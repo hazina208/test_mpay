@@ -1,21 +1,23 @@
+
+
 <?php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'm_pay');
+// Database configuration from Render environment variables
+define('DB_HOST', getenv('bg4ikv5j4exzavzvcmwb-mysql.services.clever-cloud.com'));
+define('DB_USER', getenv('uo0yxrgvekb7yhnz'));
+define('DB_PASS', getenv('lL6TCCUmkmY9oCsTEYsX'));
+define('DB_NAME', getenv('bg4ikv5j4exzavzvcmwb'));
 
-define('MPESA_CONSUMER_KEY', 'uEWApsgB5NFs9FiedApURKPVDzB3fOzBlFyDwMxG7AdA26YM');
-define('MPESA_CONSUMER_SECRET', 'KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv');
-define('MPESA_PASSKEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'); 
-//define('MPESA_PASSKEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919');  
-define('MPESA_SHORTCODE', '174379'); // Use your Paybill number
-//define('MPESA_CALLBACK_URL', 'https://fe2c1eda5d4a.ngrok-free.app/mpay/callback.php');
-define('MPESA_CALLBACK_URL', 'https://fe2c1eda5d4a.ngrok-free.app/m_pay/mpesa/busfares/callback.php');
-
-define('MPESA_ENV', 'sandbox'); // Change to 'live' for production
+// Mpesa constants (you can also move these into env vars for security!)
+define('MPESA_CONSUMER_KEY', getenv('uEWApsgB5NFs9FiedApURKPVDzB3fOzBlFyDwMxG7AdA26YM'));
+define('MPESA_CONSUMER_SECRET', getenv('KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv'));
+define('MPESA_PASSKEY', getenv('KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv'));
+define('MPESA_SHORTCODE', getenv('174379'));
+define('MPESA_CALLBACK_URL', getenv('https://fe2c1eda5d4a.ngrok-free.app/m_pay/mpesa/busfares/callback.php'));
+define('MPESA_ENV', getenv('MPESA_ENV') ?: 'sandbox'); // default sandbox
 
 // Database connection
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
