@@ -1,11 +1,11 @@
 
 <?php
 
-$host = getenv("bg4ikv5j4exzavzvcmwb-mysql.services.clever-cloud.com");
-$db   = getenv("bg4ikv5j4exzavzvcmwb");
-$user = getenv("uo0yxrgvekb7yhnz");
-$pass = getenv("lL6TCCUmkmY9oCsTEYsX");
-$port = getenv("3306");
+$host = getenv("DB_HOST");
+$db   = getenv("DB_NAME");
+$user = getenv("DB_USER");
+$pass = getenv("DB_PASS");
+$port = getenv("DB_PORT");
 
 $conn = new mysqli($host, $user, $pass, $db, $port);
 
