@@ -46,7 +46,7 @@ if (isset($_POST['register'])) {
         }
 
         // Insert new user
-        $query = "INSERT INTO register (first_name, last_name, phone, company, position, email, password, show_pass, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO register (first_name, last_name, phone, entity, position, email, password, show_pass, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(1, $fname, PDO::PARAM_STR);
         $stmt->bindParam(2, $lname, PDO::PARAM_STR);
