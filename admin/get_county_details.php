@@ -1,6 +1,6 @@
 
 <?php
-include("../connection.php");
+include "DB_connection.php";
 
 $county = $_GET['county'] ?? '';
 

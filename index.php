@@ -1,7 +1,5 @@
 <?php 
 include "DB_connection.php";
-
-
  ?>
 <!DOCTYPE html>
 <html lang="en">

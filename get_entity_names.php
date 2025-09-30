@@ -10,7 +10,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $entity = $data['entity'] ?? '';
 
 // Database connection (replace with your credentials)
-include("connection.php");
+include "DB_connection.php";
 
 $conn = new mysqli($host, $dbuser, $dbpass, $db);
 if ($conn->connect_error) {

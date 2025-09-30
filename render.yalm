@@ -13,6 +13,8 @@ services:
         value: uo0yxrgvekb7yhnz
       - key: DB_PASS
         value: lL6TCCUmkmY9oCsTEYsX
+      - key: DB_PORT
+        value: 3306
       - key: MPESA_CONSUMER_KEY
         value: uEWApsgB5NFs9FiedApURKPVDzB3fOzBlFyDwMxG7AdA26YM
       - key: MPESA_CONSUMER_SECRET
@@ -23,6 +25,14 @@ services:
         value: 174379
       - key: MPESA_CALLBACK_URL
         value: https:// test_mpay.onrender.com/m_pay/mpesa/busfares/callback.php
+      - key: MPESA_CALLBACK_URL2
+        value: https:// test_mpay.onrender.com/m_pay/mpesa/cargo/callback.php
+      - key: MPESA_CALLBACK_URL3
+        value: https:// test_mpay.onrender.com/m_pay/mpesa/events/callback.php
+      - key: MPESA_CALLBACK_URL4
+        value: https:// test_mpay.onrender.com/m_pay/mpesa/insurance/callback.php
+      - key: MPESA_CALLBACK_URL5
+        value: https:// test_mpay.onrender.com/m_pay/mpesa/chamas/callback.php
       - key: MPESA_ENV
         value: sandbox
 

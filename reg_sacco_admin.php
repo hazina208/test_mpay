@@ -1,6 +1,7 @@
 <?php
-    session_start();
-    include('connection.php');//get configuration file
+ob_start(); // buffer output, prevents "headers already sent"
+session_start();
+include "DB_connection.php";
     if(isset($_POST['register']))
     {
         

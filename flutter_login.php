@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Database connection (replace with your credentials)
-include("connection.php");
+include "DB_connection.php";
 
 if ($conn->connect_error) {
     die(json_encode(['success' => false, 'message' => 'Database connection failed']));
