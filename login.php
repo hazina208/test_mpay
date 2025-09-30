@@ -1,9 +1,9 @@
 
 
 <?php
-	ob_start(); // buffer output, prevents "headers already sent"
-    session_start();
-    include "DB_connection.php";
+ob_start(); // buffer output, prevents "headers already sent"
+session_start();
+include "DB_connection.php";
     if(isset($_POST['login']))
     {
         $email=$conn -> real_escape_string($_POST['email']);
