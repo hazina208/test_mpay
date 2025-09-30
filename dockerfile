@@ -8,6 +8,8 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 # Copy your PHP code into container
 COPY . /var/www/html/
 
+
+
 # Set working directory
 WORKDIR /var/www/html/
 
