@@ -1,5 +1,3 @@
-
-
 <?php
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
