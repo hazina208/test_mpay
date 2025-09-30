@@ -10,5 +10,5 @@ COPY . /var/www/html/
 # Set working directory
 WORKDIR /var/www/html/
 
-# Run Com[poser]
-RUN composer install
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
