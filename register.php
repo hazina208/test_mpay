@@ -1,5 +1,5 @@
 <?php
-    session_start();
+    //session_start();
     include "DB_connection.php";
     if(isset($_POST['register']))
     {
