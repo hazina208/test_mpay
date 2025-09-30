@@ -1,17 +1,17 @@
 <?php
 
 // Database configuration from Render environment variables
-define('DB_HOST', getenv('bg4ikv5j4exzavzvcmwb-mysql.services.clever-cloud.com'));
-define('DB_USER', getenv('uo0yxrgvekb7yhnz'));
-define('DB_PASS', getenv('lL6TCCUmkmY9oCsTEYsX'));
-define('DB_NAME', getenv('bg4ikv5j4exzavzvcmwb'));
-define('DB_PORT', getenv('3306'));
+define('DB_HOST', getenv('DB_HOST'));
+define('DB_USER', getenv('DB_USER'));
+define('DB_PASS', getenv('DB_PASS'));
+define('DB_NAME', getenv('DB_NAME'));
+define('DB_PORT', getenv('DB_PORT'));
 // Mpesa constants (you can also move these into env vars for security!)
-define('MPESA_CONSUMER_KEY', getenv('uEWApsgB5NFs9FiedApURKPVDzB3fOzBlFyDwMxG7AdA26YM'));
-define('MPESA_CONSUMER_SECRET', getenv('KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv'));
-define('MPESA_PASSKEY', getenv('KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv'));
-define('MPESA_SHORTCODE', getenv('174379'));
-define('MPESA_CALLBACK_URL3', getenv('https://test_mpay.onrender.com/m_pay/mpesa/events/callback.php'));
+define('MPESA_CONSUMER_KEY', getenv('MPESA_CONSUMER_KEY'));
+define('MPESA_CONSUMER_SECRET', getenv('MPESA_CONSUMER_SECRET'));
+define('MPESA_PASSKEY', getenv('MPESA_PASSKEY'));
+define('MPESA_SHORTCODE', getenv('MPESA_SHORTCODE'));
+define('MPESA_CALLBACK_URL3', getenv('MPESA_CALLBACK_URL3'));
 define('MPESA_ENV', getenv('MPESA_ENV') ?: 'sandbox'); // default sandbox
 
 // Database connection
