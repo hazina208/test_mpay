@@ -27,14 +27,14 @@ if (isset($callback['Body']['stkCallback'])) {
         $status_failed = "Failed";
 
         // Update your DB transaction here
-        require_once '../../connection.php';
+        require_once '../../DB_connection.php';
 
         $stmt = $conn->prepare("UPDATE chama_payments SET status=?, transaction_id=? WHERE CheckoutRequestID=?");
         $stmt->bind_param("sss", $status_complete, $mpesaReceiptNumber, $checkoutRequestID);
         $stmt->execute();
     } else {
         // Failed transaction
-        require_once '../../connection.php';
+        require_once '../../DB_connection.php';
         $stmt = $conn->prepare("UPDATE chama_payments SET status=? WHERE CheckoutRequestID=?"); 
         $stmt->bind_param("ss", $status_failed, $checkoutRequestID);
         $stmt->execute();
