@@ -4,3 +4,27 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DB_HOST
+        value: bg4ikv5j4exzavzvcmwb-mysql.services.clever-cloud.com
+      - key: DB_NAME
+        value: bg4ikv5j4exzavzvcmwb
+      - key: DB_USER
+        value: uo0yxrgvekb7yhnz
+      - key: DB_PASS
+        value: lL6TCCUmkmY9oCsTEYsX
+      - key: MPESA_CONSUMER_KEY
+        value: uEWApsgB5NFs9FiedApURKPVDzB3fOzBlFyDwMxG7AdA26YM
+      - key: MPESA_CONSUMER_SECRET
+        value: KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv
+      - key: MPESA_PASSKEY
+        value: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+      - key: MPESA_SHORTCODE
+        value: 174379
+      - key: MPESA_CALLBACK_URL
+        value: https:// test_mpay.onrender.com/m_pay/mpesa/busfares/callback.php
+      - key: MPESA_ENV
+        value: sandbox
+
+
+
