@@ -1,15 +1,21 @@
 <?php  
-$host = getenv('DB_HOST');
-$port = getenv('DB_PORT') ?: 3306; // default 3306 if not set
-//$port = getenv('3306');
-$dbname = getenv('DB_NAME');
-$username = getenv('DB_USER');
-$password = getenv('DB_PASSWORD');
+// Retrieve environment variables
+$host = getenv('DB_HOST'); // e.g., bg4ikv5j4exzavzvcmwb-mysql.services.clever-cloud.com
+$port = getenv('DB_PORT') ?: '3306'; // Default to 3306 if not set
+$dbname = getenv('DB_NAME'); // e.g., bg4ikv5j4exzavzvcmwb
+$username = getenv('DB_USER'); // e.g., uo0yxrgvekb7yhnz
+$password = getenv('DB_PASS'); // e.g., lL6TCCUmkmY9oCsTEYsX
 
 try {
-    $conn = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $username, $password);
+    // Construct PDO connection string
+    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Connected successfully";
+    // Optional: Log success for debugging (remove in production)
+    error_log("Connected successfully to database");
 } catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+    // Log error for debugging
+    error_log("Connection failed: " . $e->getMessage());
+    die("Connection failed: " . $e->getMessage());
 }
+?>
