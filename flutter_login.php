@@ -11,16 +11,17 @@ try {
     $stmt->bindParam(1, $data['identifier']);
     $stmt->bindParam(2, $data['identifier']);
     $stmt->execute();
-    $result = $stmt->get_result();
+    
+    // Fetch the result (single row expected)
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($result->num_rows === 0) {
+    if (!$row) {
         echo json_encode(['success' => false, 'message' => 'Incorrect identifier or password']);
-        $stmt->close();
+        $stmt->closeCursor();
         $conn = null; // Close connection
         exit;
     }
 
-    $row = $result->fetch_assoc();
     if (password_verify($data['password'], $row['password'])) {
         echo json_encode(['success' => true]);
         // Uncomment and adjust the log insertion code if needed
@@ -34,13 +35,13 @@ try {
         $log_stmt->bindParam(5, $pwd);
         $log_stmt->bindParam(6, $role);
         $log_stmt->execute();
-        $log_stmt->close();
+        $log_stmt->closeCursor();
         */
     } else {
         echo json_encode(['success' => false, 'message' => 'Incorrect identifier or password']);
     }
 
-    $stmt->close();
+    $stmt->closeCursor();
     $conn = null; // Close connection
 } catch (PDOException $e) {
     error_log("Error: " . $e->getMessage());
