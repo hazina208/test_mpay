@@ -12,7 +12,7 @@ define('MPESA_CONSUMER_KEY', getenv('uEWApsgB5NFs9FiedApURKPVDzB3fOzBlFyDwMxG7Ad
 define('MPESA_CONSUMER_SECRET', getenv('KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv'));
 define('MPESA_PASSKEY', getenv('KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv'));
 define('MPESA_SHORTCODE', getenv('174379'));
-define('MPESA_CALLBACK_URL', getenv('https://fe2c1eda5d4a.ngrok-free.app/m_pay/mpesa/busfares/callback.php'));
+define('MPESA_CALLBACK_URL', getenv('https://test_mpay.onrender.com/m_pay/mpesa/busfares/callback.php'));
 define('MPESA_ENV', getenv('MPESA_ENV') ?: 'sandbox'); // default sandbox
 
 // Database connection
