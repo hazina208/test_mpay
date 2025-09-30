@@ -3,7 +3,7 @@
 <?php
     session_start();
  
-    include('connection.php');//get configuration file
+    include "DB_connection.php";
     if(isset($_POST['login']))
     {
         $email=$conn -> real_escape_string($_POST['email']);
