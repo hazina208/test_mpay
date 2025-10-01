@@ -9,7 +9,7 @@ if (isset($_POST['register'])) {
 	$lname = trim($_POST['ln'] ?? '');
     $telphone = trim($_POST['phone'] ?? '');
     $company = trim($_POST['co'] ?? '');
-	$company_name = trim($_POST['coname'] ?? '');
+	$company_name = trim($_POST['co_name'] ?? '');
     $pos = trim($_POST['position'] ?? '');
     $e_add = trim($_POST['email'] ?? '');
     $pwd = $_POST['pass'] ?? '';
