@@ -1,16 +1,13 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
 <?php include "inc/tables_header.php"; ?>
-
 <body>
     <?php include "inc/navbar.php"; ?> 
   
@@ -24,8 +21,6 @@ if(empty($_SESSION['id']))
                     <i class="fa fa-folder-open fs-1" aria-hidden="true"></i><br>
                   Events
                 </a> 
-               
-               
                <br><br>
 
                <a href="" class="col btn btn-primary m-2 py-3 col-5">
@@ -52,41 +47,50 @@ if(empty($_SESSION['id']))
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        <?php 
-                                        $co=$mysqli -> real_escape_string($_SESSION['entity_name']);
-                                        $result = $conn->query("SELECT * FROM events WHERE event= '$co' ORDER BY date DESC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                        <?php
+                                        try {
+                                            $co=trim($_SESSION['entity_name']);
+                                            $stmt = $conn->prepare("SELECT * FROM events event= '$co' ORDER BY date DESC");
+                                            $stmt->execute();
+                                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                            ?>
                                             <tr>
-                                                <td><?= $row['event'] ?></td>
-                                                <td><?= $row['venue'] ?></td>
-                                                <td><?= $row['date'] ?></td>
-                                                <td><?= $row['time'] ?></td>
-                                                <td><?= $row['regular_price'] ?></td>
-                                                <td><?= $row['vip_regular_price'] ?></td>
-                                                <td><?= $row['vip_price'] ?></td>
-                                                <td><?= $row['vvip_regular'] ?></td>
+                                                <td><?= htmlspecialchars($row['event']) ?></td>
+                                                <td><?= htmlspecialchars($row['venue']) ?></td>
+                                                <td><?= htmlspecialchars($row['date']) ?></td>
+                                                <td><?= htmlspecialchars($row['time']) ?></td>
+                                                <td><?= htmlspecialchars($row['regular_price']) ?></td>
+                                                <td><?= htmlspecialchars($row['vip_regular_price']) ?></td>
+                                                <td><?= htmlspecialchars($row['vip_price']) ?></td>
+                                                <td><?= htmlspecialchars($row['vvip_regular']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-county="<?= $row['event'] ?>"
-                                                        data-county="<?= $row['venue'] ?>"
-                                                        data-county="<?= $row['date'] ?>"
-                                                        data-county="<?= $row['time'] ?>"
-                                                        data-county="<?= $row['regular_price'] ?>"
-                                                        data-county="<?= $row['vip_regular_price'] ?>"
-                                                        data-county="<?= $row['vip_price'] ?>"
-                                                        data-county="<?= $row['vvip_regular'] ?>"
+                                                        data-id="<?= $htmlspecialchars(row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['event']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['venue']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['date']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['time']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['regular_price']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['vip_regular_price']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['vip_price']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['vvip_regular']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
                                         </tbody>
                                     </table>
                                 </div>

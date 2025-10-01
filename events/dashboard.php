@@ -1,16 +1,12 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
-
-
 <?php 
   include "inc/header.php";
 ?>
@@ -33,9 +29,6 @@ if(empty($_SESSION['id']))
 			    ?>
              <div class="row row-cols-5">
               
-
-               
-                
                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addEventModal">
                  <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                   Add Event
@@ -99,59 +92,55 @@ if(empty($_SESSION['id']))
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <label for="county">Event Name</label>
+                                    <label for="event">Event Name</label>
                                     <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT event_name FROM event");
+                                    try {
+                                        $stmt = $conn->prepare("SELECT event_name FROM event");
+                                        $stmt->execute();
+                                        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     ?>
-
-                                    <select id="event" name="event" >
+                                    <select id="event" name="event">
                                         <option value="">-- Select Event --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['event_name']; ?>"><?= $row['event_name']; ?></option>
-                                        <?php endwhile; ?>
+                                        <?php foreach ($events as $row): ?>
+                                            <option value="<?= htmlspecialchars($row['event_name']); ?>"><?= htmlspecialchars($row['event_name']); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
+                                    <?php
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching events: " . $e->getMessage());
+                                        echo '<p>Error loading events. Please try again later.</p>';
+                                    }
+                                    ?>
                                 </div>
-
-						        <div class="modal-body">
-                                    <label for="county">Event Venue</label>
+                                <div class="modal-body">
+                                    <label for="venue">Event Venue</label>
                                     <input type="text" class="form-control" name="venue" required>
                                 </div>
                                 <div class="modal-body">
-                                    <label for="county">Event Date</label>
+                                    <label for="e_date">Event Date</label>
                                     <input type="date" class="form-control" name="e_date" required>
                                 </div>
-
-						        <div class="modal-body">
-                                    <label for="county">Event Time</label>
+                                <div class="modal-body">
+                                    <label for="e_time">Event Time</label>
                                     <input type="text" class="form-control" name="e_time" required>
                                 </div>
-
                                 <div class="modal-header">
                                     <h5 class="modal-title"><center>Event Prices</center></h5>
-                                    
                                 </div>
                                 <div class="modal-body">
-                                    <label for="county">Regular Price</label>
+                                    <label for="r_price">Regular Price</label>
                                     <input type="number" class="form-control" name="r_price" required>
                                 </div>
-
-						        <div class="modal-body">
-                                    <label for="county">Vip Regular Price </label>
+                                <div class="modal-body">
+                                    <label for="vip_r_price">VIP Regular Price</label>
                                     <input type="number" class="form-control" name="vip_r_price" required>
                                 </div>
                                 <div class="modal-body">
-                                    <label for="county">Vip Price </label>
+                                    <label for="vip_price">VIP Price</label>
                                     <input type="number" class="form-control" name="vip_price" required>
                                 </div>
-
-						        <div class="modal-body">
-                                    <label for="county">Vvip Regular Price</label>
+                                <div class="modal-body">
+                                    <label for="vvip_r_price">VVIP Regular Price</label>
                                     <input type="number" class="form-control" name="vvip_r_price" required>
                                 </div>
                                 <div class="modal-footer">

@@ -6,10 +6,7 @@ if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
-
 <?php 
   include "inc/header.php";
 ?>
@@ -128,21 +125,24 @@ if(empty($_SESSION['id']))
                                 <div class="modal-body">
                                     <label for="county">Chama</label>
                                     <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    try {
+                                        $stmt = $conn->prepare("SELECT chama_name FROM chamas");
+                                        $stmt->execute();
+                                        $chamas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     ?>
-
-                                    <select id="chama" name="chama" >
+                                    <select id="chama" name="chama">
                                         <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
+                                        <?php foreach ($chamas as $row): ?>
+                                            <option value="<?= htmlspecialchars($row['chama_name']); ?>"><?= htmlspecialchars($row['chama_name']); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
+                                    <?php
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching chamas: " . $e->getMessage());
+                                        echo '<p>Error loading chamas. Please try again later.</p>';
+                                    }
+                                    ?>
+                                   
                                 </div>
                                 
 

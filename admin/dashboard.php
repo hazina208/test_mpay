@@ -385,7 +385,6 @@ if (empty($_SESSION['id'])) {
                 </div>
             </div>
         </div>
-
         <!-- Add Bus Sacco Modal -->
         <div class="modal fade" id="addBusSaccoModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">

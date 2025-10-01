@@ -564,10 +564,11 @@ if(empty($_SESSION['id']))
                                         <tbody>
                                         <?php
                                         try {
-                                        $stmt = $conn->prepare("SELECT * FROM events ORDER BY date DESC");
-                                        $stmt->execute();
-                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
-                                        ?>
+                                            $co=trim($_SESSION['entity_name']);
+                                            $stmt = $conn->prepare("SELECT * FROM events event= '$co' ORDER BY date DESC");
+                                            $stmt->execute();
+                                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                            ?>
                                             <tr>
                                                 <td><?= htmlspecialchars($row['event']) ?></td>
                                                 <td><?= htmlspecialchars($row['venue']) ?></td>

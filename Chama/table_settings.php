@@ -1,14 +1,12 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
 <?php include "inc/tables_header.php"; ?>
 
 <body>
@@ -40,7 +38,7 @@ if(empty($_SESSION['id']))
            
              
                  <!-- Start Ward Table Modal -->
-                <div class="modal fade" id="ChamaTableModal" tabindex="-1" aria-hidden="true">
+         <div class="modal fade" id="ChamaTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header"><h5>List of Chamas</h5>
@@ -53,28 +51,37 @@ if(empty($_SESSION['id']))
                                             <tr><th>Chama</th><th>Actions</th></tr>
                                         </thead>
                                         <tbody>
-                                        <?php 
-                                        $result = $conn->query("SELECT * FROM chamas ORDER BY chama_name DESC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                        <?php
+                                        try {
+                                        $stmt = $conn->prepare("SELECT * FROM chamas ORDER BY chama_name DESC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
                                             <tr>
-                                                <td><?= $row['chama_name'] ?></td>
+                                                <td><?= htmlspecialchars($row['chama_name']) ?></td>
                                                
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-county="<?= $row['chama_name'] ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['chama_name']) ?>"
                                                         
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
                                         </tbody>
                                     </table>
                                 </div>

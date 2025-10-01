@@ -6,16 +6,13 @@ if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
-
 <?php 
   include "inc/header.php";
 ?>
 <body>
     <?php 
-        include "inc/chamanav.php";
+        include "inc/nav.php";
      ?>
      <div class="container mt-5">
          <div class="container text-center">
@@ -195,40 +192,45 @@ if(empty($_SESSION['id']))
                                 <div class="modal-body">
                                     <label for="county">Policy</label>
                                     <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT policy FROM insurance_policies");
+                                    try {
+                                        $stmt = $conn->prepare("SELECT policy FROM insurance_policies");
+                                        $stmt->execute();
+                                        $policies = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     ?>
-
-                                    <select id="policy" name="policy" >
+                                    <select id="policy" name="policy">
                                         <option value="">-- Select Policy --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['policy']; ?>"><?= $row['policy']; ?></option>
-                                        <?php endwhile; ?>
+                                        <?php foreach ($policies as $row): ?>
+                                            <option value="<?= htmlspecialchars($row['policy']); ?>"><?= htmlspecialchars($row['policy']); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
+                                    <?php
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching policies: " . $e->getMessage());
+                                        echo '<p>Error loading policies. Please try again later.</p>';
+                                    }
+                                    ?>
                                 </div>
                                 <div class="modal-body">
                                     <label for="county">Principle</label>
                                     <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT principle FROM insurance_principles");
+                                    try {
+                                        $stmt = $conn->prepare("SELECT principle FROM insurance_principles");
+                                        $stmt->execute();
+                                        $principles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     ?>
-
-                                    <select id="principle" name="principle" >
+                                    <select id="principle" name="principle">
                                         <option value="">-- Select Principle --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['principle']; ?>"><?= $row['principle']; ?></option>
-                                        <?php endwhile; ?>
+                                        <?php foreach ($principles as $row): ?>
+                                            <option value="<?= htmlspecialchars($row['principle']); ?>"><?= htmlspecialchars($row['principle']); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
+                                    <?php
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching principles: " . $e->getMessage());
+                                        echo '<p>Error loading principles. Please try again later.</p>';
+                                    }
+                                    ?>
+                                    
                                 </div>
 
                                 
