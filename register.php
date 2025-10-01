@@ -5,15 +5,17 @@ include "DB_connection.php"; // PDO connection
 if (isset($_POST['register'])) {
     // Retrieve and sanitize input
     $fname = trim($_POST['fn'] ?? '');
-    $lname = trim($_POST['ln'] ?? '');
+    $mname = trim($_POST['mn'] ?? '');
+	$lname = trim($_POST['ln'] ?? '');
     $telphone = trim($_POST['phone'] ?? '');
     $company = trim($_POST['co'] ?? '');
+	$company_name = trim($_POST['coname'] ?? '');
     $pos = trim($_POST['position'] ?? '');
     $e_add = trim($_POST['email'] ?? '');
     $pwd = $_POST['pass'] ?? '';
     $role = trim($_POST['role'] ?? '');
     // Basic input validation
-    if (empty($fname) || empty($lname) || empty($telphone) || empty($company) || 
+    if (empty($fname) || empty($mname) || empty($lname) || empty($telphone) || empty($company) || empty($compan_namey) || 
         empty($pos) || empty($e_add) || empty($pwd) || empty($role)) {
         $_SESSION['status'] = "All fields are required.";
         $_SESSION['status_code'] = "error";
@@ -46,17 +48,19 @@ if (isset($_POST['register'])) {
         }
 
         // Insert new user
-        $query = "INSERT INTO register (first_name, last_name, phone, entity, position, email, password, show_pass, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO register (first_name, middle_name, last_name, phone, entity, entity_name, position, email, password, show_pass, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(1, $fname, PDO::PARAM_STR);
-        $stmt->bindParam(2, $lname, PDO::PARAM_STR);
-        $stmt->bindParam(3, $telphone, PDO::PARAM_STR);
-        $stmt->bindParam(4, $company, PDO::PARAM_STR);
-        $stmt->bindParam(5, $pos, PDO::PARAM_STR);
-        $stmt->bindParam(6, $e_add, PDO::PARAM_STR);
-        $stmt->bindParam(7, $pwd_hashed, PDO::PARAM_STR);
-        $stmt->bindParam(8, $show_pass, PDO::PARAM_STR);
-        $stmt->bindParam(9, $role, PDO::PARAM_STR);
+		$stmt->bindParam(2, $mname, PDO::PARAM_STR);
+        $stmt->bindParam(3, $lname, PDO::PARAM_STR);
+        $stmt->bindParam(4, $telphone, PDO::PARAM_STR);
+        $stmt->bindParam(5, $company, PDO::PARAM_STR);
+		$stmt->bindParam(6, $company_name, PDO::PARAM_STR);
+        $stmt->bindParam(7, $pos, PDO::PARAM_STR);
+        $stmt->bindParam(8, $e_add, PDO::PARAM_STR);
+        $stmt->bindParam(9, $pwd_hashed, PDO::PARAM_STR);
+        $stmt->bindParam(10, $show_pass, PDO::PARAM_STR);
+        $stmt->bindParam(11, $role, PDO::PARAM_STR);
         $result = $stmt->execute();
 
         if ($result) {
@@ -103,6 +107,10 @@ if (isset($_POST['register'])) {
                     <input type="text" class="form-control" name="fn" required>
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Moddle Name</label>
+                    <input type="text" class="form-control" name="mn" required>
+                </div>
+				<div class="mb-3">
                     <label class="form-label">Last Name</label>
                     <input type="text" class="form-control" name="ln" required>
                 </div>
@@ -113,6 +121,10 @@ if (isset($_POST['register'])) {
                 <div class="mb-3">
                     <label class="form-label">Company</label>
                     <input type="text" class="form-control" name="co" required>
+                </div>
+				<div class="mb-3">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" class="form-control" name="co_name" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Position</label>
