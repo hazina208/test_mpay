@@ -119,48 +119,57 @@ if(empty($_SESSION['id']))
                   Logout
                </a> 
 
-               <!-- Start County Table Modal -->
+                <!-- Start County Table Modal -->
                 <div class="modal fade" id="CountiesTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>Counties List</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="modal-header">
+                                <h5>Counties List</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            
-                                <div class="modal-body">
-                                    <table  id="countiesTable" class="table table-bordered ">
-                                        <thead>
-                                            <tr><th>County</th><th>Code</th><th>Actions</th></tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php 
-                                        $result = $conn->query("SELECT * FROM counties ORDER BY county_code DESC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
-                                            <tr>
-                                                <td><?= $row['county'] ?></td>
-                                                <td><?= $row['county_code'] ?></td>
-                                                <td>
-                                                    <button class="btn btn-warning btn-sm" 
-                                                        data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-county="<?= $row['county'] ?>"
-                                                        data-code="<?= $row['county_code'] ?>">✏ Update</button>
-                  
-                                                    <button class="btn btn-danger btn-sm"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
-                                                </td>
-                                            </tr>
-                                        <?php endwhile; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
+            
+                            <div class="modal-body">
+                                <table id="countiesTable" class="table table-bordered">
+                                    <thead>
+                                        <tr><th>County</th><th>Code</th><th>Actions</th></tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                    try {
+                                        $stmt = $conn->prepare("SELECT * FROM counties ORDER BY county_code DESC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                    ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($row['county']) ?></td>
+                                            <td><?= htmlspecialchars($row['county_code']) ?></td>
+                                            <td>
+                                                <button class="btn btn-warning btn-sm"
+                                                    data-bs-toggle="modal" data-bs-target="#updateModal"
+                                                    data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                    data-county="<?= htmlspecialchars($row['county']) ?>"
+                                                    data-code="<?= htmlspecialchars($row['county_code']) ?>">✏ Update</button>
+                                
+                                                <button class="btn btn-danger btn-sm"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                    data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
+                                            </td>
+                                        </tr>
+                                    <?php 
+                                        endwhile;
+                                        $stmt = null; // Close statement
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                    }
+                                    ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- End County Table Modal-->
+                <!-- End County Table Modal -->
 
                 <!-- Start Company Table Modal -->
                 <div class="modal fade" id="CompanyTableModal" tabindex="-1" aria-hidden="true">
