@@ -1,13 +1,16 @@
 <?php
-    $aid=$_SESSION['id'];
-    $ret="select * from register where id=?";
-    $stmt= $conn->prepare($ret) ;
-    $stmt->bind_param('i',$aid);
-    $stmt->execute() ;//ok
-    $res=$stmt->get_result();
-    //$cnt=1;
-    while($row=$res->fetch_object())
-    {
+// Ensure session is started (already done in dashboard.php)
+$aid = $_SESSION['id'] ?? null;
+if ($aid) {
+    try {
+        // Prepare and execute query to fetch user details
+        $ret = "SELECT * FROM register WHERE id = ?";
+        $stmt = $conn->prepare($ret);
+        $stmt->bindParam(1, $aid, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if ($row) {
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -53,4 +56,20 @@
     </div>
 </nav>
 
-<?php }?>
+<?php
+        } else {
+            // Redirect if no user found
+            header('Location: ../login.php?msg=error');
+            exit();
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching user details: " . $e->getMessage());
+        header('Location: ../login.php?msg=failed');
+        exit();
+    }
+} else {
+    // Redirect if session ID is not set
+    header('Location: ../login.php?msg=error');
+    exit();
+}
+?>

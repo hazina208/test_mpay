@@ -7,7 +7,6 @@ if(empty($_SESSION['id']))
     header('location:../login.php');
 }
 ?>
-
 <?php 
   include "inc/header.php";
 ?>
@@ -66,39 +65,48 @@ if(empty($_SESSION['id']))
                                         </thead>
                                         <tbody>
                                         <?php 
-                                        $co=$conn -> real_escape_string($_SESSION['entity_name']);
-                                        $result = $conn->query("SELECT * FROM bus_fares WHERE sacco= '$co' ORDER BY sacco ASC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                        try {
+                                        $co = trim($__SESSION['entity_name'] ?? '');
+                                        $stmt = $conn->prepare("SELECT * FROM bus_fares WHERE sacco= '$co' ORDER BY sacco ASC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
                                             <tr>
                                               
-                                                <td><?= $row['sacco'] ?></td>
-                                                <td><?= $row['amount'] ?></td>
-                                                <td><?= $row['fee'] ?></td>
-                                                <td><?= $row['total'] ?></td>
-                                                <td><?= $row['phone_number'] ?></td>
-                                                <td><?= $row['transaction_id'] ?></td>
-                                                <td><?= $row['created_at'] ?></td>
+                                                <td><?= htmlspecialchars($row['sacco']) ?></td>
+                                                <td><?= htmlspecialchars($row['amount']) ?></td>
+                                                <td><?= htmlspecialchars($row['fee']) ?></td>
+                                                <td><?= htmlspecialchars($row['total']) ?></td>
+                                                <td><?= htmlspecialchars($row['phone_number']) ?></td>
+                                                <td><?= htmlspecialchars($row['transaction_id']) ?></td>
+                                                <td><?= htmlspecialchars($row['created_at']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-county="<?= $row['sacco'] ?>"
-                                                        data-county="<?= $row['amount'] ?>"
-                                                        data-county="<?= $row['fee'] ?>"
-                                                        data-county="<?= $row['total'] ?>"
-                                                        data-county="<?= $row['phone_number'] ?>"
-                                                        data-county="<?= $row['transaction_id'] ?>"
-                                                        data-county="<?= $row['created_at'] ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['sacco']) ?>"
+                                                        data-county="<?=htmlspecialchars($row['amount']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['fee']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['total']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['phone_number']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['transaction_id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['created_at']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
                                         </tbody>
                                     </table>
                                 </div>

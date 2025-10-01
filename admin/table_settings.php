@@ -391,7 +391,7 @@ if(empty($_SESSION['id']))
                 <div class="modal fade" id="CargoSaccoTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>List of Cargo Vehicles</h5>
+                            <div class="modal-header"><h5>List of Cargo Saccos</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             

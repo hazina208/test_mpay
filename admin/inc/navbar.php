@@ -1,7 +1,6 @@
 <?php
 // Ensure session is started (already done in dashboard.php)
 $aid = $_SESSION['id'] ?? null;
-
 if ($aid) {
     try {
         // Prepare and execute query to fetch user details

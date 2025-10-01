@@ -1,15 +1,12 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
-
 <?php 
   include "inc/header.php";
 ?>
@@ -106,21 +103,23 @@ if(empty($_SESSION['id']))
                                 <div class="modal-body">
                                     <label for="county">Sacco</label>
                                     <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT sacco FROM lorry_sacco");
+                                    try {
+                                        $stmt = $conn->prepare("SELECT sacco FROM lorry_sacco");
+                                        $stmt->execute();
+                                        $saccos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     ?>
-
                                     <select id="sacco" name="sacco" onchange="fetchCountyDetails(this.value)">
                                         <option value="">-- Select Sacco --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['sacco']; ?>"><?= $row['sacco']; ?></option>
-                                        <?php endwhile; ?>
+                                        <?php foreach ($saccos as $row): ?>
+                                            <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
+                                    <?php
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching lorry saccos: " . $e->getMessage());
+                                        echo '<p>Error loading saccos. Please try again later.</p>';
+                                    }
+                                    ?>
                                 </div>
 
                                 <div class="modal-body">
@@ -171,21 +170,23 @@ if(empty($_SESSION['id']))
                                 <div class="modal-body">
                                     <label for="county">Sacco</label>
                                     <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT sacco FROM lorry_fleet_no");
+                                    try {
+                                        $stmt = $conn->prepare("SELECT sacco FROM lorry_fleet_no");
+                                        $stmt->execute();
+                                        $saccos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     ?>
-
                                     <select id="cargosacco" name="cargosacco" onchange="fetchCargoVehicleFtnoDetails(this.value)">
                                         <option value="">-- Select Sacco --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['sacco']; ?>"><?= $row['sacco']; ?></option>
-                                        <?php endwhile; ?>
+                                        <?php foreach ($saccos as $row): ?>
+                                            <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
+                                    <?php
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching lorry saccos: " . $e->getMessage());
+                                        echo '<p>Error loading saccos. Please try again later.</p>';
+                                    }
+                                    ?>
                                 </div>
 
 						       
@@ -202,23 +203,24 @@ if(empty($_SESSION['id']))
 
                                 <div class="modal-body">
                                     <label for="county">Position</label>
-                                    
                                     <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT position FROM positions");
+                                    try {
+                                        $stmt = $conn->prepare("SELECT position FROM positions");
+                                        $stmt->execute();
+                                        $positions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     ?>
-
-                                    <select id="position" name="position" >
+                                    <select id="position" name="position">
                                         <option value="">-- Select Position --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['position']; ?>"><?= $row['position']; ?></option>
-                                        <?php endwhile; ?>
+                                        <?php foreach ($positions as $row): ?>
+                                            <option value="<?= htmlspecialchars($row['position']); ?>"><?= htmlspecialchars($row['position']); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
+                                    <?php
+                                    } catch (PDOException $e) {
+                                        error_log("Error fetching positions: " . $e->getMessage());
+                                        echo '<p>Error loading positions. Please try again later.</p>';
+                                    }
+                                    ?>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" name="saveCargoStaff" class="btn btn-success">Save</button>
