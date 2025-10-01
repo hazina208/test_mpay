@@ -1,14 +1,12 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
 <?php include "inc/tables_header.php"; ?>
 
 <body>
