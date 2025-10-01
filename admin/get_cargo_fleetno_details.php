@@ -1,6 +1,5 @@
-
 <?php
-include "DB_connection.php";
+include "../DB_connection.php";
 
 $sacco = $_GET['sacco'] ?? '';
 
