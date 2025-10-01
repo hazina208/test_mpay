@@ -1,29 +1,37 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 ?>
 <?php
 if (isset($_POST['saveCounty'])) {
-    $county = $conn -> real_escape_string($_POST['county']);
-	$county_code = $conn -> real_escape_string($_POST['code']);
+	 // Retrieve and sanitize input
+	$county = trim($_POST['county'] ?? '');
+    $county_code = trim($_POST['code'] ?? '');
 
-    $sql = "INSERT INTO counties (county, county_code) VALUES (?,?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $county, $county_code);
+	// Insert new user
+        $query = "INSERT INTO counties (county, county_code) VALUES (?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(1, $county, PDO::PARAM_STR);
+		$stmt->bindParam(2, $county_code, PDO::PARAM_STR);
+       
+        $result = $stmt->execute();
 
-    $stmt->execute();
+        if ($result) {
+            $_SESSION['status'] = "Data inserted successfully.";
+            $_SESSION['status_code'] = "success";
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $_SESSION['status'] = "Failed to insert data.";
+            $_SESSION['status_code'] = "error";
+            header("Location: dashboard.php");
+            exit();
+        }
 		
-	if($stmt){
-		
-        header("location:dashboard.php?msg=success");
-	}
-	else {
-		
-        header("location:dashboard.php?msg=error");
-	}
+    }
 
-}
+
 
 if(isset($_POST['saveSubCounty'])) {
     $county = $conn -> real_escape_string($_POST['county']);
