@@ -15,7 +15,7 @@ if (isset($_POST['register'])) {
     $pwd = $_POST['pass'] ?? '';
     $role = trim($_POST['role'] ?? '');
     // Basic input validation
-    if (empty($fname) || empty($mname) || empty($lname) || empty($telphone) || empty($company) || empty($compan_namey) || 
+    if (empty($fname) || empty($mname) || empty($lname) || empty($telphone) || empty($company) || empty($company_name) || 
         empty($pos) || empty($e_add) || empty($pwd) || empty($role)) {
         $_SESSION['status'] = "All fields are required.";
         $_SESSION['status_code'] = "error";
@@ -107,7 +107,7 @@ if (isset($_POST['register'])) {
                     <input type="text" class="form-control" name="fn" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Moddle Name</label>
+                    <label class="form-label">Middle Name</label>
                     <input type="text" class="form-control" name="mn" required>
                 </div>
 				<div class="mb-3">
