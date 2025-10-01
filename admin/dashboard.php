@@ -1,7 +1,6 @@
 <?php
 ob_start(); // Buffer output to prevent "headers already sent"
 session_start();
-
 // Include database connection
 include "../DB_connection.php"; // Adjusted path to reach /var/www/html/
 
