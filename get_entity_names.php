@@ -1,35 +1,30 @@
-
-
 <?php
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // Adjust for security
+header('Access-Control-Allow-Origin: *'); // Adjust for security in production
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
-
 $data = json_decode(file_get_contents('php://input'), true);
 $entity = $data['entity'] ?? '';
 
-// Database connection (replace with your credentials)
-include "DB_connection.php";
-
-$conn = new mysqli($host, $dbuser, $dbpass, $db);
-if ($conn->connect_error) {
-    die(json_encode(['success' => false, 'message' => 'Database connection failed']));
+// Early exit if no entity provided
+if (empty($entity)) {
+    echo json_encode([]);
+    exit;
 }
 
-$stmt = $conn->prepare("SELECT DISTINCT entity_name FROM `register` WHERE entity = ? ORDER BY entity_name ASC");
-$stmt->bind_param("s", $entity);
-$stmt->execute();
-$result = $stmt->get_result();
+include "DB_connection.php"; // Assumes $conn is a PDO instance
 
-$entityNames = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $entityNames[] = $row['entity_name'];
-    }
+try {
+    $stmt = $conn->prepare("SELECT DISTINCT entity_name FROM `register` WHERE entity = ? ORDER BY entity_name ASC");
+    $stmt->execute([$entity]);
+    $entityNames = $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as array of entity_name values
+    $stmt = null; // Close statement
+
+    echo json_encode($entityNames); // Outputs clean JSON array, e.g., ["MyCorp", "YourInc"]
+
+} catch (PDOException $e) {
+    error_log("Error fetching entity names: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([]); // Return empty array on error to avoid breaking client
 }
-echo json_encode($entityNames);
-
-$stmt->close();
-$conn->close();
 ?>
