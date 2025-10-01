@@ -22,21 +22,58 @@ try {
         exit;
     }
 
+    if($row){
+        // Regenerate session ID for security
+            session_regenerate_id(true);
+
+            // Store session data
+            $_SESSION['id'] = $row['id'];
+            $_SESSION['email'] = $row['email'];
+            $_SESSION['role'] = $row['role'];
+            $_SESSION['entity_name'] = $row['entity_name'];
+            $_SESSION['first_name'] = $row['first_name'];
+            $_SESSION['last_name'] = $row['last_name'];
+
+            // Log user activity
+            $log_sql = "INSERT INTO logs (first_name, last_name, entity_name, email, password, role) VALUES (?, ?, ?, ?, ?, ?)";
+            $log_stmt = $conn->prepare($log_sql);
+            $log_stmt->bindParam(1, $_SESSION['first_name']);
+            $log_stmt->bindParam(2, $_SESSION['last_name']);
+            $log_stmt->bindParam(3, $_SESSION['entity_name']);
+            $log_stmt->bindParam(4, $email);
+            $log_stmt->bindParam(5, $pwd);
+            $log_stmt->bindParam(6, $_SESSION['role'], PDO::PARAM_INT);
+            $log_stmt->execute();
+            $log_stmt->closeCursor();
+    }
+
     if (password_verify($data['password'], $row['password'])) {
         echo json_encode(['success' => true]);
         // Uncomment and adjust the log insertion code if needed
-        /*
-        $log_sql = "INSERT INTO logs (first_name, last_name, entity_name, email, password, role) VALUES (?, ?, ?, ?, ?, ?)";
-        $log_stmt = $conn->prepare($log_sql);
-        $log_stmt->bindParam(1, $fn);
-        $log_stmt->bindParam(2, $ln);
-        $log_stmt->bindParam(3, $co);
-        $log_stmt->bindParam(4, $email);
-        $log_stmt->bindParam(5, $pwd);
-        $log_stmt->bindParam(6, $role);
-        $log_stmt->execute();
-        $log_stmt->closeCursor();
-        */
+        if($row){
+        // Regenerate session ID for security
+            session_regenerate_id(true);
+
+            // Store session data
+            $_SESSION['id'] = $row['id'];
+            $_SESSION['email'] = $row['email'];
+            $_SESSION['role'] = $row['role'];
+            $_SESSION['entity_name'] = $row['entity_name'];
+            $_SESSION['first_name'] = $row['first_name'];
+            $_SESSION['last_name'] = $row['last_name'];
+
+            // Log user activity
+            $log_sql = "INSERT INTO logs (first_name, last_name, entity_name, email, password, role) VALUES (?, ?, ?, ?, ?, ?)";
+            $log_stmt = $conn->prepare($log_sql);
+            $log_stmt->bindParam(1, $_SESSION['first_name']);
+            $log_stmt->bindParam(2, $_SESSION['last_name']);
+            $log_stmt->bindParam(3, $_SESSION['entity_name']);
+            $log_stmt->bindParam(4, $email);
+            $log_stmt->bindParam(5, $pwd);
+            $log_stmt->bindParam(6, $_SESSION['role'], PDO::PARAM_INT);
+            $log_stmt->execute();
+            $log_stmt->closeCursor();
+        }
     } else {
         echo json_encode(['success' => false, 'message' => 'Incorrect identifier or password']);
     }
