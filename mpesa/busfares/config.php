@@ -1,5 +1,3 @@
-
-
 <?php
 // Database configuration from Render environment variables
 define('DB_HOST', getenv('DB_HOST'));
