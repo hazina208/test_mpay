@@ -1,16 +1,12 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
-
 ?>
-
-
-
 <?php 
   include "inc/header.php";
 ?>
@@ -70,40 +66,49 @@ if(empty($_SESSION['id']))
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $co=$conn -> real_escape_string($_SESSION['entity_name']); 
-                                        $result = $conn->query("SELECT * FROM insurance_payments  WHERE company= '$co' ORDER BY company ASC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                        try {
+                                            $co=trim($_SESSION['entity_name']);
+                                            $stmt = $conn->prepare("SELECT * FROM insurance_payments WHERE company= '$co' ORDER BY company ASC");
+                                            $stmt->execute();
+                                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                            ?>
                                             <tr>
-                                                <td><?= $row['serial_no'] ?></td>
-                                                <td><?= $row['company'] ?></td>
-                                                <td><?= $row['amount'] ?></td>
-                                                <td><?= $row['fee'] ?></td>
-                                                <td><?= $row['total'] ?></td>
-                                                <td><?= $row['phone_number'] ?></td>
-                                                <td><?= $row['transaction_id'] ?></td>
-                                                <td><?= $row['created_at'] ?></td>
+                                                <td><?= htmlspecialchars($row['serial_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['company']) ?></td>
+                                                <td><?= htmlspecialchars($row['amount']) ?></td>
+                                                <td><?= htmlspecialchars($row['fee']) ?></td>
+                                                <td><?= htmlspecialchars($row['total']) ?></td>
+                                                <td><?= htmlspecialchars($row['phone_number']) ?></td>
+                                                <td><?= htmlspecialchars($row['transaction_id']) ?></td>
+                                                <td><?= htmlspecialchars($row['created_at']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-county="<?= $row['serial_no'] ?>"
-                                                        data-county="<?= $row['company'] ?>"
-                                                        data-county="<?= $row['amount'] ?>"
-                                                        data-county="<?= $row['fee'] ?>"
-                                                        data-county="<?= $row['total'] ?>"
-                                                        data-county="<?= $row['phone_number'] ?>"
-                                                        data-county="<?= $row['transaction_id'] ?>"
-                                                        data-county="<?= $row['created_at'] ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['serial_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['company']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['amount']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['fee']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['total']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['phone_number']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['transaction_id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['created_at']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
                                         </tbody>
                                     </table>
                                 </div>

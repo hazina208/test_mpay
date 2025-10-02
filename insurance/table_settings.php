@@ -1,20 +1,16 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
 
 ?>
-
-
 <?php include "inc/tables_header.php"; ?>
-
 <body>
     <?php include "inc/navbar.php"; ?> 
-  
     <div class="container mt-5">
         <div class="container text-center">
       
@@ -57,7 +53,7 @@ if(empty($_SESSION['id']))
            
              
                 <!-- Start Company Table Modal -->
-                <div class="modal fade" id="CompanyTableModal" tabindex="-1" aria-hidden="true">
+                   <div class="modal fade" id="CompanyTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header"><h5>List of Companies</h5>
@@ -71,25 +67,37 @@ if(empty($_SESSION['id']))
                                         </thead>
                                         <tbody>
                                         <?php 
-                                        $result = $conn->query("SELECT * FROM insurance_companies ORDER BY id DESC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                      
+                                        try {
+                                        $stmt = $conn->prepare("SELECT * FROM insurance_companies ORDER BY id DESC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
                                             <tr>
-                                                <td><?= $row['company'] ?></td>
+                                               
+                                                <td><?= htmlspecialchars($row['company']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-county="<?= $row['company'] ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['company']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
+                                        
                                         </tbody>
                                     </table>
                                 </div>
@@ -113,25 +121,34 @@ if(empty($_SESSION['id']))
                                             <tr><th>Policy</th><th>Actions</th></tr>
                                         </thead>
                                         <tbody>
-                                        <?php 
-                                        $result = $conn->query("SELECT * FROM insurance_policies ORDER BY policy ASC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                        <?php
+                                        try {
+                                        $stmt = $conn->prepare("SELECT * FROM insurance_policies ORDER BY policy ASC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
                                             <tr>
-                                                <td><?= $row['policy'] ?></td>
+                                                <td><?= htmlspecialchars($row['policy']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-code="<?= $row['policy'] ?>">✏ Update</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-code="<?= htmlspecialchars($row['policy']) ?>">✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -155,25 +172,34 @@ if(empty($_SESSION['id']))
                                             <tr><th>Insurance Principles</th><th>Actions</th></tr>
                                         </thead>
                                         <tbody>
-                                        <?php 
-                                        $result = $conn->query("SELECT * FROM insurance_principles ORDER BY principle ASC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                        <?php
+                                        try {
+                                        $stmt = $conn->prepare("SELECT * FROM insurance_principles ORDER BY principle ASC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
                                             <tr>
-                                                <td><?= $row['principle'] ?></td>
+                                                <td><?= htmlspecialchars($row['principle']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-code="<?= $row['principle'] ?>">✏ Update</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-code="<?= htmlspecialchars($row['principle']) ?>">✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -198,47 +224,55 @@ if(empty($_SESSION['id']))
                                         </thead>
                                         <tbody>
                                         <?php
-                                        $co=$mysqli -> real_escape_string($_SESSION['entity_name']);  
-                                        $result = $conn->query("SELECT * FROM insurance_members WHERE company= '$co' ORDER BY policy ASC");
-                                        while($row=$result->fetch_assoc()): 
-                                         ?>
+                                        try {
+                                        $stmt = $conn->prepare("SELECT * FROM insurance_members ORDER BY policy ASC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
                                             <tr>
-                                                <td><?= $row['fname'] ?></td>
-                                                <td><?= $row['mname'] ?></td>
-                                                <td><?= $row['lname'] ?></td>
-                                                <td><?= $row['phone'] ?></td>
-                                                <td><?= $row['id_no'] ?></td>
-                                                <td><?= $row['email'] ?></td>
-                                                <td><?= $row['risk'] ?></td>
-                                                <td><?= $row['coverage'] ?></td>
-                                                <td><?= $row['principle'] ?></td>
-                                                <td><?= $row['policy'] ?></td>
-                                                <td><?= $row['premium'] ?></td>
+                                                <td><?= htmlspecialchars($row['fname']) ?></td>
+                                                <td><?= htmlspecialchars($row['mname']) ?></td>
+                                                <td><?= htmlspecialchars($row['lname']) ?></td>
+                                                <td><?= htmlspecialchars($row['phone']) ?></td>
+                                                <td><?= htmlspecialchars($row['id_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['email']) ?></td>
+                                                <td><?= htmlspecialchars($row['risk']) ?></td>
+                                                <td><?= htmlspecialchars($row['coverage']) ?></td>
+                                                <td><?= htmlspecialchars($row['principle']) ?></td>
+                                                <td><?= htmlspecialchars($row['policy']) ?></td>
+                                                <td><?= htmlspecialchars($row['premium']) ?></td>
                                                 
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $row['id'] ?>"
-                                                        data-county="<?= $row['fname'] ?>"
-                                                        data-county="<?= $row['mname'] ?>"
-                                                        data-county="<?= $row['lname'] ?>"
-                                                        data-county="<?= $row['phone'] ?>"
-                                                        data-county="<?= $row['id_no'] ?>"
-                                                        data-county="<?= $row['email'] ?>"
-                                                        data-county="<?= $row['risk'] ?>"
-                                                        data-county="<?= $row['coverage'] ?>"
-                                                        data-county="<?= $row['principle'] ?>"
-                                                        data-county="<?= $row['policy'] ?>"
-                                                        data-county="<?= $row['premium'] ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['fname']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['mname']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['lname']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['phone']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['id_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['email']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['risk']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['coverage']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['principle']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['policy']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['premium']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= $row['id'] ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
-                                        <?php endwhile; ?>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
                                         </tbody>
                                     </table>
                                 </div>
