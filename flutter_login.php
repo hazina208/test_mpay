@@ -50,7 +50,11 @@ try {
         $log_stmt->execute();
         $log_stmt->closeCursor();
         
-        echo json_encode(['success' => true]);
+        // Return success with email (for Flutter to store)
+        echo json_encode([
+            'success' => true,
+            'email' => $row['email']  // Added this
+        ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Incorrect identifier or password']);
     }
