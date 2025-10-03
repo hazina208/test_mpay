@@ -22,7 +22,10 @@ try {
         exit;
     }
 
-    if (password_verify($data['password'], $row['password'])) {
+    // Hash the input password using the referenced method
+    $hashed_input_password = sha1(md5($data['password']));
+
+    if ($hashed_input_password === $row['password']) {
         // Regenerate session ID for security
         session_regenerate_id(true);
         // Store session data
@@ -35,7 +38,7 @@ try {
         
         // Log user activity (avoid logging password for security; adjust table if needed)
         $email = $row['email'];
-        $pwd = $data['password']; // Note: Logging password is insecure; consider removing this field
+        $pwd = $data['password']; // Note: Logging plain password is insecure; consider removing this field
         $log_sql = "INSERT INTO logs (first_name, last_name, entity_name, email, password, role) VALUES (?, ?, ?, ?, ?, ?)";
         $log_stmt = $conn->prepare($log_sql);
         $log_stmt->bindParam(1, $_SESSION['first_name']);
