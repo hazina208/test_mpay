@@ -8,6 +8,7 @@ $sacco = $input['sacco'] ?? '';
 $amount = $input['amount'] ?? 0;
 $fleet_no = $input['fleet_no'] ?? '';
 $phone_number = $input['phone_number'] ?? '';
+$transaction_id = 'PENDING_' . time();
 if (empty($sacco) || empty($amount) || empty($fleet_no) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
@@ -84,8 +85,8 @@ try {
     $response = json_decode($response_str);
     if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
         // Single INSERT after STK success, including all fields
-        $stmt = $conn->prepare("INSERT INTO bus_fares (sacco, amount, fee, total, fleet_no, phone_number, status, transaction_date, CheckoutRequestID, merchant_request_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status, $timestamp, $response->CheckoutRequestID, $response->MerchantRequestID]);
+        $stmt = $conn->prepare("INSERT INTO bus_fares (sacco, amount, fee, total, fleet_no, phone_number, status, transaction_id, transaction_date, CheckoutRequestID, merchant_request_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status, $transaction_id, $timestamp, $response->CheckoutRequestID, $response->MerchantRequestID]);
         $stmt = null; // Close statement
         echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
     } else {
