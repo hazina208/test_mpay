@@ -1,5 +1,4 @@
 <?php
-
 // Database configuration from Render environment variables
 define('DB_HOST', getenv('DB_HOST'));
 define('DB_USER', getenv('DB_USER'));
