@@ -3,11 +3,13 @@ require_once 'config.php';
 require_once 'auth.php';
 include '../../DB_connection.php'; // Use PDO connection
 header('Content-Type: application/json');
+
 $input = json_decode(file_get_contents('php://input'), true);
 $sacco = $input['sacco'] ?? '';
 $amount = $input['amount'] ?? 0;
 $fleet_no = $input['fleet_no'] ?? '';
 $phone_number = $input['phone_number'] ?? '';
+
 if (empty($sacco) || empty($amount) || empty($fleet_no) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
@@ -45,13 +47,6 @@ $total = ceil($amount + $fee);  // Ceil to integer for M-Pesa (adjust rounding i
 $fee = $total - $amount;  // Update fee to match the ceiled total
 $status = 'Pending';  // Define initial status
 
-// NEW: Check connection before insert
-if (!$conn || !($conn instanceof PDO)) {
-    error_log("No valid PDO connection available");
-    echo json_encode(['status' => false, 'message' => 'No database connection']);
-    exit;
-}
-
 try {
     // Save payment details to database
     $stmt = $conn->prepare("INSERT INTO bus_fares (sacco, amount, fee, total, fleet_no, phone_number, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -59,14 +54,12 @@ try {
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
-    // UPDATED: Log and echo exact error for debugging (remove echo in production)
     error_log("Error inserting payment: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['status' => false, 'message' => 'Database error occurred']);
     exit;
 }
 
-try{
-    // Prepare STK Push
+// Prepare STK Push
 $access_token = getAccessToken();
 if (!$access_token) {
     echo json_encode(['status' => false, 'message' => 'Failed to get access token']);
@@ -120,12 +113,4 @@ if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
     $error_msg = isset($response->errorMessage) ? $response->errorMessage : (isset($response['errorMessage']) ? $response['errorMessage'] : 'Unknown error');
     echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . $error_msg]);
 }
-
-// In the UPDATE catch block, also add exact error echo for completeness:
-} catch (PDOException $e) {
-    error_log("Error updating payment: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Database update failed: ' . $e->getMessage()]);
-}
-
-// ... (rest unchanged) ...
 ?>
