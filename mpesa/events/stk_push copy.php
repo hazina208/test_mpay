@@ -1,11 +1,11 @@
 <?php
 require_once 'config.php';
 require_once 'auth.php';
-include '../../DB_connection.php'; // Use PDO connection
+
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
-$sacco = $input['sacco'] ?? '';
+$event = $input['sacco'] ?? '';
 $amount = $input['amount'] ?? 0;
 $fleet_no = $input['fleet_no'] ?? '';
 $phone_number = $input['phone_number'] ?? '';
@@ -45,19 +45,31 @@ function calculateFee($amount) {
 $fee = calculateFee($amount);
 $total = ceil($amount + $fee);  // Ceil to integer for M-Pesa (adjust rounding if needed)
 $fee = $total - $amount;  // Update fee to match the ceiled total
-$status = 'Pending';  // Define initial status
+/////////
+error_reporting(0);
+$query="SELECT * FROM event_payments ORDER BY serial_no DESC limit 1 ";
+$result=mysqli_query($mysqli,$query);
+if($result)
+{
+    $row=mysqli_fetch_assoc($result);
+    $lastclied_id = $row['serial_no'];
+    if($lastclied_id == null)
+    {
+        $newclient_id = "SRNO-0000001";
+    }
+    else {
+        $newclient_id = str_replace("SRNO-", "", $lastclied_id);
+        $newclient_id = str_pad($newclient_id+1, 7, 0, STR_PAD_LEFT);
+        $newclient_id = "SRNO-".$newclient_id;
+    }
 
-try {
-    // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO cargo_payments (sacco, amount, fee, total, fleet_no, phone_number, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status]);
-    $payment_id = $conn->lastInsertId();
-    $stmt = null; // Close statement
-} catch (PDOException $e) {
-    error_log("Error inserting payment: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Database error occurred']);
-    exit;
 }
+// Save payment details to database
+$stmt = $conn->prepare("INSERT INTO event_payments (serial_no, event, amount, fee, total,  phone_number,status) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sdddsss", $newclient_id, $event, $amount, $fee, $total, $phone_number, $status);
+$stmt->execute();
+$payment_id = $conn->insert_id;
+$stmt->close();
 
 // Prepare STK Push
 $access_token = getAccessToken();
@@ -68,7 +80,7 @@ if (!$access_token) {
 
 $timestamp = date('YmdHis');
 $password = base64_encode(MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
-$url = MPESA_ENV == 'sandbox'
+$url = MPESA_ENV == 'sandbox' 
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
@@ -77,40 +89,51 @@ $payload = [
     'Password' => $password,
     'Timestamp' => $timestamp,
     'TransactionType' => 'CustomerPayBillOnline',
-    'Amount' => $total,  // Charge the total (amount + fee)
+    'Amount' => $amount,
     'PartyA' => $phone_number,
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => $phone_number,
     'CallBackURL' => MPESA_CALLBACK_URL,
-    'AccountReference' => 'CARGO PAYMENT_' . $payment_id,
-    'TransactionDesc' => 'Payment for ' . $sacco . ' - Fleet: ' . $fleet_no
+    'AccountReference' => 'EVENT TICKET_' . $payment_id,
+    'TransactionDesc' => 'Payment for ' . $sacco 
 ];
 
+//$headers = [
+    //'Authorization: Bearer ' . $access_token,
+    //'Content-Type: application/json'
+//];
+
+//$ch = curl_init($url);
+//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+//curl_setopt($ch, CURLOPT_POST, true);
+//curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+//curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//$response = curl_exec($ch);
+//curl_close($ch);
+//
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_URL, $url);
 curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Authorization: Bearer ' . $access_token]);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POST, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-$response_str = curl_exec($curl);
-curl_close($curl);
+$response = json_decode(curl_exec($curl));
 
-$response = json_decode($response_str);
-
+//$response = json_decode($response, true);
+//if (isset($response['ResponseCode']) && $response['ResponseCode'] == '0') {  
 if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
-    try {
-        // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE cargo_payments SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = (SELECT MAX(id) FROM cargo_payments)");
-        $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
-        $stmt2 = null; // Close statement
-        
-        echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
-    } catch (PDOException $e) {
-        error_log("Error updating payment: " . $e->getMessage());
-        echo json_encode(['status' => false, 'message' => 'Database update failed']);
-    }
+    // Save payment details to database
+    $stmt2 = $conn->prepare("UPDATE event_payments SET transaction_date=?, CheckoutRequestID =?, merchant_request_id =? WHERE id = (SELECT MAX(id) FROM event_payments)");
+    $stmt2->bind_param("sss", $timestamp, $response->CheckoutRequestID, $response->MerchantRequestID);
+    $stmt2->execute();
+    $stmt2->close();
+    
+    echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
+    
+
 } else {
-    $error_msg = isset($response->errorMessage) ? $response->errorMessage : (isset($response['errorMessage']) ? $response['errorMessage'] : 'Unknown error');
-    echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . $error_msg]);
+    echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . ($response['errorMessage'] ?? 'Unknown error')]);
 }
+
+
 ?>

@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 require_once 'auth.php';
-include '../../DB_connection.php'; // Use PDO connection
+
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -30,14 +30,35 @@ function calculateFee($amount) {
     } elseif ($amount >= 401 && $amount <= 800.99) {
         return $amount * 0.02;  // 2%
     } elseif ($amount >= 501 && $amount <= 800.99) {
-        return $amount * 0.025;  // 0.25%
-    } elseif ($amount >= 801 && $amount <= 1200.99) {
-        return $amount * 0.03;  // 0.3%
-    } elseif ($amount >= 1201 && $amount <= 1500.99) {
+        return $amount * 0.025;  // 2.5%
+    } elseif ($amount >= 801 && $amount <= 1800.99) {
+        return $amount * 0.03;  // 3%
+    } elseif ($amount >= 1801 && $amount <= 4900.99) {
+        return $amount * 0.05;  // 5%
+    } elseif ($amount >= 4901 && $amount <= 10000.99) {
+        return $amount * 0.052;  // 5.2%
+    }elseif ($amount >= 10001 && $amount <= 30000.99) {
+        return $amount * 0.055;  // 5.5%
+    }elseif ($amount >= 10001 && $amount <= 15000.99) {
+        return $amount * 0.062;  // 6.2%
+    }elseif ($amount >= 15001 && $amount <= 30000.99) {
+        return $amount * 0.066;  // 6.6%
+    }elseif ($amount >= 30001 && $amount <= 50000.99) {
+        return $amount * 0.07;  // 7%
+    }elseif ($amount >= 1501 && $amount <= 3000.99) {
         return $amount * 0.05;  // 0.5%
-    } elseif ($amount >= 1501 && $amount <= 3000.99) {
+    }elseif ($amount >= 1501 && $amount <= 3000.99) {
         return $amount * 0.05;  // 0.5%
-    } else {
+    }elseif ($amount >= 1501 && $amount <= 3000.99) {
+        return $amount * 0.05;  // 0.5%
+    }elseif ($amount >= 1501 && $amount <= 3000.99) {
+        return $amount * 0.05;  // 0.5%
+    }elseif ($amount >= 1501 && $amount <= 3000.99) {
+        return $amount * 0.05;  // 0.5%
+    }elseif ($amount >= 1501 && $amount <= 3000.99) {
+        return $amount * 0.05;  // 0.5%
+    }
+     else {
         return 0;  // No fee for amounts outside ranges
     }
 }
@@ -45,19 +66,13 @@ function calculateFee($amount) {
 $fee = calculateFee($amount);
 $total = ceil($amount + $fee);  // Ceil to integer for M-Pesa (adjust rounding if needed)
 $fee = $total - $amount;  // Update fee to match the ceiled total
-$status = 'Pending';  // Define initial status
 
-try {
-    // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO cargo_payments (sacco, amount, fee, total, fleet_no, phone_number, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status]);
-    $payment_id = $conn->lastInsertId();
-    $stmt = null; // Close statement
-} catch (PDOException $e) {
-    error_log("Error inserting payment: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Database error occurred']);
-    exit;
-}
+// Save payment details to database
+$stmt = $conn->prepare("INSERT INTO cargo_payments (sacco, amount, fee, total, fleet_no, phone_number,status) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sdddsss", $sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status);
+$stmt->execute();
+$payment_id = $conn->insert_id;
+$stmt->close();
 
 // Prepare STK Push
 $access_token = getAccessToken();
@@ -68,7 +83,7 @@ if (!$access_token) {
 
 $timestamp = date('YmdHis');
 $password = base64_encode(MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
-$url = MPESA_ENV == 'sandbox'
+$url = MPESA_ENV == 'sandbox' 
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
@@ -77,7 +92,7 @@ $payload = [
     'Password' => $password,
     'Timestamp' => $timestamp,
     'TransactionType' => 'CustomerPayBillOnline',
-    'Amount' => $total,  // Charge the total (amount + fee)
+    'Amount' => $amount,
     'PartyA' => $phone_number,
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => $phone_number,
@@ -86,31 +101,42 @@ $payload = [
     'TransactionDesc' => 'Payment for ' . $sacco . ' - Fleet: ' . $fleet_no
 ];
 
+//$headers = [
+    //'Authorization: Bearer ' . $access_token,
+    //'Content-Type: application/json'
+//];
+
+//$ch = curl_init($url);
+//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+//curl_setopt($ch, CURLOPT_POST, true);
+//curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+//curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//$response = curl_exec($ch);
+//curl_close($ch);
+//
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_URL, $url);
 curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Authorization: Bearer ' . $access_token]);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POST, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-$response_str = curl_exec($curl);
-curl_close($curl);
+$response = json_decode(curl_exec($curl));
 
-$response = json_decode($response_str);
-
+//$response = json_decode($response, true);
+//if (isset($response['ResponseCode']) && $response['ResponseCode'] == '0') {  
 if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
-    try {
-        // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE cargo_payments SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = (SELECT MAX(id) FROM cargo_payments)");
-        $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
-        $stmt2 = null; // Close statement
-        
-        echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
-    } catch (PDOException $e) {
-        error_log("Error updating payment: " . $e->getMessage());
-        echo json_encode(['status' => false, 'message' => 'Database update failed']);
-    }
+    // Save payment details to database
+    $stmt2 = $conn->prepare("UPDATE cargo_payments SET transaction_date=?, CheckoutRequestID =?, merchant_request_id =? WHERE id = (SELECT MAX(id) FROM cargo_payments)");
+    $stmt2->bind_param("sss", $timestamp, $response->CheckoutRequestID, $response->MerchantRequestID);
+    $stmt2->execute();
+    $stmt2->close();
+    
+    echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
+    
+
 } else {
-    $error_msg = isset($response->errorMessage) ? $response->errorMessage : (isset($response['errorMessage']) ? $response['errorMessage'] : 'Unknown error');
-    echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . $error_msg]);
+    echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . ($response['errorMessage'] ?? 'Unknown error')]);
 }
+
+
 ?>

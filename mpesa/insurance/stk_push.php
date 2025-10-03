@@ -1,7 +1,6 @@
 <?php
-require_once 'config.php';
+require_once 'DB_connection.php';
 require_once 'auth.php';
-
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -14,6 +13,7 @@ if (empty($sacco) || empty($amount) || empty($fleet_no) || empty($phone_number))
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
 }
+
 
 // Function to calculate percentage fee
 function calculateFee($amount) {
@@ -43,32 +43,37 @@ function calculateFee($amount) {
 }
 
 $fee = calculateFee($amount);
-$total = ceil($amount + $fee);  // Ceil to integer for M-Pesa (adjust rounding if needed)
+$total = ceil($amount + $fee);  // Ceil to integer for M-Pesa
 $fee = $total - $amount;  // Update fee to match the ceiled total
-////
-error_reporting(0);
-$query="SELECT * FROM insurance_payments ORDER BY serial_no DESC limit 1 ";
-$result=mysqli_query($mysqli,$query);
-if($result)
-{
-    $row=mysqli_fetch_assoc($result);
-    $lastclied_id = $row['serial_no'];
-    if($lastclied_id == null)
-    {
-        $newclient_id = "SRNO-0000001";
-    }
-    else {
-        $newclient_id = str_replace("SRNO-", "", $lastclied_id);
-        $newclient_id = str_pad($newclient_id+1, 7, 0, STR_PAD_LEFT);
-        $newclient_id = "SRNO-".$newclient_id;
-    }
+$status = 'pending';  // Define status as pending
 
+// Generate serial_no using PDO
+$stmt_serial = $conn->prepare("SELECT serial_no FROM insurance_payments ORDER BY serial_no DESC LIMIT 1");
+$stmt_serial->execute();
+$row = $stmt_serial->fetch(PDO::FETCH_ASSOC);
+$last_serial_no = $row ? $row['serial_no'] : null;
+
+if ($last_serial_no == null) {
+    $new_serial_no = "SRNO-0000001";
+} else {
+    $numeric_part = str_replace("SRNO-", "", $last_serial_no);
+    $new_numeric = str_pad((int)$numeric_part + 1, 7, '0', STR_PAD_LEFT);
+    $new_serial_no = "SRNO-" . $new_numeric;
 }
-// Save payment details to database
+$stmt_serial->close();
+
+// Insert payment details to database
 $stmt = $conn->prepare("INSERT INTO insurance_payments (serial_no, member_no, company, amount, fee, total,  phone_number,status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sdddsss",  $newclient_id, $member_no, $co, $amount, $fee, $total, $phone_number, $status);
+$stmt->bindParam(1, $new_serial_no, PDO::PARAM_STR);
+$stmt->bindParam(2, $member_no, PDO::PARAM_STR);
+$stmt->bindParam(3, $co, PDO::PARAM_STR);
+$stmt->bindParam(4, $amount, PDO::PARAM_STR);  // Using STR for decimal amounts
+$stmt->bindParam(5, $fee, PDO::PARAM_STR);
+$stmt->bindParam(5, $total, PDO::PARAM_STR);
+$stmt->bindParam(7, $phone_number, PDO::PARAM_STR);
+$stmt->bindParam(8, $status, PDO::PARAM_STR);
 $stmt->execute();
-$payment_id = $conn->insert_id;
+$payment_id = $conn->lastInsertId();
 $stmt->close();
 
 // Prepare STK Push
@@ -80,7 +85,7 @@ if (!$access_token) {
 
 $timestamp = date('YmdHis');
 $password = base64_encode(MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
-$url = MPESA_ENV == 'sandbox' 
+$url = MPESA_ENV == 'sandbox'
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
@@ -89,51 +94,53 @@ $payload = [
     'Password' => $password,
     'Timestamp' => $timestamp,
     'TransactionType' => 'CustomerPayBillOnline',
-    'Amount' => $amount,
+    'Amount' => $total,  // Use total amount including fee
     'PartyA' => $phone_number,
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => $phone_number,
     'CallBackURL' => MPESA_CALLBACK_URL,
     'AccountReference' => 'PAY PREMIUMS_' . $payment_id,
-    'TransactionDesc' => 'Payment for ' . $sacco 
+    'TransactionDesc' => 'Payment for ' . $sacco
 ];
 
-//$headers = [
-    //'Authorization: Bearer ' . $access_token,
-    //'Content-Type: application/json'
-//];
-
-//$ch = curl_init($url);
-//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-//curl_setopt($ch, CURLOPT_POST, true);
-//curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-//curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//$response = curl_exec($ch);
-//curl_close($ch);
-//
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_URL, $url);
-curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Authorization: Bearer ' . $access_token]);
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json',
+    'Authorization: Bearer ' . $access_token
+]);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_POST, true);
 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-$response = json_decode(curl_exec($curl));
 
-//$response = json_decode($response, true);
-//if (isset($response['ResponseCode']) && $response['ResponseCode'] == '0') {  
-if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
-    // Save payment details to database
-    $stmt2 = $conn->prepare("UPDATE insurance_payments SET transaction_date=?, CheckoutRequestID =?, merchant_request_id =? WHERE id = (SELECT MAX(id) FROM insurance_payments)");
-    $stmt2->bind_param("sss", $timestamp, $response->CheckoutRequestID, $response->MerchantRequestID);
-    $stmt2->execute();
-    $stmt2->close();
-    
-    echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
-    
-
-} else {
-    echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . ($response['errorMessage'] ?? 'Unknown error')]);
+$curl_response = curl_exec($curl);
+if ($curl_response === false) {
+    echo json_encode(['status' => false, 'message' => 'CURL request failed']);
+    curl_close($curl);
+    exit;
 }
 
+curl_close($curl);
+$response = json_decode($curl_response);
 
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo json_encode(['status' => false, 'message' => 'Invalid JSON response from M-Pesa']);
+    exit;
+}
+
+if (isset($response->ResponseCode) && $response->ResponseCode == '0') {
+    // Update payment details
+    $stmt_update = $conn->prepare("UPDATE insurance_payments SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = (SELECT MAX(id) FROM insurance_payments)");
+    $stmt_update->bindParam(1, $timestamp, PDO::PARAM_STR);
+    $stmt_update->bindParam(2, $response->CheckoutRequestID, PDO::PARAM_STR);
+    $stmt_update->bindParam(3, $response->MerchantRequestID, PDO::PARAM_STR);
+    $stmt_update->bindParam(4, $payment_id, PDO::PARAM_INT);
+    $stmt_update->execute();
+    $stmt_update->close();
+
+    echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
+} else {
+    $error_msg = isset($response->errorMessage) ? $response->errorMessage : 'Unknown error';
+    echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . $error_msg]);
+}
 ?>

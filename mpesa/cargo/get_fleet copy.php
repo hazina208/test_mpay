@@ -10,7 +10,7 @@ header("Content-Type: application/json");
 if (isset($_GET['sacco'])) {
     $sacco = $_GET['sacco'];
 
-    $stmt = $conn->prepare("SELECT fleet_no FROM fleet_no WHERE sacco = ?");
+    $stmt = $conn->prepare("SELECT fleet_no FROM lorry_fleet_no WHERE sacco = ?");
     $stmt->bind_param("s", $sacco);
     $stmt->execute();
     $result = $stmt->get_result();
