@@ -3,6 +3,13 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 include "DB_connection.php"; // Assumes $conn is a PDO instance
 
+// Validate required fields
+if (!isset($data['phone_number']) || !isset($data['entity_name']) || !isset($data['first_name']) || 
+    !isset($data['last_name']) || !isset($data['email']) || !isset($data['password']) || !isset($data['role'])) {
+    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    exit;
+}
+
 try {
     // Check if email or phone already exists
     $checkStmt = $conn->prepare("SELECT id FROM register WHERE email = ? OR phone = ?");
@@ -14,10 +21,10 @@ try {
     $checkStmt = null; // Close statement
 
     // Hash password
-    $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+    $hashedPassword = sha1(md5($data['password']));
 
     // Insert new user
-    $insertStmt = $conn->prepare("INSERT INTO register (phone, entity, entity_name, first_name, last_name, middle_name, email, password, show_pass, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $insertStmt = $conn->prepare("INSERT INTO register (phone, entity, entity_name, first_name, last_name, middle_name, position, email, password, show_pass, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $insertStmt->execute([
         $data['phone_number'],
         $data['entity'],
@@ -25,6 +32,7 @@ try {
         $data['first_name'],
         $data['last_name'],
         $data['middle_name'],
+        $data['position'],
         $data['email'],
         $hashedPassword,
         $data['password'], // Note: Storing plaintext password is insecure; consider removing this
