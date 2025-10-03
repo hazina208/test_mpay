@@ -13,7 +13,7 @@ include "DB_connection.php";
 
 try {
     // Fetch user details using the email
-    $stmt = $conn->prepare("SELECT first_name, last_name, entity_name, role FROM register WHERE email = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT first_name, middle_name, last_name, phone, position, entity, entity_name, email, password, show_pass, role FROM register WHERE email = ? LIMIT 1");
     $stmt->bindParam(1, $email);
     $stmt->execute();
     
