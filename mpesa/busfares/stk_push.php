@@ -61,8 +61,13 @@ try {
     exit;
 }
 
-// Prepare STK Push
-$access_token = getAccessToken();
+try {
+    $access_token = getAccessToken();
+} catch (Error $e) {  // Catch "Undefined constant" as Error
+    error_log("Auth error: " . $e->getMessage());
+    echo json_encode(['status' => false, 'message' => 'Authentication setup failed: ' . $e->getMessage()]);
+    exit;
+}
 if (!$access_token) {
     echo json_encode(['status' => false, 'message' => 'Failed to get access token']);
     exit;

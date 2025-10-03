@@ -2,7 +2,7 @@
 require_once 'config.php';
 
 function getAccessToken() {
-    $credentials = base64_encode(CONSUMER_KEY . ':' . CONSUMER_SECRET);  // Line ~5: This fails if undefined
+    $credentials = base64_encode(CONSUMER_KEY . ':' . CONSUMER_SECRET);
     $url = MPESA_ENV == 'sandbox'
         ? 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         : 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
@@ -26,3 +26,4 @@ function getAccessToken() {
     $data = json_decode($response, true);
     return isset($data['access_token']) ? $data['access_token'] : false;
 }
+?>
