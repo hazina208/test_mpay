@@ -108,7 +108,7 @@ $payload = [
     'PhoneNumber' => $phone_number,
     'CallBackURL' => MPESA_CALLBACK_URL5,
     'AccountReference' => 'CHAMA REMITTANCES_' . $payment_id,
-    'TransactionDesc' => 'Payment for ' . $sacco
+    'TransactionDesc' => 'Payment for ' . $chama
 ];
 
 $curl = curl_init();
