@@ -93,7 +93,7 @@ $payload = [
     'PartyA' => $phone_number,
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => $phone_number,
-    'CallBackURL' => MPESA_CALLBACK_URL,
+    'CallBackURL' => MPESA_CALLBACK_URL2,
     'AccountReference' => 'CARGO PAYMENT_' . $payment_id,
     'TransactionDesc' => 'Payment for ' . $sacco . ' - Fleet: ' . $fleet_no
 ];
