@@ -12,7 +12,7 @@ $phone_number = $input['phone_number'] ?? '';
 
 $transaction_id = 'PENDING_' . time();
 
-if (empty($event) || empty($amount) || empty($fleet_no) || empty($phone_number)) {
+if (empty($event) || empty($amount) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
 }
@@ -50,7 +50,7 @@ $fee = $total - $amount;  // Update fee to match the ceiled total
 $status = 'Pending';  // Define initial status
 
 // Generate serial_no using PDO
-$stmt_serial = $conn->prepare("SELECT serial_no FROM event_payments ORDER BY serial_no DESC LIMIT 1");
+$stmt_serial = $conn->prepare("SELECT serial_no FROM event_pays ORDER BY serial_no DESC LIMIT 1");
 $stmt_serial->execute();
 $row = $stmt_serial->fetch(PDO::FETCH_ASSOC);
 $last_serial_no = $row ? $row['serial_no'] : null;
@@ -66,7 +66,7 @@ $stmt_serial=null;
 
 try {
     // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO event_payments (serial_no, event, amount, fee, total,  phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO event_pays (serial_no, event, amount, fee, total,  phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$new_serial_no, $event, $amount, $fee, $total,  $phone_number, $status, $transaction_id]);
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
@@ -126,7 +126,7 @@ $response = json_decode($response_str);
 if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
     try {
         // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE event_payments SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
+        $stmt2 = $conn->prepare("UPDATE event_pays SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
         $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
         $stmt2 = null; // Close statement
         

@@ -33,7 +33,7 @@ if (isset($callback['Body']['stkCallback'])) {
             $status_complete = "Complete";
             
             // Update DB transaction
-            $stmt = $conn->prepare("UPDATE insurance_payments SET status = ?, transaction_id = ? WHERE CheckoutRequestID = ?");
+            $stmt = $conn->prepare("UPDATE insurance_pays SET status = ?, transaction_id = ? WHERE CheckoutRequestID = ?");
             $stmt->execute([$status_complete, $mpesaReceiptNumber, $checkoutRequestID]);
             $stmt = null; // Close statement
             
@@ -41,7 +41,7 @@ if (isset($callback['Body']['stkCallback'])) {
         } else {
             // Failed transaction
             $status_failed = "Failed";
-            $stmt = $conn->prepare("UPDATE insurance_payments SET status = ? WHERE CheckoutRequestID = ?");
+            $stmt = $conn->prepare("UPDATE insurance_pays SET status = ? WHERE CheckoutRequestID = ?");
             $stmt->execute([$status_failed, $checkoutRequestID]);
             $stmt = null; // Close statement
             
