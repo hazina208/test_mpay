@@ -62,7 +62,7 @@ if ($last_serial_no == null) {
     $new_numeric = str_pad((int)$numeric_part + 1, 7, '0', STR_PAD_LEFT);
     $new_serial_no = "EVN-" . $new_numeric;
 }
-$stmt_serial->close();
+$stmt_serial=null;
 
 try {
     // Save payment details to database
