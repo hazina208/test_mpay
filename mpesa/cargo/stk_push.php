@@ -52,7 +52,7 @@ $status = 'Pending';  // Define initial status
 
 try {
     // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO cargo_payments (sacco, amount, fee, total, fleet_no, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO cargo_pays (sacco, amount, fee, total, fleet_no, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status, $transaction_id]);
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
@@ -112,7 +112,7 @@ $response = json_decode($response_str);
 if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
     try {
         // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE cargo_payments SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
+        $stmt2 = $conn->prepare("UPDATE cargo_pays SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
         $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
         $stmt2 = null; // Close statement
         
