@@ -10,6 +10,8 @@ $amount = $input['amount'] ?? 0;
 $fleet_no = $input['fleet_no'] ?? '';
 $phone_number = $input['phone_number'] ?? '';
 
+$transaction_id = 'PENDING_' . time();
+
 if (empty($sacco) || empty($amount) || empty($fleet_no) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
@@ -42,6 +44,7 @@ function calculateFee($amount) {
     }
 }
 
+
 $fee = calculateFee($amount);
 $total = ceil($amount + $fee);  // Ceil to integer for M-Pesa (adjust rounding if needed)
 $fee = $total - $amount;  // Update fee to match the ceiled total
@@ -49,8 +52,8 @@ $status = 'Pending';  // Define initial status
 
 try {
     // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO cargo_payments (sacco, amount, fee, total, fleet_no, phone_number, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status]);
+    $stmt = $conn->prepare("INSERT INTO cargo_payments (sacco, amount, fee, total, fleet_no, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$sacco, $amount, $fee, $total, $fleet_no, $phone_number, $status, $transaction_id]);
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
@@ -59,8 +62,13 @@ try {
     exit;
 }
 
-// Prepare STK Push
-$access_token = getAccessToken();
+try {
+    $access_token = getAccessToken();
+} catch (Error $e) {  // Catch "Undefined constant" as Error
+    error_log("Auth error: " . $e->getMessage());
+    echo json_encode(['status' => false, 'message' => 'Authentication setup failed: ' . $e->getMessage()]);
+    exit;
+}
 if (!$access_token) {
     echo json_encode(['status' => false, 'message' => 'Failed to get access token']);
     exit;
@@ -100,7 +108,7 @@ $response = json_decode($response_str);
 if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
     try {
         // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE cargo_payments SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = (SELECT MAX(id) FROM cargo_payments)");
+        $stmt2 = $conn->prepare("UPDATE cargo_payments SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
         $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
         $stmt2 = null; // Close statement
         
