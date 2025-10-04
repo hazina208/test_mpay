@@ -12,6 +12,7 @@ $phone_number = $input['phone_number'] ?? '';
 
 $transaction_id = 'PENDING_' . time();
 
+
 if (empty($sacco) || empty($amount) || empty($fleet_no) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
@@ -44,7 +45,6 @@ function calculateFee($amount) {
     }
 }
 
-
 $fee = calculateFee($amount);
 $total = ceil($amount + $fee);  // Ceil to integer for M-Pesa (adjust rounding if needed)
 $fee = $total - $amount;  // Update fee to match the ceiled total
@@ -57,8 +57,12 @@ try {
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
-    error_log("Error inserting payment: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Database error occurred']);
+    $errorDetails = $e->getMessage();  // Get full error
+    error_log("PDO Error in stk_push.php: " . $errorDetails);  // Log to server error log
+    echo json_encode([
+        'status' => false, 
+        'message' => 'Database error occurred: ' . $errorDetails  // Temporarily echo for testing
+    ]);
     exit;
 }
 
