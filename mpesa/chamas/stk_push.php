@@ -61,7 +61,7 @@ if ($last_serial_no == null) {
     $new_numeric = str_pad((int)$numeric_part + 1, 7, '0', STR_PAD_LEFT);
     $new_serial_no = "CHN-" . $new_numeric;
 }
-$stmt_serial->close();
+$stmt_serial=null;
 
 try {
     // Save payment details to database
@@ -102,7 +102,7 @@ $payload = [
     'PartyA' => $phone_number,
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => $phone_number,
-    'CallBackURL' => MPESA_CALLBACK_URL,
+    'CallBackURL' => MPESA_CALLBACK_URL5,
     'AccountReference' => 'CHAMA REMITTANCES_' . $payment_id,
     'TransactionDesc' => 'Payment for ' . $sacco
 ];
