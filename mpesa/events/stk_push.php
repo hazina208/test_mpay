@@ -71,8 +71,12 @@ try {
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
-    error_log("Error inserting payment: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Database error occurred']);
+    $errorDetails = $e->getMessage();  // Get full error
+    error_log("PDO Error in stk_push.php: " . $errorDetails);  // Log to server error log
+    echo json_encode([
+        'status' => false, 
+        'message' => 'Database error occurred: ' . $errorDetails  // Temporarily echo for testing
+    ]);
     exit;
 }
 
