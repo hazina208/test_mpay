@@ -43,6 +43,20 @@ if ($aid) {
                 <li class="nav-item">
                     <a class="nav-link" href="../reg_insurance_admin.php">Register Insurance Admin</a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="../reg_church_admin.php">Register Church Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../reg_hospital_admin.php">Register Hospital Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../reg_school_admin.php">Register School Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../reg_biz_admin.php">Register Business Admin</a>
+                </li>
+                
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">

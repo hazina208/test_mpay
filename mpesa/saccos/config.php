@@ -10,7 +10,7 @@ define('MPESA_PASSKEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ad
 //define('MPESA_PASSKEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919');  
 define('MPESA_SHORTCODE', '174379'); // Use your Paybill number
 //define('MPESA_CALLBACK_URL', 'https://fe2c1eda5d4a.ngrok-free.app/mpay/callback.php');
-define('MPESA_CALLBACK_URL', 'https://fe2c1eda5d4a.ngrok-free.app/m_pay/callback.php');
+define('MPESA_CALLBACK_URL5', 'https://fe2c1eda5d4a.ngrok-free.app/m_pay/saccos/callback.php');
 
 define('MPESA_ENV', 'sandbox'); // Change to 'live' for production
 
