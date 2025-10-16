@@ -114,7 +114,42 @@ if (empty($_SESSION['id'])) {
                 <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addCargoRegModal">
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Register Cargo Vehicle
-                </a><br><br>
+                </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addInstitutionRegModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Add Institution 
+               </a>
+
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addSchoolModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Add School 
+               </a>
+
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addDenomRegModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Add Denomination 
+               </a>
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addChurchModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Add Church 
+               </a>
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addBusTypeModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Add Business Type 
+               </a>
+
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addBusinessModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Add Business 
+               </a>
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addHosiTypeModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Add Hospital Type 
+               </a>
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addHospitalRegModal">
+                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                  Register Hospital 
+               </a><br><br>
                 <a href="table_settings.php" target="_blank" class="col btn btn-secondary m-2 py-3 col-5">
                     <i class="fa fa-eye fs-1" aria-hidden="true"></i><br>
                     View Tables
@@ -898,7 +933,7 @@ if (empty($_SESSION['id'])) {
         </div>
 
         <!-- Add Insurance Member Modal -->
-        <div class="modal fade" id="addInsuranceMembersModal" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="addInsuranceMembersModal" tabindex="-1" aria-hidden="true"> 
             <div class="modal-dialog">
                 <div class="modal-content">
                     <form method="POST" action="addsettings.php">
@@ -1118,6 +1153,574 @@ if (empty($_SESSION['id'])) {
                 </div>
             </div>
         </div>
+        <!--Add Business Type-->
+        <div class="modal fade" id="addBusTypeModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Business Type</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Business Type</label>
+                            <input type="text" class="form-control" name="county" required>
+                        </div>
+
+						        
+                        <div class="modal-footer">
+                            <button type="submit" name="saveCounty" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--End Business Type-->
+        <!--Add Institution-->
+        <div class="modal fade" id="addInstitutionRegModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add Institution-->
+                <!--Add School -->
+                <div class="modal fade" id="addSchoolModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add School -->
+                <!--Add Denomination -->
+                <div class="modal fade" id="addDenomRegModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add Denomination -->
+                <!--Add Church-->
+                <div class="modal fade" id="addChurchModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add Church-->
+                <!--Add Business Type-->
+                <div class="modal fade" id="addBusTypeModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add Business Type-->
+                <!--Add Business-->
+                <div class="modal fade" id="addBusinessModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add Business-->
+                <!--Add Hospital-->
+                <div class="modal fade" id="addHosiTypeModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add Hospital-->
+                 <!--Add Hospital-->
+                <div class="modal fade" id="addHospitalRegModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="addsettings.php">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Chama Member</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">First Name</label>
+                                    <input type="text" class="form-control" name="fn" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">Middle Name</label>
+                                    <input type="text" class="form-control" name="mn" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Last Name</label>
+                                    <input type="text" class="form-control" name="ln" required>
+                                </div>
+
+						        <div class="modal-body">
+                                    <label for="county">ID No</label>
+                                    <input type="text" class="form-control" name="idno" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Phone Number</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="county">Email Address</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+
+                                 
+                                <div class="modal-body">
+                                    <label for="county">Chama</label>
+                                    <?php
+                                    // Database connection
+                                    include("../connection.php");
+                                    if ($conn->connect_error) {
+                                        die("Connection failed: " . $conn->connect_error);
+                                    }
+                                    // Fetch job numbers for dropdown
+                                    $result = $conn->query("SELECT chama_name FROM chamas");
+                                    ?>
+
+                                    <select id="chama" name="chama" >
+                                        <option value="">-- Select Chama --</option>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                
+
+						        
+                                <div class="modal-footer">
+                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--End Add Hospital-->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
