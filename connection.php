@@ -1,6 +1,4 @@
-
 <?php
-
 $host = getenv("DB_HOST");
 $db   = getenv("DB_NAME");
 $user = getenv("DB_USER");
@@ -13,4 +11,3 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 ?>
-
