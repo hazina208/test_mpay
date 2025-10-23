@@ -1,0 +1,3 @@
+To deduct the fee from the receiver's side (the PayBill account) instead of adding it to the sender's payment, you need to adjust the logic so that the STK Push requests only the original $amount from the sender. 
+The receiver will effectively get $amount minus the calculated fee (handled in your accounting or distribution logic, as M-Pesa will transfer the full $amount to your PayBill minus Safaricom's own fees). 
+Update the database fields accordingly, where $total represents the net amount after your custom fee deduction.
