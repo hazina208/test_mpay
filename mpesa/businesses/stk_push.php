@@ -12,7 +12,7 @@ $phone_number = $input['phone_number'] ?? '';
 
 $transaction_id = 'PENDING_' . time();
 
-if (empty($event) || empty($amount) || empty($phone_number)) {
+if (empty($amount) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
 }
@@ -45,8 +45,8 @@ function calculateFee($amount) {
 }
 
 $fee = calculateFee($amount);
-$total = ceil($amount + $fee);  // Ceil to integer for M-Pesa (adjust rounding if needed)
-$fee = $total - $amount;  // Update fee to match the ceiled total
+$fee = ceil($fee);  // Ceil to integer (adjust rounding if needed)
+$total = $amount - $fee;  // Net amount after deducting fee from receiver
 $status = 'Pending';  // Define initial status
 
 // Generate serial_no using PDO
