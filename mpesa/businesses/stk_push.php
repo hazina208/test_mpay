@@ -49,6 +49,12 @@ $fee = ceil($fee);  // Ceil to integer (adjust rounding if needed)
 $total = $amount - $fee;  // Net amount after deducting fee from receiver
 $status = 'Pending';  // Define initial status
 
+// Add validation for amount
+if ($amount < 1 || !is_numeric($amount) || floor($amount) != $amount) {  // Ensure integer >=1, no decimals
+    echo json_encode(['status' => false, 'message' => 'Invalid amount: Must be an integer of at least 1 KES']);
+    exit;
+}
+
 // Generate serial_no using PDO
 $stmt_serial = $conn->prepare("SELECT serial_no FROM biz_payments ORDER BY serial_no DESC LIMIT 1");
 $stmt_serial->execute();
@@ -103,7 +109,7 @@ $payload = [
     'Password' => $password,
     'Timestamp' => $timestamp,
     'TransactionType' => 'CustomerPayBillOnline',
-    'Amount' => $total,  // Charge the total (amount + fee)
+    'Amount' => intval($amount),  // Charge the full input amount (fixed here)
     'PartyA' => $phone_number,
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => $phone_number,
