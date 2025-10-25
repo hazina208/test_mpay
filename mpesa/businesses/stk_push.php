@@ -12,7 +12,7 @@ $phone_number = $input['phone_number'] ?? '';
 
 $transaction_id = 'PENDING_' . time();
 
-if (empty($amount) || empty($phone_number)) {
+if (empty($business) || empty($amount) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
 }
