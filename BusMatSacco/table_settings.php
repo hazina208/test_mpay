@@ -263,7 +263,7 @@ try {
                                 <div class="modal-body">
                                     <table  id="regmatTable" class="table table-bordered ">
                                         <thead>
-                                            <tr><th>Sacco</th><th>Fleet No</th><th>No Plate</th><th>Privy</th><th>Phone No</th><th>Actions</th></tr>
+                                            <tr><th>Sacco</th><th>Fleet No</th><th>Matatu Name</th><th>No Plate</th><th>Privy</th><th>Phone No</th><th>Actions</th></tr>
                                         </thead>
                                         <tbody>
                                         <?php
@@ -276,6 +276,7 @@ try {
                                             <tr>
                                                 <td><?= htmlspecialchars($row['sacco']) ?></td>
                                                 <td><?= htmlspecialchars($row['fleet_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['matatu_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['reg_no']) ?></td>
                                                 <td><?= htmlspecialchars($row['contact_person']) ?></td>
                                                 <td><?= htmlspecialchars($row['phone_number']) ?></td>
@@ -286,6 +287,7 @@ try {
                                                         data-id="<?= htmlspecialchars($row['id']) ?>"
                                                         data-county="<?= htmlspecialchars($row['sacco']) ?>"
                                                         data-county="<?= htmlspecialchars($row['fleet_no']) ?>"
+                                                        data-county="<td><?= htmlspecialchars($row['matatu_name']) ?></td>"
                                                         data-county="<?= htmlspecialchars($row['reg_no']) ?>"
                                                         data-county="<?= htmlspecialchars($row['contact_person']) ?>"
                                                         data-county="<?= htmlspecialchars($row['phone_number']) ?>"
