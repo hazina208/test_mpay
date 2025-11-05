@@ -67,7 +67,7 @@ if (!$userSacco) {
                                 <div class="modal-body">
                                     <table  id="fareTable" class="table table-bordered ">
                                         <thead>
-                                            <tr><th>Sacco</th><th>Amount</th><th>Fee</th><th>Total</th><th>Phone No</th><th>Transaction ID</th><th>Date</th></tr>
+                                            <tr><th>Sacco</th><th>Fleet No</th><th>Amount</th><th>Fee</th><th>Total</th><th>Phone No</th><th>Transaction ID</th><th>Date</th></tr>
                                         </thead>
                                         <tbody>
                                         <?php 
@@ -81,6 +81,7 @@ if (!$userSacco) {
                                             <tr>
                                               
                                                 <td><?= htmlspecialchars($row['sacco']) ?></td>
+												<td><?= htmlspecialchars($row['fleet_no']) ?></td>
                                                 <td><?= htmlspecialchars($row['amount']) ?></td>
                                                 <td><?= htmlspecialchars($row['fee']) ?></td>
                                                 <td><?= htmlspecialchars($row['total']) ?></td>
@@ -93,6 +94,7 @@ if (!$userSacco) {
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
                                                         data-id="<?= htmlspecialchars($row['id']) ?>"
                                                         data-county="<?= htmlspecialchars($row['sacco']) ?>"
+														data-county="<?= htmlspecialchars($row['fleet_no']) ?>"
                                                         data-county="<?=htmlspecialchars($row['amount']) ?>"
                                                         data-county="<?= htmlspecialchars($row['fee']) ?>"
                                                         data-county="<?= htmlspecialchars($row['total']) ?>"
