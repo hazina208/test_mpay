@@ -211,8 +211,8 @@ try {
                                         <tbody>
                                         <?php
                                         try {
-                                        $sql1 = $conn->prepare("SELECT * FROM fleet_no WHERE sacco = :sacco ORDER BY sacco ASC");
-                                        $stmt = $conn->prepare($sql1);
+                                        $sql = $conn->prepare("SELECT * FROM fleet_no WHERE sacco = :sacco ORDER BY sacco ASC");
+                                        $stmt = $conn->prepare($sql);
                                         $stmt->execute([':sacco' => $userSacco]);
 
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
@@ -268,8 +268,8 @@ try {
                                         <tbody>
                                         <?php
                                         try {
-                                        $sql2 = $conn->prepare("SELECT * FROM mat_registration WHERE sacco = :sacco ORDER BY sacco ASC");
-                                        $stmt = $conn->prepare($sql2);
+                                        $sql = $conn->prepare("SELECT * FROM mat_registration WHERE sacco = :sacco ORDER BY sacco ASC");
+                                        $stmt = $conn->prepare($sql);
                                         $stmt->execute([':sacco' => $userSacco]);
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
