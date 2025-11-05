@@ -6,6 +6,12 @@ if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
+// Get sacco from session
+$userSacco = $_SESSION['entity_name'] ?? null;
+
+if (!$userSacco) {
+    die('Error: User sacco not found in session.');
+}
 ?>
 <?php include "tables_header.php"; ?>
 <body>
