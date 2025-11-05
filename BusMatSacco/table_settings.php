@@ -214,8 +214,6 @@ try {
                                         $sql = "SELECT * FROM fleet_no WHERE sacco = :sacco ORDER BY sacco ASC";
                                         $stmt = $conn->prepare($sql);
                                         $stmt->execute([':sacco' => $userSacco]);
-                                        $stmt->execute([':sacco' => $userSacco]);
-
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
