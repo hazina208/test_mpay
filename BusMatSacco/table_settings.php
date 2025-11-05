@@ -211,8 +211,9 @@ try {
                                         <tbody>
                                         <?php
                                         try {
-                                        $sql = $conn->prepare("SELECT * FROM fleet_no WHERE sacco = :sacco ORDER BY sacco ASC");
+                                        $sql = "SELECT * FROM fleet_no WHERE sacco = :sacco ORDER BY sacco ASC";
                                         $stmt = $conn->prepare($sql);
+                                        $stmt->execute([':sacco' => $userSacco]);
                                         $stmt->execute([':sacco' => $userSacco]);
 
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
@@ -268,7 +269,7 @@ try {
                                         <tbody>
                                         <?php
                                         try {
-                                        $sql = $conn->prepare("SELECT * FROM mat_registration WHERE sacco = :sacco ORDER BY sacco ASC");
+                                        $sql = "SELECT * FROM mat_registration WHERE sacco = :sacco ORDER BY sacco ASC";
                                         $stmt = $conn->prepare($sql);
                                         $stmt->execute([':sacco' => $userSacco]);
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
@@ -456,9 +457,9 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
 <!--Start Mat Fleet Numbers Table-->
 <script>
     $(document).ready(function() {
-        $('#RegMatTableModal').on('shown.bs.modal', function () {
+        $('#MatFleetsTableModal').on('shown.bs.modal', function () {
             if (!$.fn.DataTable.isDataTable('#regmatTable')) {
-                $('#regmatTable').DataTable({
+                $('#matfleetsTable').DataTable({
                     pageLength: 10,  // 10 rows per page
                     searching: true,  // Enable search box
                     paging: true,  // Enable pagination
