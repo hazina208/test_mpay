@@ -74,7 +74,8 @@ if (!$userSacco) {
                                         try {
                                         $co = trim($__SESSION['entity_name'] ?? '');
                                         $stmt = $conn->prepare("SELECT * FROM bus_fares  WHERE sacco = :sacco ORDER BY sacco ASC");
-                                        $stmt->execute();
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->execute([':sacco' => $userSacco]);;
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
