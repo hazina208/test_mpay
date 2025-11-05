@@ -199,7 +199,7 @@ try {
                  <div class="modal fade" id="MatFleetsTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>List of Mat/Bus Fleet Numbers</h5>
+                            <div class="modal-header"><h5>List of Mat/Bus Fleet Numbers <?= htmlspecialchars($userSacco) ?></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             
@@ -211,8 +211,10 @@ try {
                                         <tbody>
                                         <?php
                                         try {
-                                        $stmt = $conn->prepare("SELECT * FROM fleet_no ORDER BY sacco ASC");
-                                        $stmt->execute();
+                                        $stmt = $conn->prepare("SELECT * FROM fleet_no WHERE sacco = :sacco ORDER BY sacco ASC");
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->execute([':sacco' => $userSacco]);
+
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
@@ -254,7 +256,7 @@ try {
                  <div class="modal fade" id="RegMatTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>List of Registered Matatus</h5>
+                            <div class="modal-header"><h5>List of Registered Matatus<?= htmlspecialchars($userSacco) ?></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             
@@ -266,8 +268,9 @@ try {
                                         <tbody>
                                         <?php
                                         try {
-                                        $stmt = $conn->prepare("SELECT * FROM mat_registration ORDER BY sacco ASC");
-                                        $stmt->execute();
+                                        $stmt = $conn->prepare("SELECT * FROM mat_registration WHERE sacco = :sacco ORDER BY sacco ASC");
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->execute([':sacco' => $userSacco]);
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
