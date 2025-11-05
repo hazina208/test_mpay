@@ -124,34 +124,34 @@ if(empty($_SESSION['id']))
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
-                                                <td><?= htmlspecialchats($row['first_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['middle_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['last_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['phone']) ?></td>
-                                                <td><?= htmlspecialchats($row['id_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['sacco']) ?></td>
-                                                <td><?= htmlspecialchats($row['fleet_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['mat_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['position']) ?></td>
+                                                <td><?= htmlspecialchars($row['first_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['middle_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['last_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['phone']) ?></td>
+                                                <td><?= htmlspecialchars($row['id_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['sacco']) ?></td>
+                                                <td><?= htmlspecialchars($row['fleet_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['mat_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['position']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['first_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['middle_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['last_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['phone']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['id_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['sacco']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['fleet_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['mat_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['position']) ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['first_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['middle_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['last_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['phone']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['id_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['sacco']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['fleet_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['mat_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['position']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
                                         <?php 
