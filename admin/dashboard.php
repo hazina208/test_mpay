@@ -1772,7 +1772,7 @@ if (empty($_SESSION['id'])) {
                 <div class="modal-content">
                     <form method="POST" action="addsettings.php">
                         <div class="modal-header">
-                            <h5 class="modal-title">Add Powe Agency</h5>
+                            <h5 class="modal-title">Add Power Agency</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">

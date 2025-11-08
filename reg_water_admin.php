@@ -101,13 +101,29 @@ include('header_footer/header.php');
 
 		  <div class="mb-3">
 		    <label hidden class="form-label">Entity</label>
-		    <input  type="hidden" class="form-control" value="Water"  name="co">
+		    <input  type="hidden" class="form-control" value="Water Agency"  name="co">
       
 		  </div>
 
 		  <div class="mb-3">
-		    <label  class="form-label">Company Name</label>
-		    <input  type="hidden" class="form-control" value="Nairobi Water"  name="co">
+		    <label  class="form-label">Agency Name</label>
+		    <?php
+            // Database connection
+            include("connection.php");
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+            // Fetch job numbers for dropdown
+            $result = $conn->query("SELECT agency FROM wateragency");
+            ?>
+
+            <select id="co_name" name="co_name" >
+                <option value="">-- Select Water Agency --</option>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                        <option value="<?= $row['agency']; ?>"><?= $row['agency']; ?>
+					</option>
+                    <?php endwhile; ?>
+            </select>
       
 		  </div>
 

@@ -9,7 +9,7 @@
         $lname=$conn -> real_escape_string($_POST['ln']);
         $telphone=$conn -> real_escape_string($_POST['phone']);
 		$entity=$conn -> real_escape_string($_POST['co']);
-		$entity_name=$conn -> real_escape_string($_POST['kplc']);
+		$entity_name=$conn -> real_escape_string($_POST['co_name']);
         
         $e_add=$conn -> real_escape_string($_POST['email']);
         $pwd=$conn -> real_escape_string(sha1(md5($_POST['pass'])));//double encrypt to increase security
@@ -101,13 +101,29 @@ include('header_footer/header.php');
 
 		  <div class="mb-3">
 		    <label hidden class="form-label">Electricity</label>
-		    <input  type="hidden" class="form-control" value="Electricity"  name="co">
+		    <input  type="hidden" class="form-control" value="Power Agency"  name="co_name">
       
 		  </div>
 
 		  <div class="mb-3">
-		    <label  hidden class="form-label">Company Name</label>
-		    <input  type="hidden" class="form-control" value="KPLC"  name="kplc">
+		    <label  hidden class="form-label">Agency Name</label>
+		    <?php
+            // Database connection
+            include("connection.php");
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+            // Fetch job numbers for dropdown
+            $result = $conn->query("SELECT agency FROM electricityagency");
+            ?>
+
+            <select id="co_name" name="co_name" >
+                <option value="">-- Select Power Agency --</option>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                        <option value="<?= $row['agency']; ?>"><?= $row['agency']; ?>
+					</option>
+                    <?php endwhile; ?>
+            </select>
       
 		  </div>
 

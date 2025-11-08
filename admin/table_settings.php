@@ -108,7 +108,16 @@ if(empty($_SESSION['id']))
                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#RegCargoTableModal">
                  <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                   Registered Cargo Vehicle 
-               </a><br><br>
+               </a>
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#PowerTableModal">
+                 <i class="fa fa-folder-open fs-1" aria-hidden="true"></i><br>
+                  Power Agencies
+               </a> 
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#WaterTableModal">
+                 <i class="fa fa-group fs-1" aria-hidden="true"></i><br>
+                  Water Agencies
+               </a>
+               <br><br>
 
                <a href="" class="col btn btn-primary m-2 py-3 col-5">
                  <i class="fa fa-eye" aria-hidden="true"></i><br>
@@ -582,7 +591,7 @@ if(empty($_SESSION['id']))
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= $htmlspecialchars(row['id']) ?>"
+                                                        data-id="<?= $htmlspecialchars($row['id']) ?>"
                                                         data-county="<?= htmlspecialchars($row['event']) ?>"
                                                         data-county="<?= htmlspecialchars($row['venue']) ?>"
                                                         data-county="<?= htmlspecialchars($row['date']) ?>"
@@ -635,34 +644,34 @@ if(empty($_SESSION['id']))
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
-                                                <td><?= htmlspecialchats($row['first_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['middle_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['last_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['phone']) ?></td>
-                                                <td><?= htmlspecialchats($row['id_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['sacco']) ?></td>
-                                                <td><?= htmlspecialchats($row['fleet_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['mat_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['position']) ?></td>
+                                                <td><?= htmlspecialchars($row['first_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['middle_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['last_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['phone']) ?></td>
+                                                <td><?= htmlspecialchars($row['id_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['sacco']) ?></td>
+                                                <td><?= htmlspecialchars($row['fleet_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['mat_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['position']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['first_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['middle_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['last_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['phone']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['id_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['sacco']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['fleet_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['mat_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['position']) ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['first_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['middle_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['last_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['phone']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['id_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['sacco']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['fleet_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['mat_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['position']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
                                         <?php 
@@ -703,34 +712,34 @@ if(empty($_SESSION['id']))
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
-                                                <td><?= htmlspecialchats($row['first_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['middle_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['last_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['phone']) ?></td>
-                                                <td><?= htmlspecialchats($row['id_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['sacco']) ?></td>
-                                                <td><?= htmlspecialchats($row['fleet_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['lorry_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['position']) ?></td>
+                                                <td><?= htmlspecialchars($row['first_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['middle_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['last_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['phone']) ?></td>
+                                                <td><?= htmlspecialchars($row['id_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['sacco']) ?></td>
+                                                <td><?= htmlspecialchars($row['fleet_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['lorry_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['position']) ?></td>
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['first_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['middle_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['last_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['phone']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['id_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['sacco']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['fleet_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['mat_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['position']) ?>"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['first_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['middle_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['last_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['phone']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['id_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['sacco']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['fleet_no']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['mat_name']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['position']) ?>"
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>">🗑 Delete</button>
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
                                                 </td>
                                             </tr>
                                         <?php 
@@ -1289,6 +1298,116 @@ if(empty($_SESSION['id']))
                     </div>
                 </div>
                 <!-- End Sacco Members Table Modal-->
+
+                <!-- Start Power Agency Table Modal -->
+                <div class="modal fade" id="PowerTableModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header"><h5>List of Power Agencies</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            
+                                <div class="modal-body">
+                                    <table  id="powerTable" class="table table-bordered ">
+                                        <thead>
+                                            <tr><th>Agency</th><th>Actions</th></tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php 
+                                      
+                                        try {
+                                        $stmt = $conn->prepare("SELECT * FROM electricityagency ORDER BY id DESC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
+                                            <tr>
+                                               
+                                                <td><?= htmlspecialchars($row['agency']) ?></td>
+                                                
+                                                <td>
+                                                    <button class="btn btn-warning btn-sm" 
+                                                        data-bs-toggle="modal" data-bs-target="#updateModal"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['agency']) ?>"
+                                                        >✏ Update</button>
+                  
+                                                    <button class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
+                                                </td>
+                                            </tr>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
+                                        
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Power Agency Table Modal-->
+
+                <!-- Start Power Agency Table Modal -->
+                <div class="modal fade" id="WaterTableModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header"><h5>List of Water Agencies</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            
+                                <div class="modal-body">
+                                    <table  id="waterTable" class="table table-bordered ">
+                                        <thead>
+                                            <tr><th>Agency</th><th>Actions</th></tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php 
+                                      
+                                        try {
+                                        $stmt = $conn->prepare("SELECT * FROM wateragency ORDER BY id DESC");
+                                        $stmt->execute();
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+                                        ?>
+                                            <tr>
+                                               
+                                                <td><?= htmlspecialchars($row['agency']) ?></td>
+                                                
+                                                <td>
+                                                    <button class="btn btn-warning btn-sm" 
+                                                        data-bs-toggle="modal" data-bs-target="#updateModal"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['agency']) ?>"
+                                                        >✏ Update</button>
+                  
+                                                    <button class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                        data-id="<?= htmlspecialchars($row['id']) ?>">🗑 Delete</button>
+                                                </td>
+                                            </tr>
+                                        <?php 
+                                            endwhile;
+                                            $stmt = null; // Close statement
+                                        } catch (PDOException $e) {
+                                        error_log("Error fetching counties: " . $e->getMessage());
+                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
+                                        }
+                                        ?>
+                                        
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Power Agency Table Modal-->
 
             </div>
         </div>
@@ -1879,6 +1998,71 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
     });
 </script>
 <!--End Insurance Members Table-->
+<!--Start Power Agency Table-->
+<script>
+    $(document).ready(function() {
+        $('#PowerTableModal').on('shown.bs.modal', function () {
+            if (!$.fn.DataTable.isDataTable('#powerTable')) {
+                $('#powerTable').DataTable({
+                    pageLength: 10,  // 10 rows per page
+                    searching: true,  // Enable search box
+                    paging: true,  // Enable pagination
+                    info: true,  // Show page info
+                    lengthChange: false,  // Disable changing page length
+                    dom: 'Bfrtip',  // Position buttons, filter, table, info, pagination
+                    buttons: [
+                        {
+                            extend: 'print',
+                            text: 'Print',
+                            className: 'btn btn-primary btn-sm',
+                            exportOptions: {
+                                modifier: {
+                                    search: 'applied'  // Print only filtered/search results
+                                }
+                            }
+                        }
+                    ]
+                });
+            } else {
+                $('#powerTable').DataTable().columns.adjust().draw();
+            }
+        });
+    });
+</script>
+<!--End Power Agency Table-->
+
+<!--Start Power Agency Table-->
+<script>
+    $(document).ready(function() {
+        $('#WaterTableModal').on('shown.bs.modal', function () {
+            if (!$.fn.DataTable.isDataTable('#waterTable')) {
+                $('#waterTable').DataTable({
+                    pageLength: 10,  // 10 rows per page
+                    searching: true,  // Enable search box
+                    paging: true,  // Enable pagination
+                    info: true,  // Show page info
+                    lengthChange: false,  // Disable changing page length
+                    dom: 'Bfrtip',  // Position buttons, filter, table, info, pagination
+                    buttons: [
+                        {
+                            extend: 'print',
+                            text: 'Print',
+                            className: 'btn btn-primary btn-sm',
+                            exportOptions: {
+                                modifier: {
+                                    search: 'applied'  // Print only filtered/search results
+                                }
+                            }
+                        }
+                    ]
+                });
+            } else {
+                $('#waterTable').DataTable().columns.adjust().draw();
+            }
+        });
+    });
+</script>
+<!--End Power Agency Table-->
 
 <!-- Ensure DataTables elements are visible -->
 <style>

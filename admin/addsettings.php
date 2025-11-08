@@ -623,4 +623,52 @@ if(isset($_POST['saveEventDetails'])) {
         exit();
     }
 }
+
+if(isset($_POST['savePowerAgency'])) {
+	// Retrieve and sanitize input
+	$agency = trim($_POST['agency'] ?? '');
+    
+	// Insert new user
+    $query = "INSERT INTO electricityagency (agency) VALUES (?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(1, $agency, PDO::PARAM_STR);
+  
+    $result = $stmt->execute();
+
+    if ($result) {
+        $_SESSION['status'] = "Data inserted successfully.";
+        $_SESSION['status_code'] = "success";
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        $_SESSION['status'] = "Failed to insert data.";
+        $_SESSION['status_code'] = "error";
+        header("Location: dashboard.php");
+        exit();
+    }
+}
+
+if(isset($_POST['saveWaterAgency'])) {
+	// Retrieve and sanitize input
+	$agency = trim($_POST['agency'] ?? '');
+
+	// Insert new user
+    $query = "INSERT INTO wateragency (agency) VALUES (?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(1, $agency, PDO::PARAM_STR);
+    $result = $stmt->execute();
+
+    if ($result) {
+        $_SESSION['status'] = "Data inserted successfully.";
+        $_SESSION['status_code'] = "success";
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        $_SESSION['status'] = "Failed to insert data.";
+        $_SESSION['status_code'] = "error";
+        header("Location: dashboard.php");
+        exit();
+    }
+}
+
 ?>
