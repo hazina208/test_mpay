@@ -7,91 +7,66 @@ if(empty($_SESSION['id']))
     header('location:../login.php');
 }
 ?>
-<?php 
-  include "inc/header.php";
-?>
+<?php include "inc/tables_header.php"; ?>
+
 <body>
-    <?php 
-        include "inc/nav.php";
-     ?>
-     <div class="container mt-5">
-         <div class="container text-center">
-          <?php 
-            if(isset($_SESSION['status']) && $_SESSION['status']!='')
-            {
-                ?>
-                <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                    <strong>Hey!</strong><?php echo $_SESSION['status']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php
-            }
-			    ?>
-             <div class="row row-cols-5">
+    <?php include "inc/nav.php"; ?> 
+  
+    <div class="container mt-5">
+        <div class="container text-center">
+      
+            <div class="row row-cols-6">
                
-               
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#ChamaPaymentsModal">
-                 <i class="fa fa-graduation-cap fs-1" aria-hidden="true"></i><br>
-                   Chama Remittances
+
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#PowerTableModal">
+                 <i class="fa fa-cubes fs-1" aria-hidden="true"></i><br>
+                  Power Agencies 
                </a> 
                
+               
+               <br><br>
 
-               
-
-              <br><br>
-               
-              
-               
+               <a href="" class="col btn btn-primary m-2 py-3 col-5">
+                 <i class="fa fa-eye" aria-hidden="true"></i><br>
+                  VIEW TABLES
+               </a> 
                <a href="../logout.php" class="col btn btn-warning m-2 py-3 col-5">
                  <i class="fa fa-sign-out fs-1" aria-hidden="true"></i><br>
                   Logout
                </a> 
 
-
-
-                <!-- Start chamaTable Modal -->
-                <div class="modal fade" id="ChamaPaymentsModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
+           
+             
+                 <!-- Start Ward Table Modal -->
+         <div class="modal fade" id=PowerTableModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>Chama Remittances Table</h5>
+                            <div class="modal-header"><h5>List of Power Agencies</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             
                                 <div class="modal-body">
-                                    <table  id="chamaTable" class="table table-bordered ">
+                                    <table  id="powerTable" class="table table-bordered ">
                                         <thead>
-                                            <tr><th>Serial No</th><th>Chama</th><th>Amount</th><th>Fee</th><th>Total</th><th>Phone No</th><th>Transaction ID</th><th>Date</th></tr>
+                                            <tr><th>Agency</th><th>Actions</th></tr>
                                         </thead>
                                         <tbody>
                                         <?php
                                         try {
-                                        $co=trim($_SESSION['entity_name'] ?? '');
-                                        $stmt = $conn->prepare("SELECT * FROM chama_payments WHERE chama_name= '$co' ORDER BY chama_name ASC");
+                                        $stmt = $conn->prepare("SELECT * FROM electricityagency ORDER BY agency DESC");
                                         $stmt->execute();
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
-                                                <td><?= htmlspecialchars($row['serial_no']) ?></td>
-                                                <td><?= htmlspecialchars($row['chama_name']) ?></td>
-                                                <td><?= htmlspecialchars($row['amount']) ?></td>
-                                                <td><?= htmlspecialchars($row['fee']) ?></td>
-                                                <td><?= htmlspecialchars($row['total']) ?></td>
-                                                <td><?= htmlspecialchars($row['phone_number']) ?></td>
-                                                <td><?= htmlspecialchars($row['transaction_id']) ?></td>
-                                                <td><?= htmlspecialchars($row['created_at']) ?></td>
+                                                <td><?= htmlspecialchars($row['agency']) ?></td>
+                                               
                                                 
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" 
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
                                                         data-id="<?= htmlspecialchars($row['id']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['serial_no']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['company']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['amount']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['fee']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['total']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['phone_number']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['transaction_id']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['created_at']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['agency']) ?>"
+                                                        
                                                         >✏ Update</button>
                   
                                                     <button class="btn btn-danger btn-sm"
@@ -114,33 +89,24 @@ if(empty($_SESSION['id']))
                         </div>
                     </div>
                 </div>
-                <!-- End chamaTable Modal-->
-
-      
-           
-             
-
+                <!-- End Ward Table Modal-->
                 
-
-             </div>
-         </div>
-     </div>
-
-     
-               
+            </div>
+        </div>
+    </div>
 
 
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>	
-    <script>
-        $(document).ready(function(){
-             $("#navLinks li:nth-child(1) a").addClass('active');
-        });
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>	
+<script>
+    $(document).ready(function(){
+        $("#navLinks li:nth-child(1) a").addClass('active');
+    });
+</script>
 
-    
     
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <?php if(isset($_GET['msg']) && $_GET['msg']=="success"): ?>
 <script>
 Swal.fire({
@@ -194,14 +160,15 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
 <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.bootstrap5.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.js"></script>
 
+<!-- DataTables Initialization -->
 
 
-<!--Start chama remittances Table-->
+<!--Start Chamas Table-->
 <script>
     $(document).ready(function() {
-        $('#ChamaPaymentsModal').on('shown.bs.modal', function () {
-            if (!$.fn.DataTable.isDataTable('#chamaTable')) {
-                $('#chamaTable').DataTable({
+        $('#PowerTableModal').on('shown.bs.modal', function () {
+            if (!$.fn.DataTable.isDataTable('#powerTable')) {
+                $('#powerTable').DataTable({
                     pageLength: 10,  // 10 rows per page
                     searching: true,  // Enable search box
                     paging: true,  // Enable pagination
@@ -222,13 +189,24 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
                     ]
                 });
             } else {
-                $('#chamaTable').DataTable().columns.adjust().draw();
+                $('#powerTable').DataTable().columns.adjust().draw();
             }
         });
     });
 </script>
-<!--End chama remittances Table-->
+<!--End chamas Table-->
 
+
+
+<!-- Ensure DataTables elements are visible -->
+<style>
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_paginate,
+    .dataTables_wrapper .dt-buttons {
+        display: block !important;
+        visibility: visible !important;
+    }
+</style>
 
 </body>
 </html>

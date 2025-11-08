@@ -30,9 +30,9 @@ if(empty($_SESSION['id']))
              <div class="row row-cols-5">
                
                
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#ChamaPaymentsModal">
+               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#PowerPaymentsModal">
                  <i class="fa fa-graduation-cap fs-1" aria-hidden="true"></i><br>
-                   Chama Remittances
+                   Power Bills Payments
                </a> 
                
 
@@ -48,31 +48,31 @@ if(empty($_SESSION['id']))
                </a> 
 
 
-
-                <!-- Start chamaTable Modal -->
-                <div class="modal fade" id="ChamaPaymentsModal" tabindex="-1" aria-hidden="true">
+ 
+                <!-- Start Power AgewncyTable Modal -->
+                <div class="modal fade" id="PowerPaymentsModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>Chama Remittances Table</h5>
+                            <div class="modal-header"><h5>Power Bill Remittances Table</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             
                                 <div class="modal-body">
-                                    <table  id="chamaTable" class="table table-bordered ">
+                                    <table  id="powerTable" class="table table-bordered ">
                                         <thead>
-                                            <tr><th>Serial No</th><th>Chama</th><th>Amount</th><th>Fee</th><th>Total</th><th>Phone No</th><th>Transaction ID</th><th>Date</th></tr>
+                                            <tr><th>Serial No</th><th>Agency</th><th>Amount</th><th>Fee</th><th>Total</th><th>Phone No</th><th>Transaction ID</th><th>Date</th></tr>
                                         </thead>
                                         <tbody>
                                         <?php
                                         try {
                                         $co=trim($_SESSION['entity_name'] ?? '');
-                                        $stmt = $conn->prepare("SELECT * FROM chama_payments WHERE chama_name= '$co' ORDER BY chama_name ASC");
+                                        $stmt = $conn->prepare("SELECT * FROM power_bills WHERE agency= '$co' ORDER BY agency ASC");
                                         $stmt->execute();
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
                                                 <td><?= htmlspecialchars($row['serial_no']) ?></td>
-                                                <td><?= htmlspecialchars($row['chama_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['agency']) ?></td>
                                                 <td><?= htmlspecialchars($row['amount']) ?></td>
                                                 <td><?= htmlspecialchars($row['fee']) ?></td>
                                                 <td><?= htmlspecialchars($row['total']) ?></td>
@@ -85,7 +85,7 @@ if(empty($_SESSION['id']))
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
                                                         data-id="<?= htmlspecialchars($row['id']) ?>"
                                                         data-county="<?= htmlspecialchars($row['serial_no']) ?>"
-                                                        data-county="<?= htmlspecialchars($row['company']) ?>"
+                                                        data-county="<?= htmlspecialchars($row['agency']) ?>"
                                                         data-county="<?= htmlspecialchars($row['amount']) ?>"
                                                         data-county="<?= htmlspecialchars($row['fee']) ?>"
                                                         data-county="<?= htmlspecialchars($row['total']) ?>"
@@ -114,7 +114,7 @@ if(empty($_SESSION['id']))
                         </div>
                     </div>
                 </div>
-                <!-- End chamaTable Modal-->
+                <!-- End Power Agency Table Modal-->
 
       
            
@@ -199,9 +199,9 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
 <!--Start chama remittances Table-->
 <script>
     $(document).ready(function() {
-        $('#ChamaPaymentsModal').on('shown.bs.modal', function () {
-            if (!$.fn.DataTable.isDataTable('#chamaTable')) {
-                $('#chamaTable').DataTable({
+        $('#PowerPaymentsModal').on('shown.bs.modal', function () {
+            if (!$.fn.DataTable.isDataTable('#powerTable')) {
+                $('#powerTable').DataTable({
                     pageLength: 10,  // 10 rows per page
                     searching: true,  // Enable search box
                     paging: true,  // Enable pagination
@@ -222,7 +222,7 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
                     ]
                 });
             } else {
-                $('#chamaTable').DataTable().columns.adjust().draw();
+                $('#powerTable').DataTable().columns.adjust().draw();
             }
         });
     });

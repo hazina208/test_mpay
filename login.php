@@ -49,7 +49,9 @@ if (isset($_POST['login'])) {
                 4 => "BusMatSacco/dashboard.php",
                 5 => "cargovehiclesacco/dashboard.php",
                 6 => "events/dashboard.php",
-                7 => "insurance/dashboard.php"
+                7 => "insurance/dashboard.php",
+                13 => "electricity/table_settings.php",
+                14 => "water/table_settings.php"
             ];
 
             if (isset($redirects[$_SESSION['role']])) {
