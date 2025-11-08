@@ -1,10 +1,16 @@
 <?php 
 ob_start(); // buffer output, prevents "headers already sent"
 session_start();
-include "DB_connection.php";
+include "../DB_connection.php";
 if(empty($_SESSION['id']))
 {
     header('location:../login.php');
+}
+// Get sacco from session
+$userSacco = $_SESSION['entity_name'] ?? null;
+
+if (!$userSacco) {
+    die('Error: User sacco not found in session.');
 }
 ?>
 <?php 
@@ -61,19 +67,21 @@ if(empty($_SESSION['id']))
                                 <div class="modal-body">
                                     <table  id="fareTable" class="table table-bordered ">
                                         <thead>
-                                            <tr><th>Sacco</th><th>Amount</th><th>Fee</th><th>Total</th><th>Phone No</th><th>Transaction ID</th><th>Date</th></tr>
+                                            <tr><th>Sacco</th><th>Fleet No</th><th>Amount</th><th>Fee</th><th>Total</th><th>Phone No</th><th>Transaction ID</th><th>Date</th></tr>
                                         </thead>
                                         <tbody>
                                         <?php 
                                         try {
-                                        $co = trim($__SESSION['entity_name'] ?? '');
-                                        $stmt = $conn->prepare("SELECT * FROM bus_fares WHERE sacco= '$co' ORDER BY sacco ASC");
-                                        $stmt->execute();
+                                        //$co = trim($__SESSION['entity_name'] ?? '');
+										$sql = "SELECT * FROM bus_fares WHERE sacco = :sacco ORDER BY fleet_no ASC";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->execute([':sacco' => $userSacco]);;
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
                                               
                                                 <td><?= htmlspecialchars($row['sacco']) ?></td>
+												<td><?= htmlspecialchars($row['fleet_no']) ?></td>
                                                 <td><?= htmlspecialchars($row['amount']) ?></td>
                                                 <td><?= htmlspecialchars($row['fee']) ?></td>
                                                 <td><?= htmlspecialchars($row['total']) ?></td>
@@ -86,6 +94,7 @@ if(empty($_SESSION['id']))
                                                         data-bs-toggle="modal" data-bs-target="#updateModal"
                                                         data-id="<?= htmlspecialchars($row['id']) ?>"
                                                         data-county="<?= htmlspecialchars($row['sacco']) ?>"
+														data-county="<?= htmlspecialchars($row['fleet_no']) ?>"
                                                         data-county="<?=htmlspecialchars($row['amount']) ?>"
                                                         data-county="<?= htmlspecialchars($row['fee']) ?>"
                                                         data-county="<?= htmlspecialchars($row['total']) ?>"

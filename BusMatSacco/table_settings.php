@@ -6,6 +6,12 @@ if(empty($_SESSION['id']))
 {
     header('location:../login.php');
 }
+// Get sacco from session
+$userSacco = $_SESSION['entity_name'] ?? null;
+
+if (!$userSacco) {
+    die('Error: User sacco not found in session.');
+}
 ?>
 <?php include "tables_header.php"; ?>
 <body>
@@ -105,77 +111,95 @@ if(empty($_SESSION['id']))
 
                 <!-- Start Matatu Staff Table Modal -->
                 <div class="modal fade" id="MatStaffTableModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header"><h5>List of Mat/Bus Staff</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            
-                                <div class="modal-body">
-                                    <table  id="matstaffTable" class="table table-bordered ">
-                                        <thead>
-                                            <tr><th>First Name</th><th>Middle Name</th><th>Last Name</th><th>Phone</th><th>ID No</th><th>Sacco</th><th>Fleet_no</th><th>No Plate/Vehicle Name</th><th>Position</th><th>Actions</th></tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                        try {
-                                        $stmt = $conn->prepare("SELECT * FROM mat_staff ORDER BY position ASC");
-                                        $stmt->execute();
-                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
-                                        ?>
-                                            <tr>
-                                                <td><?= htmlspecialchats($row['first_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['middle_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['last_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['phone']) ?></td>
-                                                <td><?= htmlspecialchats($row['id_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['sacco']) ?></td>
-                                                <td><?= htmlspecialchats($row['fleet_no']) ?></td>
-                                                <td><?= htmlspecialchats($row['mat_name']) ?></td>
-                                                <td><?= htmlspecialchats($row['position']) ?></td>
-                                                
-                                                <td>
-                                                    <button class="btn btn-warning btn-sm" 
-                                                        data-bs-toggle="modal" data-bs-target="#updateModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['first_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['middle_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['last_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['phone']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['id_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['sacco']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['fleet_no']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['mat_name']) ?>"
-                                                        data-county="<?= htmlspecialchats($row['position']) ?>"
-                                                        >✏ Update</button>
-                  
-                                                    <button class="btn btn-danger btn-sm"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                        data-id="<?= htmlspecialchats($row['id']) ?>">🗑 Delete</button>
-                                                </td>
-                                            </tr>
-                                        <?php 
-                                            endwhile;
-                                            $stmt = null; // Close statement
-                                        } catch (PDOException $e) {
-                                        error_log("Error fetching counties: " . $e->getMessage());
-                                        // Optionally display a message: echo "<tr><td colspan='3'>Error loading data</td></tr>";
-                                        }
-                                        ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>List of Mat/Bus Staff – <?= htmlspecialchars($userSacco) ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <table id="matstaffTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>First Name</th><th>Middle Name</th><th>Last Name</th>
+                            <th>Phone</th><th>ID No</th><th>Sacco</th>
+                            <th>Fleet_no</th><th>No Plate/Vehicle Name</th>
+                            <th>Position</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+<?php
+try {
+    $sql = "
+        SELECT *
+        FROM mat_staff
+        WHERE sacco = :sacco
+        ORDER BY position ASC
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':sacco' => $userSacco]);
+
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['first_name']) ?></td>
+                            <td><?= htmlspecialchars($row['middle_name']) ?></td>
+                            <td><?= htmlspecialchars($row['last_name']) ?></td>
+                            <td><?= htmlspecialchars($row['phone']) ?></td>
+                            <td><?= htmlspecialchars($row['id_no']) ?></td>
+                            <td><?= htmlspecialchars($row['sacco']) ?></td>
+                            <td><?= htmlspecialchars($row['fleet_no']) ?></td>
+                            <td><?= htmlspecialchars($row['mat_name']) ?></td>
+                            <td><?= htmlspecialchars($row['position']) ?></td>
+
+                            <td>
+                                <!-- UPDATE BUTTON -->
+                                <button class="btn btn-warning btn-sm updateBtn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#updateModal"
+                                        data-id="<?= $row['id'] ?>"
+                                        data-first_name="<?= htmlspecialchars($row['first_name']) ?>"
+                                        data-middle_name="<?= htmlspecialchars($row['middle_name']) ?>"
+                                        data-last_name="<?= htmlspecialchars($row['last_name']) ?>"
+                                        data-phone="<?= htmlspecialchars($row['phone']) ?>"
+                                        data-id_no="<?= htmlspecialchars($row['id_no']) ?>"
+                                        data-sacco="<?= htmlspecialchars($row['sacco']) ?>"
+                                        data-fleet_no="<?= htmlspecialchars($row['fleet_no']) ?>"
+                                        data-mat_name="<?= htmlspecialchars($row['mat_name']) ?>"
+                                        data-position="<?= htmlspecialchars($row['position']) ?>">
+                                    Update
+                                </button>
+
+                                <!-- DELETE BUTTON -->
+                                <button class="btn btn-danger btn-sm deleteBtn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"
+                                        data-id="<?= $row['id'] ?>">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+<?php
+    endwhile;
+} catch (PDOException $e) {
+    error_log('MatStaff fetch error: '.$e->getMessage());
+    echo '<tr><td colspan="10" class="text-center text-danger">Error loading staff data</td></tr>';
+}
+?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
                 <!-- End Matatu Staff Table Modal-->
 
                 <!-- Start Matatu Staff Table Modal -->
                  <div class="modal fade" id="MatFleetsTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>List of Mat/Bus Fleet Numbers</h5>
+                            <div class="modal-header"><h5>List of Mat/Bus Fleet Numbers <?= htmlspecialchars($userSacco) ?></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             
@@ -187,8 +211,9 @@ if(empty($_SESSION['id']))
                                         <tbody>
                                         <?php
                                         try {
-                                        $stmt = $conn->prepare("SELECT * FROM fleet_no ORDER BY sacco ASC");
-                                        $stmt->execute();
+                                        $sql = "SELECT * FROM fleet_no WHERE sacco = :sacco ORDER BY sacco ASC";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->execute([':sacco' => $userSacco]);
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
@@ -230,25 +255,27 @@ if(empty($_SESSION['id']))
                  <div class="modal fade" id="RegMatTableModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
-                            <div class="modal-header"><h5>List of Registered Matatus</h5>
+                            <div class="modal-header"><h5>List of Registered Matatus<?= htmlspecialchars($userSacco) ?></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             
                                 <div class="modal-body">
                                     <table  id="regmatTable" class="table table-bordered ">
                                         <thead>
-                                            <tr><th>Sacco</th><th>Fleet No</th><th>No Plate</th><th>Privy</th><th>Phone No</th><th>Actions</th></tr>
+                                            <tr><th>Sacco</th><th>Fleet No</th><th>Matatu Name</th><th>No Plate</th><th>Privy</th><th>Phone No</th><th>Actions</th></tr>
                                         </thead>
                                         <tbody>
                                         <?php
                                         try {
-                                        $stmt = $conn->prepare("SELECT * FROM mat_registration ORDER BY sacco ASC");
-                                        $stmt->execute();
+                                        $sql = "SELECT * FROM mat_registration WHERE sacco = :sacco ORDER BY sacco ASC";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->execute([':sacco' => $userSacco]);
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
                                         ?>
                                             <tr>
                                                 <td><?= htmlspecialchars($row['sacco']) ?></td>
                                                 <td><?= htmlspecialchars($row['fleet_no']) ?></td>
+                                                <td><?= htmlspecialchars($row['matatu_name']) ?></td>
                                                 <td><?= htmlspecialchars($row['reg_no']) ?></td>
                                                 <td><?= htmlspecialchars($row['contact_person']) ?></td>
                                                 <td><?= htmlspecialchars($row['phone_number']) ?></td>
@@ -259,6 +286,7 @@ if(empty($_SESSION['id']))
                                                         data-id="<?= htmlspecialchars($row['id']) ?>"
                                                         data-county="<?= htmlspecialchars($row['sacco']) ?>"
                                                         data-county="<?= htmlspecialchars($row['fleet_no']) ?>"
+                                                        data-county="<td><?= htmlspecialchars($row['matatu_name']) ?></td>"
                                                         data-county="<?= htmlspecialchars($row['reg_no']) ?>"
                                                         data-county="<?= htmlspecialchars($row['contact_person']) ?>"
                                                         data-county="<?= htmlspecialchars($row['phone_number']) ?>"
@@ -427,9 +455,9 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
 <!--Start Mat Fleet Numbers Table-->
 <script>
     $(document).ready(function() {
-        $('#RegMatTableModal').on('shown.bs.modal', function () {
+        $('#MatFleetsTableModal').on('shown.bs.modal', function () {
             if (!$.fn.DataTable.isDataTable('#regmatTable')) {
-                $('#regmatTable').DataTable({
+                $('#matfleetsTable').DataTable({
                     pageLength: 10,  // 10 rows per page
                     searching: true,  // Enable search box
                     paging: true,  // Enable pagination
