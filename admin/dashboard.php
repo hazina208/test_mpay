@@ -14,16 +14,17 @@ if (empty($_SESSION['id'])) {
 <!DOCTYPE html>
 <html lang="en">
 <?php include "inc/header.php"; ?>
+
 <body>
     <?php include "inc/navbar.php"; ?>
     <div class="container mt-5">
         <div class="container text-center">
             <?php if (isset($_SESSION['status']) && $_SESSION['status'] != ''): ?>
-                <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                    <strong>Hey!</strong> <?php echo htmlspecialchars($_SESSION['status']); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['status']); // Clear status after displaying ?>
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                <strong>Hey!</strong> <?php echo htmlspecialchars($_SESSION['status']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['status']); // Clear status after displaying ?>
             <?php endif; ?>
 
             <div class="row row-cols-5">
@@ -35,11 +36,13 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-user-md fs-1" aria-hidden="true"></i><br>
                     Add Insurance Policy
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addPrinciplesModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addPrinciplesModal">
                     <i class="fa fa-user-md fs-1" aria-hidden="true"></i><br>
                     Add Insurance Principle
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addInsuranceMembersModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addInsuranceMembersModal">
                     <i class="fa fa-user-md fs-1" aria-hidden="true"></i><br>
                     Add Insurance Member
                 </a>
@@ -47,7 +50,8 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-graduation-cap fs-1" aria-hidden="true"></i><br>
                     Add Sacco
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addSaccoMembersModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addSaccoMembersModal">
                     <i class="fa fa-graduation-cap fs-1" aria-hidden="true"></i><br>
                     Add Sacco Members
                 </a>
@@ -55,7 +59,8 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-graduation-cap fs-1" aria-hidden="true"></i><br>
                     Add Bus Matatus Sacco
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addCargoSaccoModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addCargoSaccoModal">
                     <i class="fa fa-graduation-cap fs-1" aria-hidden="true"></i><br>
                     Add Lorries Sacco
                 </a>
@@ -67,7 +72,8 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-cubes fs-1" aria-hidden="true"></i><br>
                     Add County
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addSubCountyModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addSubCountyModal">
                     <i class="fa fa-folder-open fs-1" aria-hidden="true"></i><br>
                     Add Sub County
                 </a>
@@ -79,7 +85,8 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-institution fs-1" aria-hidden="true"></i><br>
                     Add Chama
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addChamaMembersModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addChamaMembersModal">
                     <i class="fa fa-institution fs-1" aria-hidden="true"></i><br>
                     Add Chama Members
                 </a>
@@ -87,7 +94,8 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Add Event
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addEventDetailsModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addEventDetailsModal">
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Add Event Details
                 </a>
@@ -95,15 +103,18 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Add Matatu/Bus Staff
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addCargoStaffModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addCargoStaffModal">
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Add Cargo Vehicle Staff
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addMatatuFleetNoModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addMatatuFleetNoModal">
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Add Matatu/Bus Fleet No
                 </a>
-                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addCargoFleetNoModal">
+                <a href="#" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addCargoFleetNoModal">
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Add Cargo Vehicle Fleet No
                 </a>
@@ -115,41 +126,55 @@ if (empty($_SESSION['id'])) {
                     <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
                     Register Cargo Vehicle
                 </a>
-                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addInstitutionRegModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Add Institution 
-               </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addInstitutionRegModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Institution
+                </a>
 
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addSchoolModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Add School 
-               </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addSchoolModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add School
+                </a>
 
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addDenomRegModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Add Denomination 
-               </a>
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addChurchModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Add Church 
-               </a>
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addBusTypeModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Add Business Type 
-               </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addDenomRegModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Denomination
+                </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addChurchModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Church
+                </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addBusTypeModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Business Type
+                </a>
 
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addBusinessModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Add Business 
-               </a>
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addHosiTypeModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Add Hospital Type 
-               </a>
-               <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addHospitalRegModal">
-                 <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
-                  Register Hospital 
-               </a><br><br>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addBusinessModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Business
+                </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal" data-bs-target="#addHosiTypeModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Hospital Type
+                </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addHospitalRegModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Register Hospital
+                </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addPowerAgencyModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Power Agency
+                </a>
+                <a href="" class="col btn btn-dark m-2 py-3" data-bs-toggle="modal"
+                    data-bs-target="#addWaterAgencyModal">
+                    <i class="fa fa-paw fs-1" aria-hidden="true"></i><br>
+                    Add Water Agency
+                </a>
+
+                <br><br>
                 <a href="table_settings.php" target="_blank" class="col btn btn-secondary m-2 py-3 col-5">
                     <i class="fa fa-eye fs-1" aria-hidden="true"></i><br>
                     View Tables
@@ -211,7 +236,8 @@ if (empty($_SESSION['id'])) {
                             <select id="county" name="county" onchange="fetchCountyDetails(this.value)">
                                 <option value="">-- Select County --</option>
                                 <?php foreach ($counties as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['county']); ?>"><?= htmlspecialchars($row['county']); ?></option>
+                                <option value="<?= htmlspecialchars($row['county']); ?>">
+                                    <?= htmlspecialchars($row['county']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -258,7 +284,8 @@ if (empty($_SESSION['id'])) {
                             <select id="county" name="county" onchange="fetchSubCountyDetails(this.value)">
                                 <option value="">-- Select County --</option>
                                 <?php foreach ($counties as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['county']); ?>"><?= htmlspecialchars($row['county']); ?></option>
+                                <option value="<?= htmlspecialchars($row['county']); ?>">
+                                    <?= htmlspecialchars($row['county']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -371,7 +398,8 @@ if (empty($_SESSION['id'])) {
                             <select id="event" name="event">
                                 <option value="">-- Select Event --</option>
                                 <?php foreach ($events as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['event_name']); ?>"><?= htmlspecialchars($row['event_name']); ?></option>
+                                <option value="<?= htmlspecialchars($row['event_name']); ?>">
+                                    <?= htmlspecialchars($row['event_name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -394,7 +422,9 @@ if (empty($_SESSION['id'])) {
                             <input type="text" class="form-control" name="e_time" required>
                         </div>
                         <div class="modal-header">
-                            <h5 class="modal-title"><center>Event Prices</center></h5>
+                            <h5 class="modal-title">
+                                <center>Event Prices</center>
+                            </h5>
                         </div>
                         <div class="modal-body">
                             <label for="r_price">Regular Price</label>
@@ -528,7 +558,8 @@ if (empty($_SESSION['id'])) {
                             <select id="sacco" name="sacco" onchange="fetchCountyDetails(this.value)">
                                 <option value="">-- Select Sacco --</option>
                                 <?php foreach ($saccos as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                <option value="<?= htmlspecialchars($row['sacco']); ?>">
+                                    <?= htmlspecialchars($row['sacco']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -571,7 +602,8 @@ if (empty($_SESSION['id'])) {
                             <select id="sacco" name="sacco" onchange="fetchCountyDetails(this.value)">
                                 <option value="">-- Select Sacco --</option>
                                 <?php foreach ($saccos as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                <option value="<?= htmlspecialchars($row['sacco']); ?>">
+                                    <?= htmlspecialchars($row['sacco']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -634,7 +666,8 @@ if (empty($_SESSION['id'])) {
                             <select id="sacco" name="sacco" onchange="fetchSaccoFleetnoDetails(this.value)">
                                 <option value="">-- Select Sacco --</option>
                                 <?php foreach ($saccos as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                <option value="<?= htmlspecialchars($row['sacco']); ?>">
+                                    <?= htmlspecialchars($row['sacco']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -663,7 +696,8 @@ if (empty($_SESSION['id'])) {
                             <select id="position" name="position">
                                 <option value="">-- Select Position --</option>
                                 <?php foreach ($positions as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['position']); ?>"><?= htmlspecialchars($row['position']); ?></option>
+                                <option value="<?= htmlspecialchars($row['position']); ?>">
+                                    <?= htmlspecialchars($row['position']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -702,7 +736,8 @@ if (empty($_SESSION['id'])) {
                             <select id="trasacco" name="trasacco" onchange="fetchSaccoFtnoDetails(this.value)">
                                 <option value="">-- Select Sacco --</option>
                                 <?php foreach ($saccos as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                <option value="<?= htmlspecialchars($row['sacco']); ?>">
+                                    <?= htmlspecialchars($row['sacco']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -778,10 +813,12 @@ if (empty($_SESSION['id'])) {
                                 $stmt->execute();
                                 $saccos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             ?>
-                            <select id="cargosacco" name="cargosacco" onchange="fetchCargoVehicleFtnoDetails(this.value)">
+                            <select id="cargosacco" name="cargosacco"
+                                onchange="fetchCargoVehicleFtnoDetails(this.value)">
                                 <option value="">-- Select Sacco --</option>
                                 <?php foreach ($saccos as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                <option value="<?= htmlspecialchars($row['sacco']); ?>">
+                                    <?= htmlspecialchars($row['sacco']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -810,7 +847,8 @@ if (empty($_SESSION['id'])) {
                             <select id="position" name="position">
                                 <option value="">-- Select Position --</option>
                                 <?php foreach ($positions as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['position']); ?>"><?= htmlspecialchars($row['position']); ?></option>
+                                <option value="<?= htmlspecialchars($row['position']); ?>">
+                                    <?= htmlspecialchars($row['position']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -846,10 +884,12 @@ if (empty($_SESSION['id'])) {
                                 $stmt->execute();
                                 $saccos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             ?>
-                            <select id="cargo_sacco" name="cargo_sacco" onchange="fetchCargoTransFtnoDetails(this.value)">
+                            <select id="cargo_sacco" name="cargo_sacco"
+                                onchange="fetchCargoTransFtnoDetails(this.value)">
                                 <option value="">-- Select Sacco --</option>
                                 <?php foreach ($saccos as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                <option value="<?= htmlspecialchars($row['sacco']); ?>">
+                                    <?= htmlspecialchars($row['sacco']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -933,7 +973,7 @@ if (empty($_SESSION['id'])) {
         </div>
 
         <!-- Add Insurance Member Modal -->
-        <div class="modal fade" id="addInsuranceMembersModal" tabindex="-1" aria-hidden="true"> 
+        <div class="modal fade" id="addInsuranceMembersModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <form method="POST" action="addsettings.php">
@@ -984,7 +1024,8 @@ if (empty($_SESSION['id'])) {
                             <select id="policy" name="policy">
                                 <option value="">-- Select Policy --</option>
                                 <?php foreach ($policies as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['policy']); ?>"><?= htmlspecialchars($row['policy']); ?></option>
+                                <option value="<?= htmlspecialchars($row['policy']); ?>">
+                                    <?= htmlspecialchars($row['policy']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -1005,7 +1046,8 @@ if (empty($_SESSION['id'])) {
                             <select id="principle" name="principle">
                                 <option value="">-- Select Principle --</option>
                                 <?php foreach ($principles as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['principle']); ?>"><?= htmlspecialchars($row['principle']); ?></option>
+                                <option value="<?= htmlspecialchars($row['principle']); ?>">
+                                    <?= htmlspecialchars($row['principle']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -1072,7 +1114,8 @@ if (empty($_SESSION['id'])) {
                             <select id="sacco" name="sacco">
                                 <option value="">-- Select Sacco --</option>
                                 <?php foreach ($saccos as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['sacco']); ?>"><?= htmlspecialchars($row['sacco']); ?></option>
+                                <option value="<?= htmlspecialchars($row['sacco']); ?>">
+                                    <?= htmlspecialchars($row['sacco']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -1135,7 +1178,8 @@ if (empty($_SESSION['id'])) {
                             <select id="chama" name="chama">
                                 <option value="">-- Select Chama --</option>
                                 <?php foreach ($chamas as $row): ?>
-                                    <option value="<?= htmlspecialchars($row['chama_name']); ?>"><?= htmlspecialchars($row['chama_name']); ?></option>
+                                <option value="<?= htmlspecialchars($row['chama_name']); ?>">
+                                    <?= htmlspecialchars($row['chama_name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php
@@ -1167,7 +1211,7 @@ if (empty($_SESSION['id'])) {
                             <input type="text" class="form-control" name="county" required>
                         </div>
 
-						        
+
                         <div class="modal-footer">
                             <button type="submit" name="saveCounty" class="btn btn-success">Save</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -1181,42 +1225,110 @@ if (empty($_SESSION['id'])) {
         <div class="modal fade" id="addInstitutionRegModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
 
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
+                            // Database connection
+                            include("../connection.php");
+                            if ($conn->connect_error) {
+                                die("Connection failed: " . $conn->connect_error);
+                            }
+                            // Fetch job numbers for dropdown
+                            $result = $conn->query("SELECT chama_name FROM chamas");
+                            ?>
+
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--End Add Institution-->
+        <!--Add School -->
+        <div class="modal fade" id="addSchoolModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
+
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
+
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
                                     // Database connection
                                     include("../connection.php");
                                     if ($conn->connect_error) {
@@ -1226,65 +1338,201 @@ if (empty($_SESSION['id'])) {
                                     $result = $conn->query("SELECT chama_name FROM chamas");
                                     ?>
 
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
                         </div>
-                    </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <!--End Add Institution-->
-                <!--Add School -->
-                <div class="modal fade" id="addSchoolModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
+            </div>
+        </div>
+        <!--End Add School -->
+        <!--Add Denomination -->
+        <div class="modal fade" id="addDenomRegModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
 
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
+                            // Database connection
+                            include("../connection.php");
+                            if ($conn->connect_error) {
+                                die("Connection failed: " . $conn->connect_error);
+                            }
+                            // Fetch job numbers for dropdown
+                            $result = $conn->query("SELECT chama_name FROM chamas");
+                            ?>
+
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--End Add Denomination -->
+        <!--Add Church-->
+        <div class="modal fade" id="addChurchModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
+
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
+
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
+                            // Database connection
+                            include("../connection.php");
+                            if ($conn->connect_error) {
+                                die("Connection failed: " . $conn->connect_error);
+                            }
+                            // Fetch job numbers for dropdown
+                            $result = $conn->query("SELECT chama_name FROM chamas");
+                            ?>
+
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--End Add Church-->
+        <!--Add Business Type-->
+        <div class="modal fade" id="addBusTypeModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
+
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
+
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
                                     // Database connection
                                     include("../connection.php");
                                     if ($conn->connect_error) {
@@ -1294,65 +1542,65 @@ if (empty($_SESSION['id'])) {
                                     $result = $conn->query("SELECT chama_name FROM chamas");
                                     ?>
 
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
                         </div>
-                    </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <!--End Add School -->
-                <!--Add Denomination -->
-                <div class="modal fade" id="addDenomRegModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
+            </div>
+        </div>
+        <!--End Add Business Type-->
+        <!--Add Business-->
+        <div class="modal fade" id="addBusinessModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
 
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
                                     // Database connection
                                     include("../connection.php");
                                     if ($conn->connect_error) {
@@ -1362,65 +1610,65 @@ if (empty($_SESSION['id'])) {
                                     $result = $conn->query("SELECT chama_name FROM chamas");
                                     ?>
 
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
                         </div>
-                    </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <!--End Add Denomination -->
-                <!--Add Church-->
-                <div class="modal fade" id="addChurchModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
+            </div>
+        </div>
+        <!--End Add Business-->
+        <!--Add Hospital-->
+        <div class="modal fade" id="addHosiTypeModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
 
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
                                     // Database connection
                                     include("../connection.php");
                                     if ($conn->connect_error) {
@@ -1430,65 +1678,65 @@ if (empty($_SESSION['id'])) {
                                     $result = $conn->query("SELECT chama_name FROM chamas");
                                     ?>
 
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
                         </div>
-                    </div>
+
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <!--End Add Church-->
-                <!--Add Business Type-->
-                <div class="modal fade" id="addBusTypeModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
+            </div>
+        </div>
+        <!--End Add Hospital-->
+        <!--Add Hospital-->
+        <div class="modal fade" id="addHospitalRegModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Chama Member</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">First Name</label>
+                            <input type="text" class="form-control" name="fn" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">Middle Name</label>
+                            <input type="text" class="form-control" name="mn" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Last Name</label>
+                            <input type="text" class="form-control" name="ln" required>
+                        </div>
 
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
+                        <div class="modal-body">
+                            <label for="county">ID No</label>
+                            <input type="text" class="form-control" name="idno" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Phone Number</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
 
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
+
+                        <div class="modal-body">
+                            <label for="county">Chama</label>
+                            <?php
                                     // Database connection
                                     include("../connection.php");
                                     if ($conn->connect_error) {
@@ -1498,264 +1746,110 @@ if (empty($_SESSION['id'])) {
                                     $result = $conn->query("SELECT chama_name FROM chamas");
                                     ?>
 
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                            <select id="chama" name="chama">
+                                <option value="">-- Select Chama --</option>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
                         </div>
-                    </div>
-                </div>
-                <!--End Add Business Type-->
-                <!--Add Business-->
-                <div class="modal fade" id="addBusinessModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
 
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
 
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
 
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT chama_name FROM chamas");
-                                    ?>
-
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                        <div class="modal-footer">
+                            <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
-                <!--End Add Business-->
-                <!--Add Hospital-->
-                <div class="modal fade" id="addHosiTypeModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
+            </div>
+        </div>
+        <!--End Add Hospital-->
 
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
-
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
-
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT chama_name FROM chamas");
-                                    ?>
-
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+        <!--Add Power Company-->
+        <div class="modal fade" id="addPowerAgencyModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Powe Agency</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                    </div>
-                </div>
-                <!--End Add Hospital-->
-                 <!--Add Hospital-->
-                <div class="modal fade" id="addHospitalRegModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form method="POST" action="addsettings.php">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Chama Member</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">First Name</label>
-                                    <input type="text" class="form-control" name="fn" required>
-                                </div>
-
-						        <div class="modal-body">
-                                    <label for="county">Middle Name</label>
-                                    <input type="text" class="form-control" name="mn" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Last Name</label>
-                                    <input type="text" class="form-control" name="ln" required>
-                                </div>
-
-						        <div class="modal-body">
-                                    <label for="county">ID No</label>
-                                    <input type="text" class="form-control" name="idno" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Phone Number</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="county">Email Address</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
-
-                                 
-                                <div class="modal-body">
-                                    <label for="county">Chama</label>
-                                    <?php
-                                    // Database connection
-                                    include("../connection.php");
-                                    if ($conn->connect_error) {
-                                        die("Connection failed: " . $conn->connect_error);
-                                    }
-                                    // Fetch job numbers for dropdown
-                                    $result = $conn->query("SELECT chama_name FROM chamas");
-                                    ?>
-
-                                    <select id="chama" name="chama" >
-                                        <option value="">-- Select Chama --</option>
-                                        <?php while($row = $result->fetch_assoc()): ?>
-                                            <option value="<?= $row['chama_name']; ?>"><?= $row['chama_name']; ?></option>
-                                        <?php endwhile; ?>
-                                    </select>
-                                </div>
-                                
-
-						        
-                                <div class="modal-footer">
-                                    <button type="submit" name="saveChamaMembers" class="btn btn-success">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
+                        <div class="modal-body">
+                            <label for="county">Agency Name</label>
+                            <input type="text" class="form-control" name="agency" required>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="savePowerAgency" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <!--End Add Hospital-->
+            </div>
+        </div>
+        <!--End Add Power Company-->
+
+        <!--Add Water Agency-->
+        <div class="modal fade" id="addWaterAgencyModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="addsettings.php">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Water Agency</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="county">Agency Name</label>
+                            <input type="text" class="form-control" name="agency" required>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" name="saveWwaterAgency" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--End Add water agency-->
+
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function(){
-            $("#navLinks li:nth-child(1) a").addClass('active');
-        });
+    $(document).ready(function() {
+        $("#navLinks li:nth-child(1) a").addClass('active');
+    });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php if (isset($_GET['msg']) && $_GET['msg'] == "success"): ?>
     <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: 'Data inserted successfully!'
-        });
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Data inserted successfully!'
+    });
     </script>
     <?php elseif (isset($_GET['msg']) && $_GET['msg'] == "error"): ?>
     <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Something went wrong while inserting!'
-        });
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong while inserting!'
+    });
     </script>
     <?php elseif (isset($_GET['msg']) && $_GET['msg'] == "warning"): ?>
     <script>
-        Swal.fire({
-            icon: 'warning',
-            title: 'Update',
-            text: 'Data Updated Successful!'
-        });
+    Swal.fire({
+        icon: 'warning',
+        title: 'Update',
+        text: 'Data Updated Successful!'
+    });
     </script>
     <?php endif; ?>
 </body>
+
 </html>
 <?php ob_end_flush(); ?>

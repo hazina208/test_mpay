@@ -56,6 +56,12 @@ if ($aid) {
                 <li class="nav-item">
                     <a class="nav-link" href="../reg_biz_admin.php">Register Business Admin</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../reg_electricity_admin.php">Register Electricy Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../reg_water_admin.php">Register Water Admin</a>
+                </li>
                 
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
