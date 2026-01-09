@@ -52,7 +52,7 @@ try {
     // Save payment details to database
     $stmt = $conn->prepare("INSERT INTO bus_fares (till_number, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$till_number, $amount, $fee, $total,  $phone_number, $status, $transaction_id]);
-    $payment_id = $pdo->lastInsertId();
+    $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
     error_log("Error inserting payment: " . $e->getMessage());
