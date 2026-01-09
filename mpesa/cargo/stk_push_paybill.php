@@ -5,13 +5,13 @@ include '../../DB_connection.php'; // Use PDO connection
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
-$till_number = trim($input['till_number'] ?? '');
+$paybill_number = trim($input['paybill_number'] ?? '');
 $amount = $input['amount'] ?? 0;
 $phone_number = $input['phone_number'] ?? '';
 
 $transaction_id = 'PENDING_' . time();
 
-if (empty($amount) || empty($till_number) || empty($phone_number)) {
+if (empty($amount) || empty($paybill_number) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
 }
@@ -50,8 +50,8 @@ $status = 'Pending';  // Define initial status
 
 try {
     // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO bus_fares (till_number, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$till_number, $amount, $fee, $total,  $phone_number, $status, $transaction_id]);
+    $stmt = $conn->prepare("INSERT INTO cargo_pays_paybill (paybill_no, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$paybill_number, $amount, $fee, $total,  $phone_number, $status, $transaction_id]);
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
@@ -73,23 +73,23 @@ if (!$access_token) {
 }
 
 $timestamp = date('YmdHis');
-$password = base64_encode($till_number . MPESA_PASSKEY . $timestamp);
+$password = base64_encode($paybill_number . MPESA_PASSKEY . $paybill_number);
 $url = MPESA_ENV == 'sandbox'
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
 $payload = [
-    'BusinessShortCode' => $till_number,
+    'BusinessShortCode' => $paybill_number,
     'Password' => $password,
     'Timestamp' => $timestamp,
     'TransactionType' => 'CustomerPayBillOnline',
     'Amount' => $total,  // Charge the total (amount + fee)
     'PartyA' => $phone_number,
-    'PartyB' => $till_number,
+    'PartyB' => $paybill_number,
     'PhoneNumber' => $phone_number,
     'CallBackURL' => MPESA_CALLBACK_URL,
-    'AccountReference' => 'BusFare_' . $payment_id,
-    'TransactionDesc' => 'Payment for BusFare  - Till Number: ' . $till_number
+    'AccountReference' => 'Cargo_' . $payment_id,
+    'TransactionDesc' => 'Payment for Cargo  - Paybill Number: ' . $paybill_number
 ];
 
 $curl = curl_init();
@@ -106,7 +106,7 @@ $response = json_decode($response_str);
 if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
     try {
         // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE bus_fares SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
+        $stmt2 = $conn->prepare("UPDATE cargo_pays_paybill SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
         $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
         $stmt2 = null; // Close statement
         
