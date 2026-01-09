@@ -88,7 +88,7 @@ $payload = [
     'PartyB' => $till_number,
     'PhoneNumber' => $phone_number,
     'CallBackURL' => MPESA_CALLBACK_URL,
-    'AccountReference' => 'BusFare_' . $payment_id,
+    'AccountReference' => 'Cargo_' . $payment_id,
     'TransactionDesc' => 'Payment for BusFare  - Till Number: ' . $till_number
 ];
 
@@ -106,7 +106,7 @@ $response = json_decode($response_str);
 if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
     try {
         // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE bus_fares SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
+        $stmt2 = $conn->prepare("UPDATE cargo_pays_till  SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
         $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
         $stmt2 = null; // Close statement
         
