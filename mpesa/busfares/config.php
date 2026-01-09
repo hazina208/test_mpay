@@ -5,7 +5,7 @@
 define('MPESA_ENV', 'sandbox');
 
 // M-Pesa Credentials (set these in Render Environment Variables)
-define('MPESA_SHORTCODE', getenv('MPESA_SHORTCODE') ?: '174379');  // Fallback for testing
+//define('MPESA_SHORTCODE', getenv('MPESA_SHORTCODE') ?: '174379');  // Fallback for testing
 define('MPESA_PASSKEY', getenv('MPESA_PASSKEY') ?: 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919');  // Your actual sandbox passkey as fallback (replace with yours)
 
 // Daraja API Credentials (Consumer Key/Secret from Safaricom Daraja Portal)
