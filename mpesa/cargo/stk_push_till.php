@@ -50,7 +50,7 @@ $status = 'Pending';  // Define initial status
 
 try {
     // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO bus_fares (till_number, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO cargo_pays_till (till_number, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$till_number, $amount, $fee, $total,  $phone_number, $status, $transaction_id]);
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
