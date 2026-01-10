@@ -51,7 +51,7 @@ $status = 'Pending';  // Define initial status
 try {
     // Save payment details to database
     $stmt = $conn->prepare("INSERT INTO cargo_pays_paybill (paybill_no, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$paybill_number, $amount, $fee, $total,  $phone_number, $status, $transaction_id]);
+    $stmt->execute([$paybill_number, $amount, $fee, $total, $phone_number, $status, $transaction_id]);
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
@@ -73,7 +73,7 @@ if (!$access_token) {
 }
 
 $timestamp = date('YmdHis');
-$password = base64_encode($paybill_number . MPESA_PASSKEY . $paybill_number);
+$password = base64_encode($paybill_number . MPESA_PASSKEY . $timestamp);
 $url = MPESA_ENV == 'sandbox'
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
