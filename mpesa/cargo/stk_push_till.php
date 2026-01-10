@@ -87,7 +87,7 @@ $payload = [
     'PartyA' => $phone_number,
     'PartyB' => $till_number,
     'PhoneNumber' => $phone_number,
-    'CallBackURL' => MPESA_CALLBACK_URL,
+    'CallBackURL' => MPESA_CALLBACK_URL_TILL,
     'AccountReference' => 'Cargo_' . $payment_id,
     'TransactionDesc' => 'Payment for BusFare  - Till Number: ' . $till_number
 ];
