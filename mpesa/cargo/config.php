@@ -13,4 +13,5 @@ define('CONSUMER_KEY', getenv('CONSUMER_KEY') ?: 'uEWApsgB5NFs9FiedApURKPVDzB3fO
 define('CONSUMER_SECRET', getenv('CONSUMER_SECRET') ?: 'KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv');  // Fallback placeholder
 
 // Callback URL
-define('MPESA_CALLBACK_URL2', 'https://test-mpay.onrender.com/mpesa/cargo/callback.php');
+define('MPESA_CALLBACK_TILL', 'https://test-mpay.onrender.com/mpesa/cargo/callbacktill.php');
+define('MPESA_CALLBACK_PAYBILL', 'https://test-mpay.onrender.com/mpesa/cargo/callbackpaybill.php');
