@@ -87,7 +87,7 @@ $payload = [
     'PartyA' => $phone_number,
     'PartyB' => $paybill_number,
     'PhoneNumber' => $phone_number,
-    'CallBackURL' => MPESA_CALLBACK_URL,
+    'CallBackURL' => MPESA_CALLBACK_URL_PAYBILL,
     'AccountReference' => 'Cargo_' . $payment_id,
     'TransactionDesc' => 'Payment for Cargo  - Paybill Number: ' . $paybill_number
 ];
