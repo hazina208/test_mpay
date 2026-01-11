@@ -1,0 +1,92 @@
+<?php
+require_once 'config.php';
+require_once 'db.php';
+
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['error' => 'Invalid method']);
+    exit;
+}
+
+$phone = $_POST['phone'] ?? '';
+$amount = floatval($_POST['amount'] ?? 0);
+$bank_code = $_POST['bank_code'] ?? '';
+$account = $_POST['account'] ?? '';
+$name = $_POST['name'] ?? '';
+
+if (empty($phone) || $amount <= 0 || empty($bank_code) || empty($account)) {
+    echo json_encode(['error' => 'Missing parameters']);
+    exit;
+}
+
+// Get Daraja token
+function getDarajaToken() {
+    $url = (DARAJA_ENV === 'sandbox') 
+        ? 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+        : 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+    
+    $cred = base64_encode(DARAJA_CONSUMER_KEY . ':' . DARAJA_CONSUMER_SECRET);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Basic $cred"]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    $data = json_decode($res, true);
+    return $data['access_token'] ?? null;
+}
+
+$token = getDarajaToken();
+if (!$token) {
+    echo json_encode(['error' => 'Failed to get token']);
+    exit;
+}
+
+$timestamp = date('YmdHis');
+$password = base64_encode(DARAJA_SHORTCODE . DARAJA_PASSKEY . $timestamp);
+
+$data = [
+    'BusinessShortCode' => DARAJA_SHORTCODE,
+    'Password' => $password,
+    'Timestamp' => $timestamp,
+    'TransactionType' => 'CustomerPayBillOnline',
+    'Amount' => $amount,
+    'PartyA' => ltrim($phone, '+'),
+    'PartyB' => DARAJA_SHORTCODE,
+    'PhoneNumber' => ltrim($phone, '+'),
+    'CallBackURL' => CALLBACK_URL,
+    'AccountReference' => 'PesaBridge-' . time(),
+    'TransactionDesc' => "Transfer to bank $bank_code"
+];
+
+$stkUrl = (DARAJA_ENV === 'sandbox') 
+    ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+    : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
+
+$ch = curl_init($stkUrl);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Authorization: Bearer $token",
+    'Content-Type: application/json'
+]);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($ch);
+curl_close($ch);
+
+$resp = json_decode($response, true);
+
+// Save to DB if initiated
+if (isset($resp['ResponseCode']) && $resp['ResponseCode'] == '0') {
+    $stmt = $pdo->prepare("
+        INSERT INTO transactions 
+        (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_name, phone, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+    ");
+    // Assume user_id from session/phone lookup - simplified here
+    $user_id = 1; // In real: query users by phone
+    $stmt->execute([$user_id, $resp['MerchantRequestID'], $resp['CheckoutRequestID'], $amount, $bank_code, $account, $name, $phone]);
+}
+
+echo $response;
+?>
