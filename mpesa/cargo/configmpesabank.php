@@ -13,11 +13,11 @@ define('CONSUMER_KEY', getenv('CONSUMER_KEY') ?: 'uEWApsgB5NFs9FiedApURKPVDzB3fO
 define('CONSUMER_SECRET', getenv('CONSUMER_SECRET') ?: 'KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv');  // Fallback placeholder
 
 // Callback URL
-//define('MPESA_CALLBACK_URL_TILL', 'https://test-mpay.onrender.com/mpesa/cargo/callbacktill.php');
-//define('MPESA_CALLBACK_URL_PAYBILL', 'https://test-mpay.onrender.com/mpesa/cargo/callbackpaybill.php');
+define('CALLBACK_URL_MPESATOBANK', 'https://yourdomain.com/backend/callbackmpesatobank.php');
+// INITIATE URL
+define('INITIATE_URL', 'https://yourdomain.com/backend/api/initiate.php');
 // INTASEND API Credentials 
 define('INTASEND_API_KEY', 'YOUR_INTASEND_SANDBOX_KEY'); // Wrapper for PesaLink
-define('CALLBACK_URL', 'https://yourdomain.com/backend/callback.php');
-define('INITIATE_URL', 'https://yourdomain.com/backend/api/initiate.php');
+
 date_default_timezone_set('Africa/Nairobi');
 ?>
