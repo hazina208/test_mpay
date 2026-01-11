@@ -17,7 +17,7 @@ define('CALLBACK_URL_MPESATOBANK', 'https://test-mpay.onrender.com/mpesa/cargo/c
 // INITIATE URL
 define('INITIATE_URL', 'https://test-mpay.onrender.com/api/initiate.php');
 // INTASEND API Credentials 
-define('INTASEND_API_KEY', 'YOUR_INTASEND_SANDBOX_KEY'); // Wrapper for PesaLink
+define('INTASEND_API_KEY',  getenv('INTASEND_API_KEY') ?: 'ISSecretKey_test_40c858c5-0aa8-4543-92b4-c7ba0bd38a0c'); // Wrapper for PesaLink
 
 date_default_timezone_set('Africa/Nairobi');
 ?>
