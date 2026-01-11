@@ -1,7 +1,7 @@
 <?php
-require_once 'config.php';
-require_once 'db.php';
-
+require_once 'configmpesabank.php';
+require_once 'auth.php';
+include '../../DB_connection.php'; // Use PDO connection
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
