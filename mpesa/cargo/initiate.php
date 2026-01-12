@@ -3,7 +3,7 @@
 // Public API endpoint called by Flutter app to start a transfer
 
 require_once 'DB_connection.php';
-require_once 'mpesa/cargo/configconfig.php';
+require_once 'mpesa/cargo/configmpesabank.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); // Allow Flutter (CORS) - restrict in production!
