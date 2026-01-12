@@ -43,16 +43,16 @@ if (!$token) {
 }
 
 $timestamp = date('YmdHis');
-$password = base64_encode(SHORTCODE . DARAJA_PASSKEY . $timestamp);
+$password = base64_encode(MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
 
 $data = [
-    'BusinessShortCode' => DARAJA_SHORTCODE,
+    'BusinessShortCode' => MPESA_SHORTCODE,
     'Password' => $password,
     'Timestamp' => $timestamp,
     'TransactionType' => 'CustomerPayBillOnline',
     'Amount' => $amount,
     'PartyA' => ltrim($phone, '+'),
-    'PartyB' => DARAJA_SHORTCODE,
+    'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => ltrim($phone, '+'),
     'CallBackURL' => CALLBACK_URL,
     'AccountReference' => 'PesaBridge-' . time(),
