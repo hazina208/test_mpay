@@ -13,7 +13,7 @@ define('CONSUMER_KEY', getenv('CONSUMER_KEY') ?: 'uEWApsgB5NFs9FiedApURKPVDzB3fO
 define('CONSUMER_SECRET', getenv('CONSUMER_SECRET') ?: 'KiItsROrqWTmygwnHAZA6QpJuzCHvWz2S8QV2nUZIheG3bJJXThjNSgW8X2ZSBAv');  // Fallback placeholder
 
 // Callback URL
-define('CALLBACK_URL_MPESATOBANK', 'https://test-mpay.onrender.com/mpesa/cargo/callbackmpesatobank.php');
+define('CALLBACK_URL_CARGO_MPESATOBANK', 'https://test-mpay.onrender.com/mpesa/cargo/callbackmpesatobank.php');
 // INITIATE URL
 define('INITIATE_URL', 'https://test-mpay.onrender.com/api/initiate.php');
 // INTASEND API Credentials 
