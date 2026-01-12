@@ -54,7 +54,7 @@ $data = [
     'PartyA' => ltrim($phone, '+'),
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => ltrim($phone, '+'),
-    'CallBackURL' => CALLBACK_URL,
+    'CallBackURL' => CALLBACK_URL_CARGO_MPESATOBANK,
     'AccountReference' => 'PesaBridge-' . time(),
     'TransactionDesc' => "Transfer to bank $bank_code"
 ];
@@ -79,7 +79,7 @@ $resp = json_decode($response, true);
 // Save to DB if initiated
 if (isset($resp['ResponseCode']) && $resp['ResponseCode'] == '0') {
     $stmt = $pdo->prepare("
-        INSERT INTO transactions 
+        INSERT INTO cargo_pay_mpesa_bank 
         (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_name, phone, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
