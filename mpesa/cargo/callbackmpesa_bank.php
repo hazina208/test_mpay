@@ -1,9 +1,11 @@
 <?php
 // callback.php - Daraja STK Push Callback Handler + IntaSend Disbursement
 // Updated January 2026 - PesaBridge Project
-
-require_once 'config.php';
-require_once 'db.php';
+//require_once 'config.php';
+//require_once 'db.php';
+require_once 'configmpesabank.php';
+require_once 'auth.php';
+include '../../DB_connection.php'; // Use PDO connection
 
 // Read raw POST data from Safaricom (JSON)
 $json = file_get_contents('php://input');
