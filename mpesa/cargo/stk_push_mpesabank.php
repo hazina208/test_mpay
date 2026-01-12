@@ -26,7 +26,7 @@ function getDarajaToken() {
         ? 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         : 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
     
-    $cred = base64_encode(DARAJA_CONSUMER_KEY . ':' . DARAJA_CONSUMER_SECRET);
+    $cred = base64_encode(CONSUMER_KEY . ':' . CONSUMER_SECRET);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Basic $cred"]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -43,7 +43,7 @@ if (!$token) {
 }
 
 $timestamp = date('YmdHis');
-$password = base64_encode(DARAJA_SHORTCODE . DARAJA_PASSKEY . $timestamp);
+$password = base64_encode(SHORTCODE . DARAJA_PASSKEY . $timestamp);
 
 $data = [
     'BusinessShortCode' => DARAJA_SHORTCODE,
