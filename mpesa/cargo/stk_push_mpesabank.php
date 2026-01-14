@@ -1,7 +1,8 @@
 <?php
 require_once 'config.php';
 require_once 'auth.php';
-include '../../DB_connection.php'; // Use PDO connection
+include '../../DB_connection.php';
+
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -9,17 +10,30 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$phone = $_POST['phone'] ?? '';
-$amount = floatval($_POST['amount'] ?? 0);
-$bank_code = $_POST['bank_code'] ?? '';
-$account = $_POST['account'] ?? '';
-$name = $_POST['name'] ?? '';
+// Read raw JSON input
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
 
-if (empty($phone) || $amount <= 0 || empty($bank_code) || empty($account)) {
-    echo json_encode(['error' => 'Missing parameters']);
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo json_encode(['error' => 'Invalid JSON: ' . json_last_error_msg()]);
     exit;
 }
 
+// Extract values (use null coalescing for safety)
+$phone     = $data['phone_number'] ?? '';     // ← note key name
+$amount    = floatval($data['amount'] ?? 0);
+$bank_code = $data['bank_code']   ?? '';
+$account   = $data['account']     ?? '';
+$bank_name = $data['bank_name'] ?? '';
+
+if (empty($phone) || $amount <= 0 || empty($bank_code) || empty($account)) {
+    echo json_encode([
+        'error' => 'Missing parameters',
+        'received' => array_keys($data)  // ← very helpful for debugging!
+    ]);
+    exit;
+}
+// ... rest of your code remains the same (get token, STK push, etc.)
 // Get Daraja token
 function getDarajaToken() {
     $url = (DARAJA_ENV === 'sandbox') 
@@ -55,8 +69,8 @@ $data = [
     'PartyB' => MPESA_SHORTCODE,
     'PhoneNumber' => ltrim($phone, '+'),
     'CallBackURL' => CALLBACK_URL_CARGO_MPESATOBANK,
-    'AccountReference' => 'PesaBridge-' . time(),
-    'TransactionDesc' => "Transfer to bank $bank_code"
+    'AccountReference' => 'MPAY-' . time(),
+    'TransactionDesc' => "Transfer to bank $bank_name"
 ];
 
 $stkUrl = (DARAJA_ENV === 'sandbox') 
