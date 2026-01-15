@@ -36,7 +36,7 @@ if (empty($phone) || $amount <= 0 || empty($bank_code) || empty($account)) {
 // ... rest of your code remains the same (get token, STK push, etc.)
 // Get Daraja token
 function getDarajaToken() {
-    $url = (DARAJA_ENV === 'sandbox') 
+    $url = (MPESA_ENV === 'sandbox') 
         ? 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         : 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
     
@@ -73,7 +73,7 @@ $data = [
     'TransactionDesc' => "Transfer to bank $bank_name"
 ];
 
-$stkUrl = (DARAJA_ENV === 'sandbox') 
+$stkUrl = (MPESA_ENV === 'sandbox') 
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
