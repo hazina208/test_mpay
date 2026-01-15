@@ -1,34 +1,40 @@
 <?php
-// callback.php - Daraja STK Push Callback Handler + IntaSend Disbursement
-// Updated January 2026 - PesaBridge Project
-//require_once 'config.php';
-//require_once 'db.php';
-require_once 'config.php';
-require_once 'auth.php';
-include '../../DB_connection.php'; // Use PDO connection
+// callback.php
+// Daraja STK Push Callback Handler + IntaSend PesaLink Disbursement
+// Updated for CargoPay - Table: cargo_pay_mpesa_bank
+// Changes: account_name → bank_name in payload, recipient_name → recipient_bank_name
+// Last updated: January 15, 2026
 
-// Read raw POST data from Safaricom (JSON)
+require_once 'config.php';
+require_once '../../DB_connection.php';
+
+// ────────────────────────────────────────────────────────────────────────────────
+// Read raw POST data from Safaricom
 $json = file_get_contents('php://input');
 $callback = json_decode($json, true);
 
-// Always log the full callback for debugging & audit
-file_put_contents('logs/callbacks.log', date('Y-m-d H:i:s') . " - " . $json . PHP_EOL, FILE_APPEND);
+// Always log the incoming callback - very important for debugging
+$log_time = date('Y-m-d H:i:s');
+file_put_contents('logs/callbacks.log', $log_time . " - " . $json . PHP_EOL, FILE_APPEND);
 
-// Safaricom sends empty/invalid callbacks sometimes - early exit if no useful data
+// Early exit if not a valid STK callback structure
 if (!isset($callback['Body']['stkCallback'])) {
     http_response_code(200);
-    echo "Accepted";
+    echo "Accepted (empty callback)";
     exit;
 }
 
+// ────────────────────────────────────────────────────────────────────────────────
+// Process STK Push result
 if (isset($callback['Body']['stkCallback']['ResultCode'])) {
     $resultCode   = $callback['Body']['stkCallback']['ResultCode'];
     $merchantID   = $callback['Body']['stkCallback']['MerchantRequestID'];
-    $resultDesc   = $callback['Body']['stkCallback']['ResultDesc'] ?? 'No description';
+    $resultDesc   = $callback['Body']['stkCallback']['ResultDesc'] ?? 'No description provided';
 
     if ($resultCode == 0) {
-        // Payment collected successfully
-        // Extract M-Pesa Receipt Number from metadata (Item[1] is usually the receipt)
+        // ─── SUCCESS: Payment collected ───────────────────────────────────────
+
+        // Extract M-Pesa Receipt Number from CallbackMetadata (reliable way)
         $receipt = '';
         if (isset($callback['Body']['stkCallback']['CallbackMetadata']['Item'])) {
             foreach ($callback['Body']['stkCallback']['CallbackMetadata']['Item'] as $item) {
@@ -39,33 +45,50 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
             }
         }
 
-        // Update transaction status to collected
+        // Update transaction to collected
         $stmt = $pdo->prepare("
             UPDATE cargo_pay_mpesa_bank 
-            SET status = 'collected', 
-                mpesa_receipt = ?, 
-                collected_at = NOW() 
+            SET 
+                status = 'collected',
+                mpesa_receipt = ?,
+                collected_at = NOW()
             WHERE merchant_request_id = ?
         ");
         $stmt->execute([$receipt, $merchantID]);
 
-        // Fetch full transaction details to trigger disbursement
-        $txStmt = $pdo->prepare("SELECT * FROM cargo_pay_mpesa_bank WHERE merchant_request_id = ?");
+        // Fetch transaction details to proceed with disbursement
+        $txStmt = $pdo->prepare("
+            SELECT id, user_id, amount, recipient_bank_code, recipient_account, recipient_bank_name 
+            FROM cargo_pay_mpesa_bank 
+            WHERE merchant_request_id = ?
+        ");
         $txStmt->execute([$merchantID]);
         $tx = $txStmt->fetch(PDO::FETCH_ASSOC);
 
         if ($tx) {
-            disburseToBank($tx['id'], $tx['amount'], $tx['recipient_bank_code'], $tx['recipient_account'], $tx['recipient_bank_name']);
+            disburseToBank(
+                $tx['id'],
+                $tx['user_id'],
+                $tx['amount'],
+                $tx['recipient_bank_code'],
+                $tx['recipient_account'],
+                $tx['recipient_bank_name']  // Now using the renamed column
+            );
         } else {
-            // Rare case: transaction not found in DB
-            file_put_contents('logs/callbacks.log', date('Y-m-d H:i:s') . " - WARNING: Transaction not found for MerchantRequestID $merchantID" . PHP_EOL, FILE_APPEND);
+            file_put_contents(
+                'logs/callbacks.log',
+                $log_time . " - CRITICAL: Transaction not found for MerchantRequestID: $merchantID\n",
+                FILE_APPEND
+            );
         }
     } else {
-        // Payment failed (user cancelled, insufficient funds, etc.)
+        // ─── FAILURE: STK Push failed ──────────────────────────────────────────
         $reason = $resultDesc ?: 'Unknown failure';
+
         $stmt = $pdo->prepare("
             UPDATE cargo_pay_mpesa_bank 
-            SET status = 'failed', 
+            SET 
+                status = 'failed',
                 failed_reason = ? 
             WHERE merchant_request_id = ?
         ");
@@ -75,28 +98,29 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
     }
 }
 
+// Always respond with 200 OK to Safaricom
 http_response_code(200);
 echo "Success";
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Disbursement Function (PesaLink via IntaSend - robust version 2026)
-function disburseToBank($tx_id, $amount, $bank_code, $account, $bank_name) {
+// Function: Send money to bank via IntaSend (PesaLink)
+function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name) {
     global $pdo;
 
-    $url = 'https://sandbox.intasend.com/api/v1/payment/payouts/'; 
-    // Switch to live when ready: 'https://api.intasend.com/api/v1/payment/payouts/'
+    $url = 'https://sandbox.intasend.com/api/v1/payment/payouts/';
+    // LIVE: 'https://api.intasend.com/api/v1/payment/payouts/'
 
     $payload = [
         'api_key'     => INTASEND_API_KEY,
         'currency'    => 'KES',
         'amount'      => $amount,
-        'method'      => 'pesalink',  // Explicitly request PesaLink for bank transfer
+        'method'      => 'pesalink',
         'beneficiary' => [
-            'bank_code'     => $bank_code,      // e.g., '02' for Equity
+            'bank_code'      => $bank_code,
             'account_number' => $account,
-            'account_name'  => $bank_name
+            'bank_name'      => $bank_name   // ← Changed from account_name to bank_name
         ],
-        'narration'   => "MPAY TX #$tx_id - Transfer to bank"
+        'narration'   => "CargoPay TX #$tx_id - Transfer to bank"
     ];
 
     $ch = curl_init($url);
@@ -104,77 +128,119 @@ function disburseToBank($tx_id, $amount, $bank_code, $account, $bank_name) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);           // Prevent long hangs
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
     $res = curl_exec($ch);
 
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
+    $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError  = curl_error($ch);
     curl_close($ch);
 
     $response = json_decode($res, true);
 
-    // Success handling
+    // ─── SUCCESS CASE ────────────────────────────────────────────────────────
     if ($httpCode >= 200 && $httpCode < 300 && isset($response['status']) && strtolower($response['status']) === 'success') {
-        $ref = $response['reference'] ?? $response['tracking_id'] ?? $response['id'] ?? 'No ref';
+        $ref = $response['reference'] ?? $response['tracking_id'] ?? $response['id'] ?? 'No reference';
 
         $stmt = $pdo->prepare("
             UPDATE cargo_pay_mpesa_bank 
-            SET status = 'disbursed', 
-                pesalink_reference = ?, 
-                disbursed_at = NOW() 
+            SET 
+                status = 'disbursed',
+                pesalink_reference = ?,
+                disbursed_at = NOW()
             WHERE id = ?
         ");
         $stmt->execute([$ref, $tx_id]);
 
         logEvent($tx_id, 'disbursement_success', "Disbursed successfully. Ref: $ref");
+
+        // Update user stats
+        updateUserStats($user_id, $amount);
+
         return true;
     }
 
-    // Failure handling - detailed logging
+    // ─── FAILURE CASE ────────────────────────────────────────────────────────
     $failure_reason = "Disbursement failed. HTTP $httpCode";
     if ($curlError) {
         $failure_reason .= " | cURL error: $curlError";
     }
     if (is_array($response)) {
-        $failure_reason .= " | " . ($response['message'] ?? $response['error'] ?? $response['detail'] ?? 'Unknown error');
+        $msg = $response['message'] ?? $response['error'] ?? $response['detail'] ?? 'Unknown error';
+        $failure_reason .= " | $msg";
         if (isset($response['code'])) {
             $failure_reason .= " (Code: {$response['code']})";
         }
-    } else if ($res) {
+    } elseif ($res) {
         $failure_reason .= " | Raw response: " . substr($res, 0, 500);
     } else {
         $failure_reason .= " | No response received";
     }
 
-    // Mark transaction as failed
     $stmt = $pdo->prepare("
         UPDATE cargo_pay_mpesa_bank 
-        SET status = 'failed', 
+        SET 
+            status = 'failed',
             failed_reason = ? 
         WHERE id = ?
     ");
     $stmt->execute([$failure_reason, $tx_id]);
 
-    // Audit log
     logEvent($tx_id, 'disbursement_failed', $failure_reason);
-
-    // Optional: Critical alert (uncomment in production)
-    // mail('admin@pesabridge.com', "Disbursement Failure TX#$tx_id", $failure_reason);
 
     return false;
 }
 
-// Helper: Audit logging to cargo_pay_mpesa_bank_tranx_logs table
+// ────────────────────────────────────────────────────────────────────────────────
+// Function: Update user totals and recalculate credit score
+function updateUserStats($user_id, $amount) {
+    global $pdo;
+
+    // Update counters
+    $stmt = $pdo->prepare("
+        UPDATE users 
+        SET 
+            total_transactions = total_transactions + 1,
+            total_amount = total_amount + ?
+        WHERE id = ?
+    ");
+    $stmt->execute([$amount, $user_id]);
+
+    // Recalculate credit score
+    $stats = $pdo->prepare("
+        SELECT 
+            total_transactions,
+            total_amount,
+            (SELECT COUNT(*) FROM cargo_pay_mpesa_bank WHERE user_id = ? AND status = 'failed') as failed_count
+        FROM users 
+        WHERE id = ?
+    ");
+    $stats->execute([$user_id, $user_id]);
+    $data = $stats->fetch(PDO::FETCH_ASSOC);
+
+    if ($data) {
+        $score = 300
+               + ($data['total_transactions'] * 10)
+               + (floor($data['total_amount'] / 1000) * 5)
+               - ($data['failed_count'] * 40);
+
+        $score = max(300, min(850, $score));
+
+        $update = $pdo->prepare("UPDATE users SET credit_score = ? WHERE id = ?");
+        $update->execute([$score, $user_id]);
+    }
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+// Helper: Log events to transaction_logs table
 function logEvent($transaction_id, $event, $details) {
     global $pdo;
 
-    // If transaction_id is MerchantRequestID (string), convert or adjust as needed
-    // For simplicity we assume it's compatible or cast to string in DB
-
     $stmt = $pdo->prepare("
-        INSERT INTO cargo_pay_mpesa_bank_tranx_logs (transaction_id, event, details)
-        VALUES (?, ?, ?)
+        INSERT INTO transaction_logs 
+        (transaction_id, event, details, created_at)
+        VALUES (?, ?, ?, NOW())
     ");
     $stmt->execute([$transaction_id, $event, $details]);
 }
+
 ?>
