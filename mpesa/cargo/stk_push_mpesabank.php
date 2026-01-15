@@ -26,7 +26,7 @@ $bank_code = $data['bank_code']   ?? '';
 $account   = $data['account']     ?? '';
 $bank_name = $data['bank_name'] ?? '';
 
-if (empty($phone) || $amount <= 0 || empty($bank_code) || empty($account)) {
+if (empty($phone) || $amount <= 0 || empty($bank_code) || empty($bank_name) || empty($account)) {
     echo json_encode([
         'error' => 'Missing parameters',
         'received' => array_keys($data)  // ← very helpful for debugging!
