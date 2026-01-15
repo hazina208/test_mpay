@@ -3,7 +3,7 @@
 // Public API endpoint called by Flutter app to start a transfer
 
 require_once 'DB_connection.php';
-require_once 'mpesa/cargo/configmpesabank.php';
+require_once 'mpesa/cargo/config.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); // Allow Flutter (CORS) - restrict in production!
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
 // Required fields
-$required = ['phone', 'amount', 'bank_code', 'account'];
+$required = ['phone', 'amount', 'bank_code', 'bank_name', 'account'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
@@ -29,11 +29,11 @@ foreach ($required as $field) {
     }
 }
 
-$phone   = trim($data['phone']);
+$phone   = trim($data['phone_number']);
 $amount  = floatval($data['amount']);
 $bank_code = $data['bank_code'];
 $account = $data['account'];
-$name    = $data['name'] ?? '';
+$bank_name    = $data['bank_name'] ?? '';
 
 // Basic validation (add more in production: phone format, amount limits, etc.)
 if ($amount <= 0 || $amount > 999999) {
@@ -68,10 +68,10 @@ $payload = [
     'PhoneNumber'       => ltrim($phone, '+'),
     'CallBackURL'       => CALLBACK_URL_MPESA_BANK,
     'AccountReference'  => 'Mpay-' . time(),
-    'TransactionDesc'   => "Transfer to bank $bank_code"
+    'TransactionDesc'   => "Transfer to bank $bank_name"
 ];
 
-$stkUrl = (DARAJA_ENV === 'sandbox')
+$stkUrl = (MPESA_ENV === 'sandbox')
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
 
@@ -128,7 +128,7 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
 
 // Reuse or define getDarajaToken() here if not requiring stk-push.php
 function getDarajaToken() {
-    $url = (DARAJA_ENV === 'sandbox')
+    $url = (MPESA_ENV === 'sandbox')
         ? 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         : 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
 
