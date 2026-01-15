@@ -3,7 +3,7 @@
 // Updated January 2026 - PesaBridge Project
 //require_once 'config.php';
 //require_once 'db.php';
-require_once 'configmpesabank.php';
+require_once 'config.php';
 require_once 'auth.php';
 include '../../DB_connection.php'; // Use PDO connection
 
@@ -55,7 +55,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
         $tx = $txStmt->fetch(PDO::FETCH_ASSOC);
 
         if ($tx) {
-            disburseToBank($tx['id'], $tx['amount'], $tx['recipient_bank_code'], $tx['recipient_account'], $tx['recipient_name']);
+            disburseToBank($tx['id'], $tx['amount'], $tx['recipient_bank_code'], $tx['recipient_account'], $tx['recipient_bank_name']);
         } else {
             // Rare case: transaction not found in DB
             file_put_contents('logs/callbacks.log', date('Y-m-d H:i:s') . " - WARNING: Transaction not found for MerchantRequestID $merchantID" . PHP_EOL, FILE_APPEND);
@@ -80,7 +80,7 @@ echo "Success";
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Disbursement Function (PesaLink via IntaSend - robust version 2026)
-function disburseToBank($tx_id, $amount, $bank_code, $account, $name) {
+function disburseToBank($tx_id, $amount, $bank_code, $account, $bank_name) {
     global $pdo;
 
     $url = 'https://sandbox.intasend.com/api/v1/payment/payouts/'; 
@@ -94,7 +94,7 @@ function disburseToBank($tx_id, $amount, $bank_code, $account, $name) {
         'beneficiary' => [
             'bank_code'     => $bank_code,      // e.g., '02' for Equity
             'account_number' => $account,
-            'account_name'  => $name
+            'account_name'  => $bank_name
         ],
         'narration'   => "MPAY TX #$tx_id - Transfer to bank"
     ];
