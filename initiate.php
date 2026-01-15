@@ -93,7 +93,7 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
     // Save to DB (simplified - get or create user_id by phone)
     //$userStmt = $pdo->prepare("SELECT id FROM cargo_pay_mpesa_to_bank_senders WHERE phone = ?");
     $userStmt = $pdo->prepare("SELECT email FROM register WHERE id = ?");
-    $userStmt->execute([$phone]);
+    $userStmt->execute([$id]);
     $user = $userStmt->fetch();
     $user_id = $user ? $user['email'] : 1; // Fallback/create new user logic here in real
 
@@ -109,7 +109,7 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
         $amount,
         $bank_code,
         $account,
-        $name,
+        $bank_name,
         $phone
     ]);
 
