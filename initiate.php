@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
 // Required fields
-$required = ['phone', 'amount', 'bank_code', 'bank_name', 'account'];
+$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
@@ -91,10 +91,11 @@ $resp = json_decode($response, true);
 
 if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] === '0') {
     // Save to DB (simplified - get or create user_id by phone)
-    $userStmt = $pdo->prepare("SELECT id FROM cargo_pay_mpesa_to_bank_senders WHERE phone = ?");
+    //$userStmt = $pdo->prepare("SELECT id FROM cargo_pay_mpesa_to_bank_senders WHERE phone = ?");
+    $userStmt = $pdo->prepare("SELECT email FROM register WHERE id = ?");
     $userStmt->execute([$phone]);
     $user = $userStmt->fetch();
-    $user_id = $user ? $user['id'] : 1; // Fallback/create new user logic here in real
+    $user_id = $user ? $user['email'] : 1; // Fallback/create new user logic here in real
 
     $stmt = $pdo->prepare("
         INSERT INTO cargo_pay_mpesa_bank 
