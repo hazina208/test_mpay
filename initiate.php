@@ -99,7 +99,7 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
 
     $stmt = $pdo->prepare("
         INSERT INTO cargo_pay_mpesa_bank 
-        (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_name, phone, status)
+        (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
