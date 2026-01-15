@@ -94,12 +94,12 @@ $resp = json_decode($response, true);
 if (isset($resp['ResponseCode']) && $resp['ResponseCode'] == '0') {
     $stmt = $pdo->prepare("
         INSERT INTO cargo_pay_mpesa_bank 
-        (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_name, phone, status)
+        (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     // Assume user_id from session/phone lookup - simplified here
     $user_id = 1; // In real: query users by phone
-    $stmt->execute([$user_id, $resp['MerchantRequestID'], $resp['CheckoutRequestID'], $amount, $bank_code, $account, $name, $phone]);
+    $stmt->execute([$user_id, $resp['MerchantRequestID'], $resp['CheckoutRequestID'], $amount, $bank_code, $account, $bank_name, $phone]);
 }
 
 echo $response;
