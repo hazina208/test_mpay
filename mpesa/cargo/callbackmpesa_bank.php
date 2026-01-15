@@ -7,7 +7,7 @@
 // Last updated: January 15, 2026
 
 require_once 'config.php';
-require_once 'db.php';
+require_once '../../DB_connection.php';
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Read raw POST data from Safaricom
@@ -206,7 +206,7 @@ function updateUserStats($user_id, $amount) {
     global $pdo;
 
     $stmt = $pdo->prepare("
-        UPDATE users 
+        UPDATE register 
         SET 
             total_transactions = total_transactions + 1,
             total_amount = total_amount + ?
@@ -219,7 +219,7 @@ function updateUserStats($user_id, $amount) {
             total_transactions,
             total_amount,
             (SELECT COUNT(*) FROM cargo_pay_mpesa_bank WHERE user_id = ? AND status = 'failed') as failed_count
-        FROM users 
+        FROM register 
         WHERE id = ?
     ");
     $stats->execute([$user_id, $user_id]);
@@ -233,7 +233,7 @@ function updateUserStats($user_id, $amount) {
 
         $score = max(300, min(850, $score));
 
-        $update = $pdo->prepare("UPDATE users SET credit_score = ? WHERE id = ?");
+        $update = $pdo->prepare("UPDATE register SET credit_score = ? WHERE id = ?");
         $update->execute([$score, $user_id]);
     }
 }
