@@ -2,22 +2,23 @@
 // callback.php
 // Daraja STK Push Callback Handler + IntaSend PesaLink Disbursement
 // Updated for CargoPay - Table: cargo_pay_mpesa_bank
-// Changes: account_name → bank_name in payload, recipient_name → recipient_bank_name
+// Now includes recipient_name (account holder) + recipient_bank_name (bank name)
+// Both sent to IntaSend: 'account_name' and 'bank_name'
 // Last updated: January 15, 2026
 
 require_once 'config.php';
-require_once '../../DB_connection.php';
+require_once 'db.php';
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Read raw POST data from Safaricom
 $json = file_get_contents('php://input');
 $callback = json_decode($json, true);
 
-// Always log the incoming callback - very important for debugging
+// Always log the incoming callback
 $log_time = date('Y-m-d H:i:s');
 file_put_contents('logs/callbacks.log', $log_time . " - " . $json . PHP_EOL, FILE_APPEND);
 
-// Early exit if not a valid STK callback structure
+// Early exit if not a valid STK callback
 if (!isset($callback['Body']['stkCallback'])) {
     http_response_code(200);
     echo "Accepted (empty callback)";
@@ -34,7 +35,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
     if ($resultCode == 0) {
         // ─── SUCCESS: Payment collected ───────────────────────────────────────
 
-        // Extract M-Pesa Receipt Number from CallbackMetadata (reliable way)
+        // Extract M-Pesa Receipt Number
         $receipt = '';
         if (isset($callback['Body']['stkCallback']['CallbackMetadata']['Item'])) {
             foreach ($callback['Body']['stkCallback']['CallbackMetadata']['Item'] as $item) {
@@ -45,7 +46,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
             }
         }
 
-        // Update transaction to collected
+        // Update to collected
         $stmt = $pdo->prepare("
             UPDATE cargo_pay_mpesa_bank 
             SET 
@@ -56,9 +57,16 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
         ");
         $stmt->execute([$receipt, $merchantID]);
 
-        // Fetch transaction details to proceed with disbursement
+        // Fetch transaction details (now includes recipient_name)
         $txStmt = $pdo->prepare("
-            SELECT id, user_id, amount, recipient_bank_code, recipient_account, recipient_bank_name 
+            SELECT 
+                id, 
+                user_id, 
+                amount, 
+                recipient_bank_code, 
+                recipient_account, 
+                recipient_bank_name,
+                recipient_name
             FROM cargo_pay_mpesa_bank 
             WHERE merchant_request_id = ?
         ");
@@ -72,7 +80,8 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
                 $tx['amount'],
                 $tx['recipient_bank_code'],
                 $tx['recipient_account'],
-                $tx['recipient_bank_name']  // Now using the renamed column
+                $tx['recipient_bank_name'],
+                $tx['recipient_name'] ?? ''  // Fallback to empty if null
             );
         } else {
             file_put_contents(
@@ -98,13 +107,13 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
     }
 }
 
-// Always respond with 200 OK to Safaricom
+// Always respond 200 to Safaricom
 http_response_code(200);
 echo "Success";
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Function: Send money to bank via IntaSend (PesaLink)
-function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name) {
+// Function: Disburse via IntaSend (PesaLink) - now sends both bank_name & account_name
+function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name, $recipient_name) {
     global $pdo;
 
     $url = 'https://sandbox.intasend.com/api/v1/payment/payouts/';
@@ -118,7 +127,8 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
         'beneficiary' => [
             'bank_code'      => $bank_code,
             'account_number' => $account,
-            'bank_name'      => $bank_name   // ← Changed from account_name to bank_name
+            'bank_name'      => $bank_name,         // Bank name (e.g. "Equity Bank")
+            'account_name'   => $recipient_name     // Account holder's name
         ],
         'narration'   => "CargoPay TX #$tx_id - Transfer to bank"
     ];
@@ -137,7 +147,7 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
 
     $response = json_decode($res, true);
 
-    // ─── SUCCESS CASE ────────────────────────────────────────────────────────
+    // ─── SUCCESS ─────────────────────────────────────────────────────────────
     if ($httpCode >= 200 && $httpCode < 300 && isset($response['status']) && strtolower($response['status']) === 'success') {
         $ref = $response['reference'] ?? $response['tracking_id'] ?? $response['id'] ?? 'No reference';
 
@@ -159,7 +169,7 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
         return true;
     }
 
-    // ─── FAILURE CASE ────────────────────────────────────────────────────────
+    // ─── FAILURE ─────────────────────────────────────────────────────────────
     $failure_reason = "Disbursement failed. HTTP $httpCode";
     if ($curlError) {
         $failure_reason .= " | cURL error: $curlError";
@@ -191,11 +201,10 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Function: Update user totals and recalculate credit score
+// Update user totals and credit score
 function updateUserStats($user_id, $amount) {
     global $pdo;
 
-    // Update counters
     $stmt = $pdo->prepare("
         UPDATE users 
         SET 
@@ -205,7 +214,6 @@ function updateUserStats($user_id, $amount) {
     ");
     $stmt->execute([$amount, $user_id]);
 
-    // Recalculate credit score
     $stats = $pdo->prepare("
         SELECT 
             total_transactions,
@@ -231,7 +239,7 @@ function updateUserStats($user_id, $amount) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Helper: Log events to transaction_logs table
+// Log to transaction_logs
 function logEvent($transaction_id, $event, $details) {
     global $pdo;
 
