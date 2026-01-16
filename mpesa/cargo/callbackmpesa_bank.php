@@ -47,7 +47,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
         }
 
         // Update to collected
-        $stmt = $pdo->prepare("
+        $stmt = $conn->prepare("
             UPDATE cargo_pay_mpesa_bank 
             SET 
                 status = 'collected',
@@ -58,7 +58,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
         $stmt->execute([$receipt, $merchantID]);
 
         // Fetch transaction details (now includes recipient_name)
-        $txStmt = $pdo->prepare("
+        $txStmt = $conn->prepare("
             SELECT 
                 id, 
                 user_id, 
@@ -92,7 +92,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
         // ─── FAILURE: STK Push failed ──────────────────────────────────────────
         $reason = $resultDesc ?: 'Unknown failure';
 
-        $stmt = $pdo->prepare("
+        $stmt = $conn->prepare("
             UPDATE cargo_pay_mpesa_bank 
             SET 
                 status = 'failed',
@@ -112,7 +112,7 @@ echo "Success";
 // ────────────────────────────────────────────────────────────────────────────────
 // Function: Disburse via IntaSend (PesaLink) - now sends both bank_name & account_name
 function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name) {
-    global $pdo;
+    global $conn;
 
     $url = 'https://sandbox.intasend.com/api/v1/payment/payouts/';
     // LIVE: 'https://api.intasend.com/api/v1/payment/payouts/'
@@ -149,7 +149,7 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
     if ($httpCode >= 200 && $httpCode < 300 && isset($response['status']) && strtolower($response['status']) === 'success') {
         $ref = $response['reference'] ?? $response['tracking_id'] ?? $response['id'] ?? 'No reference';
 
-        $stmt = $pdo->prepare("
+        $stmt = $conn->prepare("
             UPDATE cargo_pay_mpesa_bank 
             SET 
                 status = 'disbursed',
@@ -184,7 +184,7 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
         $failure_reason .= " | No response received";
     }
 
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         UPDATE cargo_pay_mpesa_bank 
         SET 
             status = 'failed',
@@ -201,9 +201,9 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
 // ────────────────────────────────────────────────────────────────────────────────
 // Update user totals and credit score
 function updateUserStats($user_id, $amount) {
-    global $pdo;
+    global $conn;
 
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         UPDATE register 
         SET 
             total_transactions = total_transactions + 1,
@@ -212,7 +212,7 @@ function updateUserStats($user_id, $amount) {
     ");
     $stmt->execute([$amount, $user_id]);
 
-    $stats = $pdo->prepare("
+    $stats = $conn->prepare("
         SELECT 
             total_transactions,
             total_amount,
@@ -231,7 +231,7 @@ function updateUserStats($user_id, $amount) {
 
         $score = max(300, min(850, $score));
 
-        $update = $pdo->prepare("UPDATE register SET credit_score = ? WHERE id = ?");
+        $update = $conn->prepare("UPDATE register SET credit_score = ? WHERE id = ?");
         $update->execute([$score, $user_id]);
     }
 }
@@ -239,9 +239,9 @@ function updateUserStats($user_id, $amount) {
 // ────────────────────────────────────────────────────────────────────────────────
 // Log to transaction_logs
 function logEvent($transaction_id, $event, $details) {
-    global $pdo;
+    global $conn;
 
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         INSERT INTO transaction_logs 
         (transaction_id, event, details, created_at)
         VALUES (?, ?, ?, NOW())
