@@ -66,7 +66,6 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
                 recipient_bank_code, 
                 recipient_account, 
                 recipient_bank_name,
-                recipient_name
             FROM cargo_pay_mpesa_bank 
             WHERE merchant_request_id = ?
         ");
@@ -81,7 +80,6 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
                 $tx['recipient_bank_code'],
                 $tx['recipient_account'],
                 $tx['recipient_bank_name'],
-                $tx['recipient_name'] ?? ''  // Fallback to empty if null
             );
         } else {
             file_put_contents(
@@ -128,7 +126,7 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
             'bank_code'      => $bank_code,
             'account_number' => $account,
             'bank_name'      => $bank_name,         // Bank name (e.g. "Equity Bank")
-            'account_name'   => $recipient_name     // Account holder's name
+            //'account_name'   => $recipient_name     // Account holder's name
         ],
         'narration'   => "CargoPay TX #$tx_id - Transfer to bank"
     ];
