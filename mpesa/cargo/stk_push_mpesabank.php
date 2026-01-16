@@ -57,16 +57,16 @@ if (!$token) {
 }
 
 $timestamp = date('YmdHis');
-$password = base64_encode(MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
+$password = base64_encode(CARGO_MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
 
 $data = [
-    'BusinessShortCode' => MPESA_SHORTCODE,
+    'BusinessShortCode' => CARGO_MPESA_SHORTCODE,
     'Password' => $password,
     'Timestamp' => $timestamp,
     'TransactionType' => 'CustomerPayBillOnline',
     'Amount' => $amount,
     'PartyA' => ltrim($phone, '+'),
-    'PartyB' => MPESA_SHORTCODE,
+    'PartyB' => CARGO_MPESA_SHORTCODE,
     'PhoneNumber' => ltrim($phone, '+'),
     'CallBackURL' => CALLBACK_URL_CARGO_MPESATOBANK,
     'AccountReference' => 'MPAY-' . time(),
