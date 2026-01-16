@@ -16,7 +16,7 @@
             <thead><tr><th>ID</th><th>Amount</th><th>Status</th><th>Phone</th><th>Bank</th><th>Date</th></tr></thead>
             <tbody>
             <?php
-            $stmt = $pdo->query("SELECT t.*, u.phone FROM cargo_pay_mpesa_bank t JOIN cargo_pay_mpesa_to_bank_senders u ON t.user_id = u.id ORDER BY t.id DESC LIMIT 50");
+            $stmt = $pdo->query("SELECT t.*, u.phone FROM cargo_pay_mpesa_bank t JOIN resgister u ON t.user_id = u.id ORDER BY t.id DESC LIMIT 50");
             while ($row = $stmt->fetch()) {
                 echo "<tr><td>{$row['id']}</td><td>KES {$row['amount']}</td><td>{$row['status']}</td><td>{$row['phone']}</td><td>Bank {$row['recipient_bank_code']}</td><td>{$row['created_at']}</td></tr>";
             }
