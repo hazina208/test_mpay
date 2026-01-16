@@ -3,7 +3,7 @@
 //require_once 'config.php';
 //require_once 'db.php';
 require_once 'DB_connection.php';
-require_once 'mpesa/cargo/configmpesabank.php';
+require_once 'mpesa/cargo/config.php';
 // Example: Query Daraja for status if needed, or IntaSend status
 // For simplicity, assume disbursed = reconciled after 24h
 $stmt = $pdo->query("SELECT * FROM cargo_pay_mpesa_bank WHERE status IN ('collected', 'disbursed') AND created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)");
@@ -27,7 +27,7 @@ function updateCreditScore($user_id) {
     $score = 300 + ($data['count'] * 10) + ($data['total'] / 1000) - ($data['fails'] * 50);
     $score = min(850, max(300, $score));
     
-    $pdo->prepare("UPDATE cargo_pay_mpesa_to_bank_senders SET credit_score = ?, total_transactions = ?, total_amount = ? WHERE id = ?")
+    $pdo->prepare("UPDATE register SET credit_score = ?, total_transactions = ?, total_amount = ? WHERE id = ?")
         ->execute([$score, $data['count'], $data['total'], $user_id]);
 }
 ?>
