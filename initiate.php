@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
 // Required fields
-$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account_name','account'];
+$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
@@ -55,16 +55,16 @@ if (!$token) {
 }
 
 $timestamp = date('YmdHis');
-$password = base64_encode(MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
+$password = base64_encode(CARGO_MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
 
 $payload = [
-    'BusinessShortCode' => MPESA_SHORTCODE,
+    'BusinessShortCode' => CARGO_MPESA_SHORTCODE,
     'Password'          => $password,
     'Timestamp'         => $timestamp,
     'TransactionType'   => 'CustomerPayBillOnline',
     'Amount'            => $amount,
     'PartyA'            => ltrim($phone, '+'),
-    'PartyB'            => MPESA_SHORTCODE,
+    'PartyB'            => CARGO_MPESA_SHORTCODE,
     'PhoneNumber'       => ltrim($phone, '+'),
     'CallBackURL'       => CALLBACK_URL_MPESA_BANK,
     'AccountReference'  => 'Mpay-' . time(),
