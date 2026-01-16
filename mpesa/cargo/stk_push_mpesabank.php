@@ -92,7 +92,7 @@ $resp = json_decode($response, true);
 
 // Save to DB if initiated
 if (isset($resp['ResponseCode']) && $resp['ResponseCode'] == '0') {
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         INSERT INTO cargo_pay_mpesa_bank 
         (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
