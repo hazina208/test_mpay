@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
 // Required fields
-$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account'];
+$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account_name','account'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
