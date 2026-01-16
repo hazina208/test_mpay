@@ -111,7 +111,7 @@ echo "Success";
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Function: Disburse via IntaSend (PesaLink) - now sends both bank_name & account_name
-function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name, $recipient_name) {
+function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name) {
     global $pdo;
 
     $url = 'https://sandbox.intasend.com/api/v1/payment/payouts/';
