@@ -6,7 +6,7 @@ require_once 'mpesa/cargo/config.php';
 require_once 'DB_connection.php';
 
 // Sample data fetching (add real filters later via GET/POST)
-$transactions = $pdo->query("
+$transactions = $conn->query("
     SELECT t.*, u.phone, b.name as branch_name 
     FROM cargo_pay_mpesa_bank t 
     LEFT JOIN users u ON t.user_id = u.id 
@@ -15,7 +15,7 @@ $transactions = $pdo->query("
     LIMIT 50
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-$users = $pdo->query("
+$users = conno->query("
     SELECT u.*, b.name as branch_name 
     FROM users u 
     LEFT JOIN branches b ON u.branch_id = b.id 
@@ -23,12 +23,12 @@ $users = $pdo->query("
     LIMIT 30
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-$branches = $pdo->query("SELECT * FROM branches")->fetchAll(PDO::FETCH_ASSOC);
+$branches = $conn->query("SELECT * FROM branches")->fetchAll(PDO::FETCH_ASSOC);
 
 // Aggregates
-$total_in     = $pdo->query("SELECT SUM(amount) FROM cargo_pay_mpesa_bank WHERE status IN ('collected','disbursed')")->fetchColumn() ?? 0;
-$total_out    = $pdo->query("SELECT SUM(amount) FROM cargo_pay_mpesa_bank WHERE status = 'disbursed'")->fetchColumn() ?? 0;
-$discrepant   = $pdo->query("SELECT COUNT(*) FROM cargo_pay_mpesa_bank WHERE disbursed_at < DATE_SUB(NOW(), INTERVAL 24 HOUR) AND status != 'reconciled'")->fetchColumn() ?? 0;
+$total_in     = $conn->query("SELECT SUM(amount) FROM cargo_pay_mpesa_bank WHERE status IN ('collected','disbursed')")->fetchColumn() ?? 0;
+$total_out    = $conn->query("SELECT SUM(amount) FROM cargo_pay_mpesa_bank WHERE status = 'disbursed'")->fetchColumn() ?? 0;
+$discrepant   = $conn->query("SELECT COUNT(*) FROM cargo_pay_mpesa_bank WHERE disbursed_at < DATE_SUB(NOW(), INTERVAL 24 HOUR) AND status != 'reconciled'")->fetchColumn() ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
