@@ -66,7 +66,7 @@ $payload = [
     'PartyA'            => ltrim($phone, '+'),
     'PartyB'            => CARGO_MPESA_SHORTCODE,
     'PhoneNumber'       => ltrim($phone, '+'),
-    'CallBackURL'       => CALLBACK_URL_MPESABANK,
+    'CallBackURL'       => CALLBACK_URL_CARGO_MPESATOBANK,
     'AccountReference'  => 'Mpay-' . time(),
     'TransactionDesc'   => "Transfer to bank $bank_name"
 ];
