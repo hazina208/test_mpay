@@ -34,7 +34,7 @@ $phone   = trim($data['phone_number']);
 $amount  = floatval($data['amount']);
 $bank_code = $data['bank_code'];
 $account = $data['account'];
-$bank_name    = $data['bank_name'] ?? '';
+$bank_name = $data['bank_name'] ?? '';
 
 // Basic validation (add more in production: phone format, amount limits, etc.)
 if ($amount <= 0 || $amount > 999999) {
