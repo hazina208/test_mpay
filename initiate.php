@@ -3,6 +3,7 @@
 // Public API endpoint called by Flutter app to start a transfer
 
 require_once 'DB_connection.php';
+require_once 'mpesa/cargo/auth.php';
 require_once 'mpesa/cargo/config.php';
 
 header('Content-Type: application/json');
