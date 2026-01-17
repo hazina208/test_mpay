@@ -66,7 +66,7 @@ $payload = [
     'PartyA'            => ltrim($phone, '+'),
     'PartyB'            => CARGO_MPESA_SHORTCODE,
     'PhoneNumber'       => ltrim($phone, '+'),
-    'CallBackURL'       => CALLBACK_URL_MPESA_BANK,
+    'CallBackURL'       => CALLBACK_URL_MPESABANK,
     'AccountReference'  => 'Mpay-' . time(),
     'TransactionDesc'   => "Transfer to bank $bank_name"
 ];
@@ -92,12 +92,12 @@ $resp = json_decode($response, true);
 if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] === '0') {
     // Save to DB (simplified - get or create user_id by phone)
     //$userStmt = $pdo->prepare("SELECT id FROM cargo_pay_mpesa_to_bank_senders WHERE phone = ?");
-    $userStmt = $pdo->prepare("SELECT email FROM register WHERE id = ?");
+    $userStmt = $conn->prepare("SELECT email FROM register WHERE id = ?");
     $userStmt->execute([$id]);
     $user = $userStmt->fetch();
     $user_id = $user ? $user['email'] : 1; // Fallback/create new user logic here in real
 
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         INSERT INTO cargo_pay_mpesa_bank 
         (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
