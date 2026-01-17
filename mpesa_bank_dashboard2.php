@@ -9,7 +9,7 @@ require_once 'DB_connection.php';
 $transactions = $conn->query("
     SELECT t.*, u.phone, b.name as branch_name 
     FROM cargo_pay_mpesa_bank t 
-    LEFT JOIN users u ON t.user_id = u.id 
+    LEFT JOIN register u ON t.user_id = u.id 
     LEFT JOIN branches b ON t.branch_id = b.id 
     ORDER BY t.created_at DESC 
     LIMIT 50
@@ -17,7 +17,7 @@ $transactions = $conn->query("
 
 $users = conno->query("
     SELECT u.*, b.name as branch_name 
-    FROM users u 
+    FROM register u 
     LEFT JOIN branches b ON u.branch_id = b.id 
     ORDER BY u.credit_score DESC 
     LIMIT 30
