@@ -7,6 +7,7 @@
 // Last updated: January 15, 2026
 
 require_once 'config.php';
+require_once 'auth.php';
 require_once '../../DB_connection.php';
 
 // ────────────────────────────────────────────────────────────────────────────────
