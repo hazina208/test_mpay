@@ -5,8 +5,8 @@
 // Updates status, logs events, and can trigger notifications
 // Run via cron:  */30 * * * * php /path/to/reconcile.php >> /path/to/logs/reconcile.log 2>&1
 
-require_once 'config.php';
-require_once 'db.php';
+require_once 'mpesa/cargo/config.php';
+require_once 'DB_connection.php';
 
 echo "Reconciliation started: " . date('Y-m-d H:i:s') . "\n";
 
@@ -33,7 +33,7 @@ $query = "
     LIMIT 500  -- safety limit - adjust as needed
 ";
 
-$stmt = $pdo->prepare($query);
+$stmt = $conn->prepare($query);
 $stmt->execute();
 $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -54,7 +54,7 @@ foreach ($transactions as $tx) {
     
     if ($should_be_reconciled) {
         // Mark as reconciled
-        $update = $pdo->prepare("
+        $update = $conn->prepare("
             UPDATE cargo_pay_mpesa_bank 
             SET 
                 status = 'reconciled',
@@ -69,7 +69,7 @@ foreach ($transactions as $tx) {
         echo "TX #$tx_id reconciled successfully\n";
     } else {
         // Flag as discrepant
-        $update = $pdo->prepare("
+        $update = $conn->prepare("
             UPDATE cargo_pay_mpesa_bank 
             SET 
                 status = 'discrepant',
@@ -102,9 +102,9 @@ echo "----------------------------------------\n";
 // Helper functions
 
 function logReconciliationEvent($transaction_id, $event, $details) {
-    global $pdo;
+    global $conn;
     
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         INSERT INTO transaction_logs 
         (transaction_id, event, details, created_at)
         VALUES (?, ?, ?, NOW())
