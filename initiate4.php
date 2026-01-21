@@ -1,14 +1,17 @@
 <?php
 // backend/api/initiate.php
+// Public API endpoint called by Flutter app to start a transfer
+
 require_once 'DB_connection.php';
 require_once 'mpesa/cargo/auth.php';
 require_once 'mpesa/cargo/config.php';
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: *'); // Allow Flutter (CORS) - restrict in production!
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+// Only allow POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
@@ -27,54 +30,28 @@ foreach ($required as $field) {
     }
 }
 
-$phone      = trim($data['phone_number']);
-$amount     = floatval($data['amount']);
-$bank_code  = $data['bank_code'];
-$account    = $data['account'];
-$bank_name  = $data['bank_name'] ?? '';
-$branch_id  = isset($data['branch_id']) ? (int)$data['branch_id'] : null;  // ← NEW: get from Flutter
+$phone   = trim($data['phone_number']);
+$amount  = floatval($data['amount']);
+$bank_code = $data['bank_code'];
+$account = $data['account'];
+$bank_name = $data['bank_name'] ?? '';
 
-// Validation
+// Basic validation (add more in production: phone format, amount limits, etc.)
 if ($amount <= 0 || $amount > 999999) {
     echo json_encode(['error' => 'Invalid amount']);
     exit;
 }
 if (!preg_match('/^2547\d{8}$/', $phone)) {
-    echo json_encode(['error' => 'Invalid phone number']);
+    echo json_encode(['error' => 'Invalid phone number format (use 2547xxxxxxxx)']);
     exit;
 }
 
-// Get or create user
-$userStmt = $conn->prepare("SELECT id, email, branch_id FROM register WHERE phone = ?");
-$userStmt->execute([$phone]);
-$user = $userStmt->fetch(PDO::FETCH_ASSOC);
+// Now call the STK Push logic (we can include stk-push.php or duplicate the code here)
+// For simplicity, we duplicate the core logic here (or require 'stk-push.php' and call a function)
 
-if ($user) {
-    $user_id = $user['id'];
-    $user_email = $user['email'];
-    // Prefer user's stored branch_id if exists, otherwise use the one from app
-    $branch_id = $user['branch_id'] ?? $branch_id;
-} else {
-    // Create new user if not found
-    $insert = $conn->prepare("
-        INSERT INTO register (phone, branch_id) 
-        VALUES (?, ?)
-    ");
-    $insert->execute([$phone, $branch_id]);
-    $user_id = $conn->lastInsertId();
-}
-
-// If no branch_id at all → error or default
-if ($branch_id === null) {
-    echo json_encode(['error' => 'No branch selected. Please contact support or log in again.']);
-    exit;
-}
-
-// ─────────────────────────────────────────────
-// Initiate STK Push
-$token = getDarajaToken();
+$token = getDarajaToken(); // Function from stk-push.php or defined below
 if (!$token) {
-    echo json_encode(['error' => 'Failed to get token']);
+    echo json_encode(['error' => 'Failed to get access token']);
     exit;
 }
 
@@ -83,16 +60,16 @@ $password = base64_encode(CARGO_MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
 
 $payload = [
     'BusinessShortCode' => CARGO_MPESA_SHORTCODE,
-    'Password' => $password,
-    'Timestamp' => $timestamp,
-    'TransactionType' => 'CustomerPayBillOnline',
-    'Amount' => $amount,
-    'PartyA' => ltrim($phone, '+'),
-    'PartyB' => CARGO_MPESA_SHORTCODE,
-    'PhoneNumber' => ltrim($phone, '+'),
-    'CallBackURL' => CALLBACK_URL_CARGO_MPESATOBANK,
-    'AccountReference' => 'Mpay-' . time(),
-    'TransactionDesc' => "Transfer to bank $bank_name"
+    'Password'          => $password,
+    'Timestamp'         => $timestamp,
+    'TransactionType'   => 'CustomerPayBillOnline',
+    'Amount'            => $amount,
+    'PartyA'            => ltrim($phone, '+'),
+    'PartyB'            => CARGO_MPESA_SHORTCODE,
+    'PhoneNumber'       => ltrim($phone, '+'),
+    'CallBackURL'       => CALLBACK_URL_CARGO_MPESATOBANK,
+    'AccountReference'  => 'Mpay-' . time(),
+    'TransactionDesc'   => "Transfer to bank $bank_name"
 ];
 
 $stkUrl = (MPESA_ENV === 'sandbox')
@@ -114,17 +91,20 @@ curl_close($ch);
 $resp = json_decode($response, true);
 
 if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] === '0') {
-    // Insert transaction WITH branch_id
+    // Save to DB (simplified - get or create user_id by phone)
+    //$userStmt = $pdo->prepare("SELECT id FROM cargo_pay_mpesa_to_bank_senders WHERE phone = ?");
+    $userStmt = $conn->prepare("SELECT email FROM register WHERE id = ?");
+    $userStmt->execute([$id]);
+    $user = $userStmt->fetch();
+    $user_id = $user ? $user['email'] : 1; // Fallback/create new user logic here in real
+
     $stmt = $conn->prepare("
-        INSERT INTO cargo_pay_mpesa_bank
-        (user_id, branch_id, email, merchant_request_id, checkout_request_id, amount,
-         recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+        INSERT INTO cargo_pay_mpesa_bank 
+        (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
         $user_id,
-        $branch_id,
-        $user_email, // ← Now saved!
         $resp['MerchantRequestID'],
         $resp['CheckoutRequestID'],
         $amount,
@@ -136,18 +116,19 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
 
     echo json_encode([
         'success' => true,
-        'message' => 'STK Push initiated successfully. Please complete payment on your phone.',
+        'message' => 'STK Push initiated successfully',
         'merchant_request_id' => $resp['MerchantRequestID'],
         'checkout_request_id' => $resp['CheckoutRequestID']
     ]);
 } else {
     echo json_encode([
         'success' => false,
-        'error' => $resp['ResponseDescription'] ?? 'Failed to initiate STK Push',
-        'details' => $resp
+        'error' => $resp['errorMessage'] ?? $resp['ResponseDescription'] ?? 'Failed to initiate STK Push',
+        'details' => $response // for debugging
     ]);
 }
 
+// Reuse or define getDarajaToken() here if not requiring stk-push.php
 function getDarajaToken() {
     $url = (MPESA_ENV === 'sandbox')
         ? 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
