@@ -11,7 +11,7 @@ define('CONSUMER_SECRET', getenv('CONSUMER_SECRET') ?: 'KiItsROrqWTmygwnHAZA6QpJ
 // Specific callbacks
 define('MPESA_CALLBACK_URL_TILL',       'https://test-mpay.onrender.com/mpesa/cargo/callbacktill.php');
 define('MPESA_CALLBACK_URL_PAYBILL',    'https://test-mpay.onrender.com/mpesa/cargo/callbackpaybill.php');
-define('CALLBACK_URL_CARGO_MPESATOBANK','https://test-mpay.onrender.com/mpesa/cargo/callbackmpesatobank.php');
+define('CALLBACK_URL_CARGO_MPESATOBANK','https://test-mpay.onrender.com/mpesa/cargo/callbackmpesa_bank.php');
 
 define('INITIATE_URL', 'https://test-mpay.onrender.com/initiate.php');
 define('INTASEND_API_KEY',  getenv('INTASEND_API_KEY') ?: 'ISSecretKey_test_40c858c5-0aa8-4543-92b4-c7ba0bd38a0c'); // Wrapper for PesaLink
