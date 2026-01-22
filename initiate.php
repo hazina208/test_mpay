@@ -30,6 +30,13 @@ $account = $data['account'];
 $bank_name = $data['bank_name'] ?? '';
 $email = $data['email'] ?? '';  // New: From Flutter
 $branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null; // ← NEW: get from Flutter
+if (empty($phone) || $amount <= 0 || empty($bank_code) || empty($bank_name) || empty($account)) {
+    echo json_encode([
+        'error' => 'Missing parameters',
+        'received' => array_keys($data) // ← very helpful for debugging!
+    ]);
+    exit;
+}
 // Validation
 if ($amount <= 0 || $amount > 999999) {
     echo json_encode(['error' => 'Invalid amount']);
