@@ -1,26 +1,21 @@
+// initiate.php (Full corrected file)
 <?php
 // backend/api/initiate.php
-// Public API endpoint called by Flutter app to start a transfer
-
 require_once 'DB_connection.php';
-require_once 'mpesa/cargo/configmpesabank.php';
-
+require_once 'mpesa/cargo/auth.php';
+require_once 'mpesa/cargo/config.php';
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // Allow Flutter (CORS) - restrict in production!
+header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
-
-// Only allow POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
     exit;
 }
-
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-
 // Required fields
-$required = ['phone', 'amount', 'bank_code', 'account'];
+$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
@@ -28,53 +23,77 @@ foreach ($required as $field) {
         exit;
     }
 }
-
-$phone   = trim($data['phone']);
-$amount  = floatval($data['amount']);
+$phone = trim($data['phone_number']);
+$amount = floatval($data['amount']);
 $bank_code = $data['bank_code'];
 $account = $data['account'];
-$name    = $data['name'] ?? '';
-
-// Basic validation (add more in production: phone format, amount limits, etc.)
+$bank_name = $data['bank_name'] ?? '';
+$email = $data['email'] ?? '';  // New: From Flutter
+$branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null; // ← NEW: get from Flutter
+// Validation
 if ($amount <= 0 || $amount > 999999) {
     echo json_encode(['error' => 'Invalid amount']);
     exit;
 }
 if (!preg_match('/^2547\d{8}$/', $phone)) {
-    echo json_encode(['error' => 'Invalid phone number format (use 2547xxxxxxxx)']);
+    echo json_encode(['error' => 'Invalid phone number']);
     exit;
 }
+// Get or create user in users (since it has phone, email, stats)
+$userStmt = $conn->prepare("SELECT user_id, email, branch_id FROM users WHERE phone = ? OR email = ?");
+$userStmt->execute([$phone, $email]);
+$user = $userStmt->fetch(PDO::FETCH_ASSOC);
 
-// Now call the STK Push logic (we can include stk-push.php or duplicate the code here)
-// For simplicity, we duplicate the core logic here (or require 'stk-push.php' and call a function)
+if ($user) {
+    $user_id = $user['user_id'];
+    $user_email = $user['email'];
+    $branch_id = $user['branch_id'] ?? $branch_id; // Prefer stored
+} else {
+    // Create in users (link to register if email matches)
+    $regStmt = $conn->prepare("SELECT id, branch_id FROM register WHERE email = ?");
+    $regStmt->execute([$email]);
+    $reg = $regStmt->fetch(PDO::FETCH_ASSOC);
+    $reg_id = $reg ? $reg['id'] : null; // Link user_id to register.id if possible
+    $branch_id = $reg ? $reg['branch_id'] : $branch_id;
 
-$token = getDarajaToken(); // Function from stk-push.php or defined below
+    $insert = $conn->prepare("
+        INSERT INTO users (user_id, phone, branch_id, email, credit_score, total_transactions, total_amount)
+        VALUES (?, ?, ?, ?, 300, 0, 0)  // Default stats; user_id = register.id if exists
+    ");
+    $insert->execute([$reg_id, $phone, $branch_id, $email]);
+    $user_id = $reg_id ?? $conn->lastInsertId(); // If no reg, auto user_id
+    $user_email = $email;
+}
+// If no branch_id at all → error or default
+if ($branch_id === null) {
+    echo json_encode(['error' => 'No branch selected. Please contact support or log in again.']);
+    exit;
+}
+// ─────────────────────────────────────────────
+// Initiate STK Push
+$token = getDarajaToken();
 if (!$token) {
-    echo json_encode(['error' => 'Failed to get access token']);
+    echo json_encode(['error' => 'Failed to get token']);
     exit;
 }
-
 $timestamp = date('YmdHis');
-$password = base64_encode(DARAJA_SHORTCODE . DARAJA_PASSKEY . $timestamp);
-
+$password = base64_encode(CARGO_MPESA_SHORTCODE . MPESA_PASSKEY . $timestamp);
 $payload = [
-    'BusinessShortCode' => DARAJA_SHORTCODE,
-    'Password'          => $password,
-    'Timestamp'         => $timestamp,
-    'TransactionType'   => 'CustomerPayBillOnline',
-    'Amount'            => $amount,
-    'PartyA'            => ltrim($phone, '+'),
-    'PartyB'            => DARAJA_SHORTCODE,
-    'PhoneNumber'       => ltrim($phone, '+'),
-    'CallBackURL'       => CALLBACK_URL,
-    'AccountReference'  => 'PesaBridge-' . time(),
-    'TransactionDesc'   => "Transfer to bank $bank_code"
+    'BusinessShortCode' => CARGO_MPESA_SHORTCODE,
+    'Password' => $password,
+    'Timestamp' => $timestamp,
+    'TransactionType' => 'CustomerPayBillOnline',
+    'Amount' => $amount,
+    'PartyA' => ltrim($phone, '+'),
+    'PartyB' => CARGO_MPESA_SHORTCODE,
+    'PhoneNumber' => ltrim($phone, '+'),
+    'CallBackURL' => CALLBACK_URL_CARGO_MPESATOBANK,
+    'AccountReference' => 'Mpay-' . time(),
+    'TransactionDesc' => "Transfer to bank $bank_name"
 ];
-
-$stkUrl = (DARAJA_ENV === 'sandbox')
+$stkUrl = (MPESA_ENV === 'sandbox')
     ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
-
 $ch = curl_init($stkUrl);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Authorization: Bearer $token",
@@ -86,53 +105,45 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
-
 $resp = json_decode($response, true);
-
 if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] === '0') {
-    // Save to DB (simplified - get or create user_id by phone)
-    $userStmt = $pdo->prepare("SELECT id FROM users WHERE phone = ?");
-    $userStmt->execute([$phone]);
-    $user = $userStmt->fetch();
-    $user_id = $user ? $user['id'] : 1; // Fallback/create new user logic here in real
-
-    $stmt = $pdo->prepare("
-        INSERT INTO transactions 
-        (user_id, merchant_request_id, checkout_request_id, amount, recipient_bank_code, recipient_account, recipient_name, phone, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+    // Insert transaction WITH branch_id
+    $stmt = $conn->prepare("
+        INSERT INTO cargo_pay_mpesa_bank
+        (user_id, branch_id, email, merchant_request_id, checkout_request_id, amount,
+         recipient_bank_code, recipient_account, recipient_bank_name, mpesa_phone, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
         $user_id,
+        $branch_id,
+        $user_email, // ← Now saved!
         $resp['MerchantRequestID'],
         $resp['CheckoutRequestID'],
         $amount,
         $bank_code,
         $account,
-        $name,
+        $bank_name,
         $phone
     ]);
-
     echo json_encode([
         'success' => true,
-        'message' => 'STK Push initiated successfully',
+        'message' => 'STK Push initiated successfully. Please complete payment on your phone.',
         'merchant_request_id' => $resp['MerchantRequestID'],
         'checkout_request_id' => $resp['CheckoutRequestID']
     ]);
 } else {
     echo json_encode([
         'success' => false,
-        'error' => $resp['errorMessage'] ?? $resp['ResponseDescription'] ?? 'Failed to initiate STK Push',
-        'details' => $response // for debugging
+        'error' => $resp['ResponseDescription'] ?? 'Failed to initiate STK Push',
+        'details' => $resp
     ]);
 }
-
-// Reuse or define getDarajaToken() here if not requiring stk-push.php
 function getDarajaToken() {
-    $url = (DARAJA_ENV === 'sandbox')
+    $url = (MPESA_ENV === 'sandbox')
         ? 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         : 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
-
-    $cred = base64_encode(DARAJA_CONSUMER_KEY . ':' . DARAJA_CONSUMER_SECRET);
+    $cred = base64_encode(CONSUMER_KEY . ':' . CONSUMER_SECRET);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Basic $cred"]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
