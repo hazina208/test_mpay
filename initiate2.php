@@ -45,7 +45,7 @@ if (!preg_match('/^2547\d{8}$/', $phone)) {
 }
 
 // Get or create user
-$userStmt = $conn->prepare("SELECT id, email, branch_id FROM register WHERE phone = ?");
+$userStmt = $conn->prepare("SELECT id, email, branch_id FROM register WHERE mpesa_phone = ?");
 $userStmt->execute([$phone]);
 $user = $userStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -57,7 +57,7 @@ if ($user) {
 } else {
     // Create new user if not found
     $insert = $conn->prepare("
-        INSERT INTO register (phone, branch_id) 
+        INSERT INTO register (mpesa_phone, branch_id) 
         VALUES (?, ?)
     ");
     $insert->execute([$phone, $branch_id]);
@@ -118,7 +118,7 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
     $stmt = $conn->prepare("
         INSERT INTO cargo_pay_mpesa_bank
         (user_id, branch_id, email, merchant_request_id, checkout_request_id, amount,
-         recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
+         recipient_bank_code, recipient_account, recipient_bank_name, mpesa_phone, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
