@@ -1,14 +1,26 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-$data = json_decode(file_get_contents('php://input'), true);
+// Always return JSON, even on early exit
+function sendResponse($data) {
+    echo json_encode($data);
+    exit;
+}
+$rawInput = file_get_contents('php://input');
+$data = json_decode($rawInput, true);
+if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+    sendResponse(['success' => false, 'message' => 'Invalid JSON input', 'debug' => $rawInput]);
+}
+if (empty($data['identifier']) || empty($data['password'])) {
+    sendResponse(['success' => false, 'message' => 'Missing identifier or password']);
+}
 
-// Database connection
+// Your DB include + rest of code...
 include "DB_connection.php";
 
 try {
     // Find user by email or phone - select all necessary fields
-    $stmt = $conn->prepare("SELECT id, email, phone, password, role, entity_name, first_name, last_name FROM register WHERE email = ? OR phone = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, email, phone, branch_id, password, role, entity_name, first_name, last_name FROM register WHERE email = ? OR phone = ? LIMIT 1");
     $stmt->bindParam(1, $data['identifier']);
     $stmt->bindParam(2, $data['identifier']);
     $stmt->execute();
@@ -16,10 +28,7 @@ try {
     // Fetch the result (single row expected)
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$row) {
-        echo json_encode(['success' => false, 'message' => 'Incorrect identifier or password']);
-        $stmt->closeCursor();
-        $conn = null; // Close connection
-        exit;
+        sendResponse(['success' => false, 'message' => 'Incorrect identifier or password']);
     }
 
     // Hash the input password using the referenced method
@@ -31,6 +40,7 @@ try {
         // Store session data
         $_SESSION['id'] = $row['id'];
         $_SESSION['email'] = $row['email'];
+        $_SESSION['branch_id'] = $row['branch_id'];
         $_SESSION['role'] = $row['role'];
         $_SESSION['entity_name'] = $row['entity_name'];
         $_SESSION['first_name'] = $row['first_name'];
@@ -51,9 +61,12 @@ try {
         $log_stmt->closeCursor();
         
         // Return success with email (for Flutter to store)
-        echo json_encode([
+        sendResponse([
             'success' => true,
-            'email' => $row['email']  // Added this
+            'email' => $row['email'],  // Added this
+            // Add these if you want to use them in Flutter
+            'id' => $row['id'],
+            'branch_id' => $row['branch_id'] // or fetch it if exists
         ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Incorrect identifier or password']);
@@ -62,6 +75,6 @@ try {
     $conn = null; // Close connection
 } catch (PDOException $e) {
     error_log("Error: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Database error']);
+    sendResponse(['success' => false, 'message' => 'Database error' . $e->getMessage()]);
 }
 ?>
