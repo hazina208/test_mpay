@@ -109,13 +109,14 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
     // Insert transaction WITH branch_id
     $stmt = $conn->prepare("
         INSERT INTO cargo_pay_mpesa_bank
-        (user_id, branch_id, merchant_request_id, checkout_request_id, amount,
+        (user_id, branch_id, email, merchant_request_id, checkout_request_id, amount,
          recipient_bank_code, recipient_account, recipient_bank_name, mpesa_phone, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
         $user_id,
-        $branch_id, 
+        $branch_id,
+        $user_email,
         $resp['MerchantRequestID'],
         $resp['CheckoutRequestID'],
         $amount,
