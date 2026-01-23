@@ -27,7 +27,7 @@ $amount = floatval($data['amount']);
 $bank_code = $data['bank_code'];
 $account = $data['account'];
 $bank_name = $data['bank_name'] ?? '';
-$email = $data['email'] ?? '';  // New: From Flutter
+$email = $data['email'] ?? '';  
 $branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null; 
 // Validation
 if ($amount <= 0 || $amount > 999999) {
@@ -109,14 +109,13 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
     // Insert transaction WITH branch_id
     $stmt = $conn->prepare("
         INSERT INTO cargo_pay_mpesa_bank
-        (user_id, branch_id, email, merchant_request_id, checkout_request_id, amount,
+        (user_id, branch_id, merchant_request_id, checkout_request_id, amount,
          recipient_bank_code, recipient_account, recipient_bank_name, mpesa_phone, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
         $user_id,
-        $branch_id,
-        $user_email, 
+        $branch_id, 
         $resp['MerchantRequestID'],
         $resp['CheckoutRequestID'],
         $amount,
