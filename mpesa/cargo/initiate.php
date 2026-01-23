@@ -116,7 +116,7 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
     $stmt->execute([
         $user_id,
         $branch_id,
-        $user_email, // ← Now saved!
+        $user_email, 
         $resp['MerchantRequestID'],
         $resp['CheckoutRequestID'],
         $amount,
