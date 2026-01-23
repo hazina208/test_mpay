@@ -1,4 +1,3 @@
-// initiate.php (Full corrected file)
 <?php
 // backend/api/initiate.php
 require_once '../../DB_connection.php';
@@ -29,7 +28,7 @@ $bank_code = $data['bank_code'];
 $account = $data['account'];
 $bank_name = $data['bank_name'] ?? '';
 $email = $data['email'] ?? '';  // New: From Flutter
-$branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null; // ← NEW: get from Flutter
+$branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null; 
 // Validation
 if ($amount <= 0 || $amount > 999999) {
     echo json_encode(['error' => 'Invalid amount']);
@@ -47,13 +46,13 @@ $user = $userStmt->fetch(PDO::FETCH_ASSOC);
 if ($user) {
     $user_id = $user['user_id'];
     $user_email = $user['email'];
-    $branch_id = $user['branch_id'] ?? $branch_id; // Prefer stored
+    $branch_id = $user['branch_id'] ?? $branch_id; 
 } else {
     // Create in users (link to register if email matches)
     $regStmt = $conn->prepare("SELECT id, branch_id FROM register WHERE email = ?");
     $regStmt->execute([$email]);
     $reg = $regStmt->fetch(PDO::FETCH_ASSOC);
-    $reg_id = $reg ? $reg['id'] : null; // Link user_id to register.id if possible
+    $reg_id = $reg ? $reg['id'] : null;
     $branch_id = $reg ? $reg['branch_id'] : $branch_id;
 
     $insert = $conn->prepare("
@@ -61,7 +60,7 @@ if ($user) {
         VALUES (?, ?, ?, ?, 300, 0, 0)  // Default stats; user_id = register.id if exists
     ");
     $insert->execute([$reg_id, $phone, $branch_id, $email]);
-    $user_id = $reg_id ?? $conn->lastInsertId(); // If no reg, auto user_id
+    $user_id = $reg_id ?? $conn->lastInsertId(); 
     $user_email = $email;
 }
 // If no branch_id at all → error or default
