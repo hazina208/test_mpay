@@ -104,18 +104,31 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
     // LIVE: 'https://payment.intasend.com/api/v1/send-money/bank'
     //$url = 'https://sandbox.intasend.com/api/v1/payment/payouts/';
     // LIVE: 'https://api.intasend.com/api/v1/payment/payouts/'
-    $payload = [
-        'currency' => 'KES',
-        'amount' => $amount,
-        'method' => 'pesalink',
-        'beneficiary' => [
-            'bank_code' => $bank_code,
-            'account_number' => $account,
-            'bank_name' => $bank_name, // Bank name (e.g. "Equity Bank")
+    //$payload = [
+        //'currency' => 'KES',
+        //'amount' => $amount,
+        //'method' => 'pesalink',
+        //'beneficiary' => [
+            //'bank_code' => $bank_code,
+            //'account_number' => $account,
+            //'bank_name' => $bank_name, // Bank name (e.g. "Equity Bank")
             //'account_name' => $recipient_name // Account holder's name (add if you have recipient_name in DB)
-        ],
-        'narration' => "CargoPay TX #$tx_id - Transfer to bank"
-    ];
+        //],
+        //'narration' => "CargoPay TX #$tx_id - Transfer to bank"
+    //];
+    $payload = [
+    'currency' => 'KES',
+    'transactions' => [
+        [
+            'name' => $recipient_name,  // Required: Account holder's name (currently missing/commented in your code)
+            'account' => $account,
+            'bank_code' => $bank_code,
+            'amount' => $amount,
+            'narrative' => "CargoPay TX #$tx_id - Transfer to bank"  // Use 'narrative' (not 'narration')
+        ]
+    ],
+    'requires_approval' => 'NO'  // Optional: Set to 'NO' if you don't need manual approval; defaults to requiring it
+];
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
@@ -137,6 +150,7 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
             UPDATE cargo_pay_mpesa_bank
             SET
                 status = 'disbursed',
+                recipient_name = '$recipient_name',
                 pesalink_reference = ?,
                 disbursed_at = NOW()
             WHERE id = ?
