@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 // Required fields
-$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account'];
+$required = ['phone_number', 'amount', 'bank_code', 'bank_name', 'account', 'account_name'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
@@ -26,6 +26,7 @@ $phone = trim($data['phone_number']);
 $amount = floatval($data['amount']);
 $bank_code = $data['bank_code'];
 $account = $data['account'];
+$recipient_name = $data['account_name'];
 $bank_name = $data['bank_name'] ?? '';
 $email = $data['email'] ?? '';  
 $branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null; 
@@ -110,8 +111,8 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
     $stmt = $conn->prepare("
         INSERT INTO cargo_pay_mpesa_bank
         (user_id, branch_id, email, merchant_request_id, checkout_request_id, amount,
-         recipient_bank_code, recipient_account, recipient_bank_name, phone, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+         recipient_bank_code, recipient_account, recipient_bank_name, recipient_name, phone, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     $stmt->execute([
         $user_id,
@@ -123,6 +124,7 @@ if ($httpCode === 200 && isset($resp['ResponseCode']) && $resp['ResponseCode'] =
         $bank_code,
         $account,
         $bank_name,
+        $recipient_name,
         $phone
     ]);
     echo json_encode([
