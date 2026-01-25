@@ -1,10 +1,4 @@
 <?php
-// callback.php
-// Daraja STK Push Callback Handler + IntaSend PesaLink Disbursement
-// Updated for CargoPay - Table: cargo_pay_mpesa_bank
-// Now includes recipient_name (account holder) + recipient_bank_name (bank name)
-// Both sent to IntaSend: 'account_name' and 'bank_name'
-// Last updated: January 15, 2026
 require_once 'config.php';
 require_once 'auth.php';
 require_once '../../DB_connection.php';
@@ -57,6 +51,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
                 amount,
                 recipient_bank_code,
                 recipient_account,
+                recipient_name,
                 recipient_bank_name
             FROM cargo_pay_mpesa_bank
             WHERE merchant_request_id = ?
@@ -70,6 +65,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
                 $tx['amount'],
                 $tx['recipient_bank_code'],
                 $tx['recipient_account'],
+                $tx['recipient_name'],
                 $tx['recipient_bank_name'],
             );
         } else {
@@ -98,7 +94,7 @@ http_response_code(200);
 echo "Success";
 // ────────────────────────────────────────────────────────────────────────────────
 // Function: Disburse via IntaSend (PesaLink) - now sends both bank_name & account_name
-function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name) {
+function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account,  $bank_name, $recipient_name) {
     global $conn;
     $url = 'https://sandbox.intasend.com/api/v1/send-money/bank';
     // LIVE: 'https://payment.intasend.com/api/v1/send-money/bank'
@@ -123,7 +119,8 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
             'name' => $recipient_name,  // Required: Account holder's name (currently missing/commented in your code)
             'account' => $account,
             'bank_code' => $bank_code,
-            'amount' => $amount,
+            'bank_name' => $bank_name, // Bank name (e.g. "Equity Bank")
+            'amount' => $amount, 
             'narrative' => "CargoPay TX #$tx_id - Transfer to bank"  // Use 'narrative' (not 'narration')
         ]
     ],
@@ -150,11 +147,11 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
             UPDATE cargo_pay_mpesa_bank
             SET
                 status = 'disbursed',
-                recipient_name = '$recipient_name',
                 pesalink_reference = ?,
                 disbursed_at = NOW()
             WHERE id = ?
         ");
+        //recipient_name = '$recipient_name', you can include it in the above code for UPDATE cargo_pay_mpesa_bank
         $stmt->execute([$ref, $tx_id]);
         logEvent($tx_id, 'disbursement_success', "Disbursed successfully. Ref: $ref");
         // Update user stats
