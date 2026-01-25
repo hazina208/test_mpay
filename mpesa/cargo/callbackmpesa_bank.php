@@ -1,4 +1,3 @@
-// callback_mpesatobank.php (Full corrected file; renamed from callbackmpesa_bank.php)
 <?php
 // callback.php
 // Daraja STK Push Callback Handler + IntaSend PesaLink Disbursement
@@ -58,7 +57,7 @@ if (isset($callback['Body']['stkCallback']['ResultCode'])) {
                 amount,
                 recipient_bank_code,
                 recipient_account,
-                recipient_bank_name,
+                recipient_bank_name
             FROM cargo_pay_mpesa_bank
             WHERE merchant_request_id = ?
         ");
@@ -101,7 +100,9 @@ echo "Success";
 // Function: Disburse via IntaSend (PesaLink) - now sends both bank_name & account_name
 function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_name) {
     global $conn;
-    $url = 'https://sandbox.intasend.com/api/v1/payment/payouts/';
+    $url = 'https://sandbox.intasend.com/api/v1/send-money/bank';
+    // LIVE: 'https://payment.intasend.com/api/v1/send-money/bank'
+    //$url = 'https://sandbox.intasend.com/api/v1/payment/payouts/';
     // LIVE: 'https://api.intasend.com/api/v1/payment/payouts/'
     $payload = [
         'currency' => 'KES',
@@ -120,7 +121,7 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $bank_n
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'Authorization: Bearer ' . INTASEND_API_KEY  // Corrected: Header auth
+        'Authorization: Bearer ' . INTASEND_API_KEY 
     ]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
