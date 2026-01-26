@@ -114,8 +114,8 @@ function disburseToBank($tx_id, $user_id, $amount, $bank_code, $account, $recipi
     global $conn;
 
     // Use correct sandbox endpoint
-    $url = 'https://sandbox.intasend.com/api/v1/send_money/initiate/';
-    // For production: 'https://payment.intasend.com/api/v1/send_money/initiate/';
+    $url = 'https://sandbox.intasend.com/api/v1/send-money/initiate/';
+    // For production: 'https://payment.intasend.com/api/v1/send-money/initiate/';
 
     $payload = [
         'provider'         => 'PESALINK',
