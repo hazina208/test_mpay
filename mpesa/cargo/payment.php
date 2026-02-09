@@ -3,7 +3,7 @@ require_once '../../DB_connection.php';
 require_once 'auth.php';
 require_once 'config.php';
 header('Content-Type: application/json');
-
+//header('Content-Type: application/json');
 if (!$conn) {
     die(json_encode(['message' => 'DB Connection failed']));
 }
