@@ -1,9 +1,9 @@
 <?php
-include 'config.php';
-
+require_once '../../DB_connection.php';
+require_once 'auth.php';
+require_once 'config.php';
 header('Content-Type: application/json');
 
-$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if (!$conn) {
     die(json_encode(['message' => 'DB Connection failed']));
 }
