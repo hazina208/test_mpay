@@ -16,6 +16,6 @@ define('CALLBACK_URL_CARGO_MPESATOBANK','https://test-mpay.onrender.com/mpesa/ca
 
 define('INITIATE_URL', 'https://test-mpay.onrender.com/initiate.php');
 define('INTASEND_API_KEY',  getenv('INTASEND_API_KEY') ?: 'ISSecretKey_test_40c858c5-0aa8-4543-92b4-c7ba0bd38a0c'); // Wrapper for PesaLink
-define('WEBHOOK_SECRET', 'https://test-mpay.onrender.com/initiate.php'); // For verifying webhooks
+define('WEBHOOK_SECRET', 'https://test-mpay.onrender.com/webhook.php'); // For verifying webhooks
 
 date_default_timezone_set('Africa/Nairobi');
