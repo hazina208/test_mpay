@@ -1,8 +1,6 @@
 <?php
-include 'config.php';
-
-$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
+require_once 'DB_connection.php';
+require_once 'mpesa/cargo/config.php';
 // Find pending tx older than 24h
 $sql = "SELECT * FROM cargo_pay_bank_bank WHERE status = 'PENDING' AND created_at < NOW() - INTERVAL 24 HOUR";
 $result = mysqli_query($conn, $sql);
