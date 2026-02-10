@@ -1,7 +1,7 @@
 <?php
 ob_start(); // Buffer output to prevent "headers already sent"
 //session_start();
-include 'config.php';
+require_once 'mpesa/cargo/config.php';
 
 include "DB_connection.php"; // PDO connection
 
