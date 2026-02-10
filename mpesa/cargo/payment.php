@@ -32,7 +32,6 @@ $recipient_account = mysqli_real_escape_string($conn, $data['recipient_account']
 $sender_account = mysqli_real_escape_string($conn, $data['sender_account']); // For logging, not used in payout
 $recipient_name = mysqli_real_escape_string($conn, $data['recipient_name']);
 // Assume user_id from auth (e.g., JWT or session); hardcoded for example
-$user_id = 1;
 $email = $data['email'] ?? '';  
 $branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null;
 // Validation
@@ -72,7 +71,7 @@ if ($branch_id === null) {
     exit;
 }
 // Insert transaction
-$sql = "INSERT INTO transactions (user_id, amount, recipient_account, sender_account, recipient_name) VALUES ($user_id, $amount, '$recipient_account', '$sender_account', '$recipient_name')";
+$sql = "INSERT INTO cargo_pay_bank_bank (user_id, branch_id, email, amount, recipient_account, sender_account, recipient_name) VALUES ($user_id, $branch_id, $user_email, $amount, '$recipient_account', '$sender_account', '$recipient_name')";
 if (mysqli_query($conn, $sql)) {
     $local_tx_id = mysqli_insert_id($conn);
 
@@ -107,11 +106,11 @@ if (mysqli_query($conn, $sql)) {
     if (isset($resp_data['tracking_id'])) {
         // Update local tx with IntaSend ID
         $tracking_id = $resp_data['tracking_id'];
-        mysqli_query($conn, "UPDATE transactions SET transaction_id = '$tracking_id' WHERE id = $local_tx_id");
+        mysqli_query($conn, "UPDATE cargo_pay_bank_bank SET transaction_id = '$tracking_id' WHERE id = $local_tx_id");
         echo json_encode(['message' => 'Payment initiated', 'tracking_id' => $tracking_id]);
     } else {
         // Handle error
-        mysqli_query($conn, "UPDATE transactions SET status = 'FAILED' WHERE id = $local_tx_id");
+        mysqli_query($conn, "UPDATE cargo_pay_bank_bank SET status = 'FAILED' WHERE id = $local_tx_id");
         echo json_encode(['message' => 'IntaSend error: ' . $response]);
     }
 } else {
