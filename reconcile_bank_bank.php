@@ -4,7 +4,7 @@ include 'config.php';
 $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 // Find pending tx older than 24h
-$sql = "SELECT * FROM transactions WHERE status = 'PENDING' AND created_at < NOW() - INTERVAL 24 HOUR";
+$sql = "SELECT * FROM cargo_pay_bank_bank WHERE status = 'PENDING' AND created_at < NOW() - INTERVAL 24 HOUR";
 $result = mysqli_query($conn, $sql);
 
 while ($row = mysqli_fetch_assoc($result)) {
@@ -27,11 +27,11 @@ while ($row = mysqli_fetch_assoc($result)) {
     $remote_status = strtoupper($resp_data['state'] ?? 'UNKNOWN');
 
     if ($remote_status != 'COMPLETED') {
-        mysqli_query($conn, "UPDATE transactions SET status = 'DISCREPANT' WHERE id = {$row['id']}");
+        mysqli_query($conn, "UPDATE cargo_pay_bank_bank SET status = 'DISCREPANT' WHERE id = {$row['id']}");
         // Notify user (e.g., email/SMS; implement via CURL to Twilio or similar)
         // Example: mail('user@email.com', 'Discrepancy', 'Tx ID: ' . $row['transaction_id']);
     } else {
-        mysqli_query($conn, "UPDATE transactions SET status = 'COMPLETED' WHERE id = {$row['id']}");
+        mysqli_query($conn, "UPDATE cargo_pay_bank_bank SET status = 'COMPLETED' WHERE id = {$row['id']}");
     }
 }
 
