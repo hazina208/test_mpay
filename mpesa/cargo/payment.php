@@ -27,10 +27,10 @@ foreach ($required as $field) {
     }
 }
 
-$amount = mysqli_real_escape_string($conn, $data['amount']);
-$recipient_account = mysqli_real_escape_string($conn, $data['recipient_account']);
-$sender_account = mysqli_real_escape_string($conn, $data['sender_account']); // For logging, not used in payout
-$recipient_name = mysqli_real_escape_string($conn, $data['recipient_name']);
+$amount          = $data['amount'];
+$recipient_account = $data['recipient_account'];
+$sender_account    = $data['sender_account'];
+$recipient_name    = $data['recipient_name'];
 // Assume user_id from auth (e.g., JWT or session); hardcoded for example
 $email = $data['email'] ?? '';  
 $branch_id = isset($data['branch_id']) ? (int)$data['branch_id'] : null;
