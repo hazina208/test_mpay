@@ -59,7 +59,7 @@ if ($user) {
 
     $insert = $conn->prepare("
         INSERT INTO banktobankusers (user_id, branch_id, email, credit_score, total_transactions, total_amount)
-        VALUES (?, ?, ?, ?, 300, 0, 0) 
+        VALUES (?, ?, ?, 300, 0, 0) 
     ");
     $insert->execute([$reg_id, $branch_id, $email]);
     $user_id = $reg_id ?? $conn->lastInsertId(); 
