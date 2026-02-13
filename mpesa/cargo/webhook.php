@@ -2,12 +2,17 @@
 ob_start(); // Buffer output to prevent "headers already sent"
 //session_start();
 require_once 'config.php';
-
 include "../../DB_connection.php"; // PDO connection
-
 // Verify webhook (optional: check signature if IntaSend provides)
 $payload = file_get_contents('php://input');
 $data = json_decode($payload, true);
+// Check if this is the verification challenge request
+if (isset($data['challenge']) && !empty($data['challenge'])) {
+    // Simply echo back the exact challenge string
+    echo $data['challenge'];
+    http_response_code(200);
+    exit;  // Stop here — don't process as normal webhook
+}
 
 // Example payload: {'event': 'send_money_update', 'tracking_id': 'XXX', 'state': 'COMPLETED', 'amount': 1000}
 // Update transaction status
