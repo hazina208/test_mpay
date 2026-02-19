@@ -2,7 +2,8 @@
 // M-Pesa Sandbox Config - NO OUTPUT (no echo/print)
 // Environment
 define('MPESA_ENV', 'sandbox');
-//define('INTASEND_API_URL', 'https://api.intasend.com'); // Or sandbox: https://sandbox.intasend.com
+define('INTASEND_API_URL', 'https://api.intasend.com'); 
+define('INTASEND_SANDBOX_API_URL', 'https://sandbox.intasend.com');
 // M-Pesa Credentials (set these in Render Environment Variables)
 define('CARGO_MPESA_SHORTCODE', getenv('CARGO_MPESA_SHORTCODE') ?: '174379');  // Fallback for testing
 define('MPESA_PASSKEY', getenv('MPESA_PASSKEY') ?: 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919');  // Your actual sandbox passkey as fallback (replace with yours)
