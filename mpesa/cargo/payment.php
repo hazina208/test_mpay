@@ -111,7 +111,8 @@ try {
     // 3. Initiate IntaSend payout
     $curl = curl_init();
     curl_setopt_array($curl, [
-        CURLOPT_URL            => INTASEND_API_URL . '/api/v1/send-money/initiate/',
+        CURLOPT_URL            => INTASEND_SANDBOX_API_URL . '/api/v1/send-money/initiate/',
+        //CURLOPT_URL            => INTASEND_API_URL . '/api/v1/send-money/initiate/',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER     => [
             'Authorization: Bearer ' . INTASEND_BEARER_TOKEN,
