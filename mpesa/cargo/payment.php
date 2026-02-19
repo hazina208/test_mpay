@@ -29,7 +29,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 
 // Required fields
-$required = ['amount', 'recipient_account', 'sender_account', 'recipient_name'];
+$required = ['amount', 'recipient_account', 'sender_account', 'recipient_name', 'bank_code'];
 foreach ($required as $field) {
     if (!isset($data[$field]) || trim($data[$field]) === '') {
         http_response_code(400);
@@ -42,6 +42,7 @@ $amount           = $data['amount'];
 $recipient_account = $data['recipient_account'];
 $sender_account    = $data['sender_account'];
 $recipient_name    = $data['recipient_name'];
+$bank_code         = trim($data['bank_code'] ?? '');
 $email            = $data['email'] ?? '';
 $branch_id        = isset($data['branch_id']) ? (int)$data['branch_id'] : null;
 
@@ -92,8 +93,8 @@ try {
     // 2. Insert transaction (using prepared statement → safe, no injection risk)
     $insertTx = $conn->prepare("
         INSERT INTO cargo_pay_bank_bank 
-        (user_id, branch_id, email, amount, recipient_account, sender_account, recipient_name, status)
-        VALUES (:user_id, :branch_id, :email, :amount, :recipient_account, :sender_account, :recipient_name, 'PENDING')
+        (user_id, branch_id, email, amount, recipient_account, receipient_bank_code, sender_account, recipient_name, status)
+        VALUES (:user_id, :branch_id, :email, :amount, :recipient_account, :bank_code, :sender_account, :recipient_name, 'PENDING')
     ");
 
     $insertTx->execute([
@@ -102,6 +103,7 @@ try {
         ':email'            => $user_email,
         ':amount'           => $amount,
         ':recipient_account' => $recipient_account,
+        ':bank_code'         => $bank_code,
         ':sender_account'    => $sender_account,
         ':recipient_name'    => $recipient_name,
     ]);
@@ -127,7 +129,7 @@ try {
                     'narrative' => 'Payment to ' . $recipient_name,
                     'name'      => $recipient_name,
                     'account'   => $recipient_account,
-                    'bank_code' => '63',  // ← Replace with correct dynamic bank code if possible!
+                    'bank_code' => $bank_code,
                     'amount'    => (float)$amount
                 ]
             ]
