@@ -2,9 +2,9 @@
 // M-Pesa Sandbox Config - NO OUTPUT (no echo/print)
 // Environment
 define('MPESA_ENV', 'sandbox');
-define('INTASEND_API_URL', 'https://api.intasend.com'); 
+//define('INTASEND_API_URL', 'https://api.intasend.com'); 
 define('INTASEND_SANDBOX_API_URL', 'https://sandbox.intasend.com');
-define('INTASEND_BEARER_TOKEN', 'ISSecretKey_test_40c858c5-0aa8-4543-92b4-c7ba0bd38a0c');//your_sandbox_or_live_secret_key_here
+define('INTASEND_BEARER_TOKEN', 'ISSecretKey_test_8447f187-f6f3-4b75-8e45-fb020f09e6da');//your_sandbox_or_live_secret_key_here
 // M-Pesa Credentials (set these in Render Environment Variables)
 define('CARGO_MPESA_SHORTCODE', getenv('CARGO_MPESA_SHORTCODE') ?: '174379');  // Fallback for testing
 define('MPESA_PASSKEY', getenv('MPESA_PASSKEY') ?: 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919');  // Your actual sandbox passkey as fallback (replace with yours)
@@ -17,7 +17,7 @@ define('MPESA_CALLBACK_URL_PAYBILL',    'https://test-mpay.onrender.com/mpesa/ca
 define('CALLBACK_URL_CARGO_MPESATOBANK','https://test-mpay.onrender.com/mpesa/cargo/callbackmpesa_bank.php');
 
 define('INITIATE_URL', getenv('INITIATE_URL') ?: 'https://test-mpay.onrender.com/initiate.php');
-define('INTASEND_API_KEY',  getenv('INTASEND_API_KEY') ?: 'ISSecretKey_test_40c858c5-0aa8-4543-92b4-c7ba0bd38a0c'); // Wrapper for PesaLink
+define('INTASEND_API_KEY',  getenv('INTASEND_API_KEY') ?: 'ISSecretKey_test_8447f187-f6f3-4b75-8e45-fb020f09e6da'); // Wrapper for PesaLink
 define('WEBHOOK_SECRET', getenv('WEBHOOK_SECRET') ?: 'https://test-mpay.onrender.com/webhook.php'); // For verifying webhooks
 
 date_default_timezone_set('Africa/Nairobi');
