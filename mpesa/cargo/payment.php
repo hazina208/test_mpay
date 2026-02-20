@@ -122,7 +122,7 @@ try {
         ],
         CURLOPT_POST           => true,
         CURLOPT_POSTFIELDS     => json_encode([
-            'provider'     => 'BANK',
+            'provider'     => 'PESALINK',
             'currency'     => 'KES',
             'transactions' => [
                 [
