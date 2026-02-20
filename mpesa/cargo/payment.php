@@ -122,7 +122,8 @@ try {
         ],
         CURLOPT_POST           => true,
         CURLOPT_POSTFIELDS     => json_encode([
-            'provider'     => 'PESALINK',
+            'provider'     => 'INTASEND_PROVIDER_BANK',
+            //'provider'     => 'PESALINK',                                
             'currency'     => 'KES',
             'transactions' => [
                 [
