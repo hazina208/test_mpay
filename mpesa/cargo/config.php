@@ -5,6 +5,7 @@ define('MPESA_ENV', 'sandbox');
 define('INTASEND_API_URL', getenv('INTASEND_API_URL') ?:'https://payment.intasend.com'); 
 define('INTASEND_SANDBOX_API_URL', getenv('INTASEND_SANDBOX_API_URL') ?: 'https://sandbox.intasend.com');
 define('INTASEND_BEARER_TOKEN', getenv('INTASEND_BEARER_TOKEN') ?: 'ISSecretKey_test_8447f187-f6f3-4b75-8e45-fb020f09e6da');//your_sandbox_or_live_secret_key_here
+define('INTASEND_PROVIDER_BANK', 'PESALINK');
 // M-Pesa Credentials (set these in Render Environment Variables)
 define('CARGO_MPESA_SHORTCODE', getenv('CARGO_MPESA_SHORTCODE') ?: '174379');  // Fallback for testing
 define('MPESA_PASSKEY', getenv('MPESA_PASSKEY') ?: 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919');  // Your actual sandbox passkey as fallback (replace with yours)
