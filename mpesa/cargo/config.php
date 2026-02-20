@@ -2,7 +2,7 @@
 // M-Pesa Sandbox Config - NO OUTPUT (no echo/print)
 // Environment
 define('MPESA_ENV', 'sandbox');
-//define('INTASEND_API_URL', 'https://api.intasend.com'); 
+define('INTASEND_API_URL', 'https://api.intasend.com'); 
 define('INTASEND_SANDBOX_API_URL', 'https://sandbox.intasend.com');
 define('INTASEND_BEARER_TOKEN', 'ISSecretKey_test_8447f187-f6f3-4b75-8e45-fb020f09e6da');//your_sandbox_or_live_secret_key_here
 // M-Pesa Credentials (set these in Render Environment Variables)
