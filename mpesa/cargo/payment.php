@@ -219,3 +219,11 @@ if (isset($resp_data['tracking_id'])) {
         'http_code' => $http_code              // also include status code
     ]);
 }
+ } catch (PDOException $e) {
+    error_log("Payment PHP error: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['message' => 'Database error: ' . $e->getMessage()]);
+}
+
+$conn = null; // Close PDO connection   
+    
