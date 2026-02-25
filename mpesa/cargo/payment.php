@@ -122,6 +122,7 @@ try {
         CURLOPT_POSTFIELDS => json_encode([
             'provider' => INTASEND_PROVIDER_BANK,  // PESALINK
             'currency' => 'KES',
+            'requires_approval' => 'NO',                             
             'transactions' => [
                 [
                     'narrative' => 'Payment to ' . $recipient_name,
