@@ -6,12 +6,13 @@ header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
 $paybill_number = trim($input['paybill_number'] ?? '');
+$acc_number = trim($input['acc_number'] ?? '');
 $amount = $input['amount'] ?? 0;
 $phone_number = $input['phone_number'] ?? '';
 
 $transaction_id = 'PENDING_' . time();
 
-if (empty($amount) || empty($paybill_number) || empty($phone_number)) {
+if (empty($amount) || empty($paybill_number) || empty($acc_number) || empty($phone_number)) {
     echo json_encode(['status' => false, 'message' => 'Missing required fields']);
     exit;
 }
@@ -50,8 +51,8 @@ $status = 'Pending';  // Define initial status
 
 try {
     // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO cargo_pays_paybill (paybill_no, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$paybill_number, $amount, $fee, $total, $phone_number, $status, $transaction_id]);
+    $stmt = $conn->prepare("INSERT INTO cargo_pays_paybill (paybill_no, acc_no, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$paybill_number, $acc_number, $amount, $fee, $total, $phone_number, $status, $transaction_id]);
     $payment_id = $conn->lastInsertId();
     $stmt = null; // Close statement
 } catch (PDOException $e) {
