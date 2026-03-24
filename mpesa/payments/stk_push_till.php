@@ -51,77 +51,23 @@ function calculateFee($amount) {
 $fee = calculateFee($amount);
 $fee = ceil($fee);  // Ceil to integer (adjust rounding if needed)
 $total = $amount - $fee;  // Net amount after deducting fee from receiver
-$status = 'Pending';  // Define initial status
 
 try {
-    // Save payment details to database
-    $stmt = $conn->prepare("INSERT INTO cargo_pays_till (till_number, amount, fee, total, phone_number, status, transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$till_number, $amount, $fee, $total,  $phone_number, $status, $transaction_id]);
-    $payment_id = $conn->lastInsertId();
-    $stmt = null; // Close statement
-} catch (PDOException $e) {
-    error_log("Error inserting payment: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Database error occurred']);
-    exit;
-}
+    $stmt = $pdo->prepare("INSERT INTO till_payments (till_number, amount, fee, total, payer_phone, reference) VALUES (?,?,?,?,?,?)");
+    $stmt->execute([$till, $amount, $phone, $reference]);
 
-try {
-    $access_token = getAccessToken();
-} catch (Error $e) {  // Catch "Undefined constant" as Error
-    error_log("Auth error: " . $e->getMessage());
-    echo json_encode(['status' => false, 'message' => 'Authentication setup failed: ' . $e->getMessage()]);
-    exit;
-}
-if (!$access_token) {
-    echo json_encode(['status' => false, 'message' => 'Failed to get access token']);
-    exit;
-}
-
-$timestamp = date('YmdHis');
-$password = base64_encode($till_number . MPESA_PASSKEY . $timestamp);
-$url = MPESA_ENV == 'sandbox'
-    ? 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
-    : 'https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest';
-
-$payload = [
-    'BusinessShortCode' => $till_number,
-    'Password' => $password,
-    'Timestamp' => $timestamp,
-    'TransactionType' => 'CustomerPayBillOnline',
-    'Amount' => $total,  // Charge the total (amount + fee)
-    'PartyA' => $phone_number,
-    'PartyB' => $till_number,
-    'PhoneNumber' => $phone_number,
-    'CallBackURL' => MPESA_CALLBACK_URL_TILL,
-    'AccountReference' => 'Cargo_' . $payment_id,
-    'TransactionDesc' => 'Payment for BusFare  - Till Number: ' . $till_number
-];
-
-$curl = curl_init();
-curl_setopt($curl, CURLOPT_URL, $url);
-curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Authorization: Bearer ' . $access_token]);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_POST, true);
-curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
-$response_str = curl_exec($curl);
-curl_close($curl);
-
-$response = json_decode($response_str);
-
-if (isset($response->ResponseCode) && $response->ResponseCode == 0) {
-    try {
-        // Save STK details to database
-        $stmt2 = $conn->prepare("UPDATE cargo_pays_till  SET transaction_date = ?, CheckoutRequestID = ?, merchant_request_id = ? WHERE id = ?");
-        $stmt2->execute([$timestamp, $response->CheckoutRequestID, $response->MerchantRequestID, $payment_id]);
-        $stmt2 = null; // Close statement
-        
-        echo json_encode(['status' => true, 'message' => 'STK Push initiated. Please check your phone.']);
-    } catch (PDOException $e) {
-        error_log("Error updating payment: " . $e->getMessage());
-        echo json_encode(['status' => false, 'message' => 'Database update failed']);
-    }
-} else {
-    $error_msg = isset($response->errorMessage) ? $response->errorMessage : (isset($response['errorMessage']) ? $response['errorMessage'] : 'Unknown error');
-    echo json_encode(['status' => false, 'message' => 'STK Push failed: ' . $error_msg]);
+    echo json_encode([
+        'success'   => true,
+        'reference' => $reference,
+        'till'      => $till,
+        'amount'    => $amount,
+        'fee'    => $fee,
+        'total'    => $total,
+        'phone'     => $phone,
+        'message'   => 'Ready for payment'
+    ]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Database error']);
 }
 ?>
