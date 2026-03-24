@@ -5,16 +5,21 @@ include '../../DB_connection.php'; // Use PDO connection
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
-$till_number = trim($input['till_number'] ?? '');
-$amount = $input['amount'] ?? 0;
-$phone_number = $input['phone_number'] ?? '';
+$till   = trim($data['till_number'] ?? '');
+$amount = floatval($data['amount'] ?? 0);
+$phone  = trim($data['phone_number'] ?? '');
 
-$transaction_id = 'PENDING_' . time();
-
-if (empty($amount) || empty($till_number) || empty($phone_number)) {
-    echo json_encode(['status' => false, 'message' => 'Missing required fields']);
+if (empty($till) || $amount < 1 || empty($phone)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'All fields required']);
     exit;
 }
+
+if (!preg_match('/^254[17]\d{8}$/', $phone) && preg_match('/^0[17]\d{8}$/', $phone)) {
+    $phone = '254' . substr($phone, 1);
+}
+
+$reference = 'TILL-' . strtoupper(substr(md5(uniqid()), 0, 12));
 
 // Function to calculate percentage fee
 function calculateFee($amount) {
