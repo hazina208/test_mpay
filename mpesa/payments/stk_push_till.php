@@ -54,7 +54,7 @@ $total = $amount - $fee;  // Net amount after deducting fee from receiver
 
 try {
     $stmt = $pdo->prepare("INSERT INTO till_payments (till_number, amount, fee, total, payer_phone, reference) VALUES (?,?,?,?,?,?)");
-    $stmt->execute([$till, $amount, $phone, $reference]);
+    $stmt->execute([$till, $amount, $fee, $total, $phone, $reference]);
 
     echo json_encode([
         'success'   => true,
