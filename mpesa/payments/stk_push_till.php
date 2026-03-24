@@ -48,7 +48,7 @@ $fee = calculateFee($amount);
 $total = $amount - $fee;   // or $amount + $fee depending on your logic
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO till_payments 
+    $stmt = $conn->prepare("INSERT INTO till_payments 
         (till_number, amount, fee, total, payer_phone, reference) 
         VALUES (?,?,?,?,?,?)");
 
