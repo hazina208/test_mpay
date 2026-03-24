@@ -1,5 +1,7 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
+require_once 'auth.php';
+include '../../DB_connection.php'; // Use PDO connection
 
 $data = json_decode(file_get_contents('php://input'), true);
 
