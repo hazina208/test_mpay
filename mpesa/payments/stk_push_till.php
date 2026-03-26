@@ -63,7 +63,7 @@ try {
     }
 
     // Insert into database (added qr_text and qr_image_path)
-    $stmt = $pdo->prepare("INSERT INTO till_payments 
+    $stmt = $conn->prepare("INSERT INTO till_payments 
         (till_number, amount, fee, total, payer_phone, reference, qr_text, qr_image_path, status) 
         VALUES (?,?,?,?,?,?,?,?, 'pending')");
 
