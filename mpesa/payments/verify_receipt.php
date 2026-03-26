@@ -18,7 +18,7 @@ if (empty($reference) || empty($receiptCode) || strlen($receiptCode) < 8) {
 
 try {
     // Update the record with the receipt code and mark as confirmed
-    $stmt = $pdo->prepare("UPDATE till_payments 
+    $stmt = $conn->prepare("UPDATE till_payments 
         SET mpesa_receipt = ?, 
             status = 'confirmed', 
             confirmed_at = NOW() 
