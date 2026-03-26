@@ -15,7 +15,7 @@ if (empty($reference) || empty($receipt) || strlen($receipt) !== 10) {
 }
 
 try {
-    $stmt = $pdo->prepare("UPDATE till_payments SET status='confirmed', mpesa_receipt=?, updated_at=NOW() WHERE reference=? AND status='pending'");
+    $stmt = $conn->prepare("UPDATE till_payments SET status='confirmed', mpesa_receipt=?, updated_at=NOW() WHERE reference=? AND status='pending'");
     $stmt->execute([$receipt, $reference]);
 
     if ($stmt->rowCount() > 0) {
