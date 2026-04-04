@@ -17,20 +17,14 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # Copy composer files
 COPY composer.json composer.lock ./
 
-# Install dependencies with maximum verbosity for debugging
-RUN composer install \
-    --no-dev \
-    --optimize-autoloader \
-    --no-scripts \
-    --no-interaction \
-    --prefer-dist \
-    --ignore-platform-reqs \
-    -vvv || (echo "=== COMPOSER FAILED ===" && cat composer.json && echo "=== END OF composer.json ===" && exit 1)
 
 # Copy the rest of the application
 COPY . /var/www/html/
 
 WORKDIR /var/www/html/
+
+# Run composer at container startup instead
+CMD composer install --no-dev --optimize-autoloader --no-scripts --no-interaction && apache2-foreground
 
 # Create QR image directories
 RUN mkdir -p qr_images paybill_qr_images \
