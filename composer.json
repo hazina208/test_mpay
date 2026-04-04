@@ -3,7 +3,7 @@
   "description": "A simple PHP app deployed on Render",
   "type": "project",
   "require": {
-    "endroid/qr-code": "^5.0"
+    "endroid/qr-code": "^8.1"
   },
   "minimum-stability": "stable"
 }
