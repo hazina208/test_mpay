@@ -2,11 +2,19 @@
 require_once 'config.php';
 require_once 'auth.php';
 include '../../DB_connection.php';
+
+// Load Composer autoloader for endroid/qr-code
+require __DIR__ . '/vendor/autoload.php';
+
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
-$business = trim($input['business_number'] ?? '');      // ← changed
-$account = trim($input['account_number'] ?? '');        // ← new
+
+$business = trim($input['business_number'] ?? '');
+$account = trim($input['account_number'] ?? '');
 $amount = floatval($input['amount'] ?? 0);
 $phone = trim($input['phone_number'] ?? '');
 
@@ -16,7 +24,7 @@ if (empty($business) || empty($account) || $amount < 1 || empty($phone)) {
     exit;
 }
 
-// Phone formatting (same as before)
+// Phone formatting
 if (preg_match('/^0[17]\d{8}$/', $phone)) {
     $phone = '254' . substr($phone, 1);
 } elseif (!preg_match('/^254[17]\d{8}$/', $phone)) {
@@ -25,18 +33,17 @@ if (preg_match('/^0[17]\d{8}$/', $phone)) {
     exit;
 }
 
-$reference = 'PAYBILL-' . strtoupper(substr(md5(uniqid()), 0, 12));  // ← changed prefix
+$reference = 'PAYBILL-' . strtoupper(substr(md5(uniqid()), 0, 12));
 
-// calculateFee function 
 function calculateFee($amount) {
-    if ($amount >= 1 && $amount <= 50.99)    return ceil($amount * 0.002);
-    if ($amount >= 51 && $amount <= 80.99)   return ceil($amount * 0.005);
-    if ($amount >= 81 && $amount <= 100.99)  return ceil($amount * 0.009);
+    if ($amount >= 1 && $amount <= 50.99) return ceil($amount * 0.002);
+    if ($amount >= 51 && $amount <= 80.99) return ceil($amount * 0.005);
+    if ($amount >= 81 && $amount <= 100.99) return ceil($amount * 0.009);
     if ($amount >= 101 && $amount <= 150.99) return ceil($amount * 0.01);
     if ($amount >= 151 && $amount <= 400.99) return ceil($amount * 0.018);
     if ($amount >= 401 && $amount <= 800.99) return ceil($amount * 0.02);
-    if ($amount >= 801 && $amount <= 1200.99)return ceil($amount * 0.03);
-    if ($amount >= 1201 && $amount <= 3000.99)return ceil($amount * 0.05);
+    if ($amount >= 801 && $amount <= 1200.99) return ceil($amount * 0.03);
+    if ($amount >= 1201 && $amount <= 3000.99) return ceil($amount * 0.05);
     return 0;
 }
 
@@ -45,31 +52,42 @@ $total = $amount - $fee;
 
 $qr_text = "Paybill: $business\nAccount: $account\nAmount: KSh " . number_format($amount, 2) . "\nRef: $reference";
 
-// QR image generation (exactly the same)
+// Create paybill_qr_images directory if it doesn't exist
 $qr_dir = __DIR__ . '/paybill_qr_images/';
-if (!is_dir($qr_dir)) mkdir($qr_dir, 0755, true);
+
+if (!is_dir($qr_dir)) {
+    mkdir($qr_dir, 0755, true);
+}
+
 $qr_filename = $reference . '.png';
 $qr_path = $qr_dir . $qr_filename;
 $qr_url_path = 'paybill_qr_images/' . $qr_filename;
 
+// ====================== GENERATE QR CODE USING ENDROID ======================
 try {
-    $google_qr_url = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" . urlencode($qr_text);
-    $qr_image = file_get_contents($google_qr_url);
-    if ($qr_image !== false) {
-        file_put_contents($qr_path, $qr_image);
-    }
+    $qrCode = QrCode::create($qr_text)
+        ->setSize(300)
+        ->setMargin(10);
 
-    // Insert into NEW table (you need to create paybill_payments with matching columns)
-    $stmt = $conn->prepare("INSERT INTO paybill_payments
+    $writer = new PngWriter();
+    $result = $writer->write($qrCode);
+
+    // Save the QR code image
+    $result->saveToFile($qr_path);
+
+    // Insert into database
+    $stmt = $conn->prepare("INSERT INTO paybill_payments 
         (business_number, account_number, amount, fee, total, payer_phone, reference, qr_text, qr_image_path, status)
         VALUES (?,?,?,?,?,?,?,?,?, 'pending')");
+    
     $stmt->execute([$business, $account, $amount, $fee, $total, $phone, $reference, $qr_text, $qr_url_path]);
 
+    // Success response
     echo json_encode([
         'success' => true,
         'reference' => $reference,
-        'paybill' => $business,          // ← matches frontend
-        'account' => $account,           // ← matches frontend
+        'paybill' => $business,
+        'account' => $account,
         'amount' => $amount,
         'fee' => $fee,
         'total' => $total,
@@ -78,8 +96,12 @@ try {
         'qr_image_path' => $qr_url_path,
         'message' => 'Ready for payment'
     ]);
+
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Error generating QR code or saving data: ' . $e->getMessage()
+    ]);
 }
 ?>
