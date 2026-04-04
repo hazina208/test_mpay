@@ -27,8 +27,18 @@ if (preg_match('/^0[17]\d{8}$/', $phone)) {
 
 $reference = 'PAYBILL-' . strtoupper(substr(md5(uniqid()), 0, 12));  // ← changed prefix
 
-// calculateFee function stays exactly the same
-function calculateFee($amount) { ... }  // copy from original
+// calculateFee function 
+function calculateFee($amount) {
+    if ($amount >= 1 && $amount <= 50.99)    return ceil($amount * 0.002);
+    if ($amount >= 51 && $amount <= 80.99)   return ceil($amount * 0.005);
+    if ($amount >= 81 && $amount <= 100.99)  return ceil($amount * 0.009);
+    if ($amount >= 101 && $amount <= 150.99) return ceil($amount * 0.01);
+    if ($amount >= 151 && $amount <= 400.99) return ceil($amount * 0.018);
+    if ($amount >= 401 && $amount <= 800.99) return ceil($amount * 0.02);
+    if ($amount >= 801 && $amount <= 1200.99)return ceil($amount * 0.03);
+    if ($amount >= 1201 && $amount <= 3000.99)return ceil($amount * 0.05);
+    return 0;
+}
 
 $fee = calculateFee($amount);
 $total = $amount - $fee;
