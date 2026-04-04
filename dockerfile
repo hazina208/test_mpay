@@ -17,13 +17,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 COPY composer.json composer.lock ./
 
 # Install dependencies with better error handling and flags
-RUN composer install \
-    --no-dev \
-    --optimize-autoloader \
-    --no-scripts \
-    --no-interaction \
-    --prefer-dist \
-    --ignore-platform-reqs || (echo "Composer failed with exit code $?" && cat composer.lock && exit 1)
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction -vvv
 
 # Copy the rest of the application
 COPY . /var/www/html/
