@@ -13,5 +13,9 @@ COPY . /var/www/html/
 # Set working directory
 WORKDIR /var/www/html/
 
+# Install Composer dependencies
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-
+# Copy the rest of the application
+COPY . .
