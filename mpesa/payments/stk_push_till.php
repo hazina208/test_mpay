@@ -1,5 +1,6 @@
 <?php
-// === ABSOLUTE FIRST LINE - NO whitespace, no blank lines, no BOM above this ===
+// === MUST BE THE VERY FIRST LINE ===
+// No blank lines, no spaces, no BOM before <?php
 
 ob_start();
 ini_set('display_errors', 0);
@@ -7,12 +8,7 @@ error_reporting(E_ALL);
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Clean any early output
 if (ob_get_length() > 0) ob_clean();
-
-// Early debug - will help us see if script even starts
-echo json_encode(['debug' => 'PHP script started successfully']);
-if (ob_get_length() > 0) ob_clean();  // remove the debug if we reach real code
 
 // ====================== ERROR HANDLERS ======================
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
@@ -20,7 +16,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => "PHP Error: $errstr in $errfile line $errline"
+        'message' => "PHP Error: $errstr in $errfile on line $errline"
     ]);
     exit;
 });
@@ -30,44 +26,34 @@ set_exception_handler(function($e) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Exception: ' . $e->getMessage() . 
-                     ' (' . $e->getFile() . ':' . $e->getLine() . ')'
+        'message' => 'Exception: ' . $e->getMessage()
     ]);
     exit;
 });
 
 try {
-    // Check required files
-    if (!file_exists('config.php')) {
-        throw new Exception('config.php not found');
-    }
-    if (!file_exists('../../DB_connection.php')) {
-        throw new Exception('../../DB_connection.php not found - check path');
+    // === Check critical files first ===
+    if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+        throw new Exception('vendor/autoload.php not found. Please run "composer install" on your server.');
     }
 
     require_once 'config.php';
     require_once 'auth.php';
     include '../../DB_connection.php';
 
-    // Critical: Composer autoloader
-    $autoloader = __DIR__ . '/vendor/autoload.php';
-    if (!file_exists($autoloader)) {
-        throw new Exception('vendor/autoload.php not found. Run "composer install" on Render.');
-    }
-    require $autoloader;
+    // Load Composer autoloader FIRST
+    require_once __DIR__ . '/vendor/autoload.php';
 
+    // NOW we can safely use the classes
     use Endroid\QrCode\QrCode;
     use Endroid\QrCode\Writer\PngWriter;
 
-    // Now read input
+    // Read input
     $rawInput = file_get_contents('php://input');
-    if (empty($rawInput)) {
-        throw new Exception('Empty input received');
-    }
-
     $input = json_decode($rawInput, true);
+
     if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new Exception('Invalid JSON: ' . json_last_error_msg());
+        throw new Exception('Invalid JSON input');
     }
 
     $till   = trim($input['till_number'] ?? '');
@@ -80,7 +66,7 @@ try {
         exit;
     }
 
-    // Phone formatting
+    // Phone number formatting
     if (preg_match('/^0[17]\d{8}$/', $phone)) {
         $phone = '254' . substr($phone, 1);
     } elseif (!preg_match('/^254[17]\d{8}$/', $phone)) {
@@ -110,24 +96,25 @@ try {
 
     $qr_dir = __DIR__ . '/qr_images/';
     if (!is_dir($qr_dir)) {
-        if (!mkdir($qr_dir, 0755, true)) {
-            throw new Exception('Failed to create qr_images directory');
-        }
+        mkdir($qr_dir, 0755, true);
     }
 
     $qr_filename = $reference . '.png';
     $qr_path = $qr_dir . $qr_filename;
     $qr_url_path = 'qr_images/' . $qr_filename;
 
-    // QR Code
-    $qrCode = QrCode::create($qr_text)->setSize(300)->setMargin(10);
+    // Generate QR Code
+    $qrCode = QrCode::create($qr_text)
+        ->setSize(300)
+        ->setMargin(10);
+
     $writer = new PngWriter();
     $result = $writer->write($qrCode);
     $result->saveToFile($qr_path);
 
-    // Database insert
+    // Save to database
     if (!isset($conn)) {
-        throw new Exception('$conn is not defined - check DB_connection.php');
+        throw new Exception('Database connection $conn is not available');
     }
 
     $stmt = $conn->prepare("INSERT INTO till_payments 
