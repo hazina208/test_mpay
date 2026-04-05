@@ -1,9 +1,14 @@
 {
   "name": "myapp/php-app",
-  "description": "A simple PHP app deployed on Render",
+  "description": "M-Pesa Till Payment with QR Code",
   "type": "project",
   "require": {
     "endroid/qr-code": "^5.0"
   },
-  "minimum-stability": "stable"
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
