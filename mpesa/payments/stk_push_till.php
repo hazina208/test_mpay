@@ -1,4 +1,9 @@
 <?php
+// ====================== STRICT OUTPUT CONTROL ======================
+// NOTHING should be before this <?php tag (no spaces, no blank lines, no BOM)
+
+ob_start(); // Start output buffering to prevent any unwanted output
+
 require_once 'config.php';
 require_once 'auth.php';
 include '../../DB_connection.php';
@@ -9,79 +14,104 @@ require __DIR__ . '/vendor/autoload.php';
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 
+// Set JSON header immediately
 header('Content-Type: application/json');
 
-$input = json_decode(file_get_contents('php://input'), true);
+// Clean any accidental output before this point
+if (ob_get_length()) ob_clean();
 
-$till = trim($input['till_number'] ?? '');
-$amount = floatval($input['amount'] ?? 0);
-$phone = trim($input['phone_number'] ?? '');
-
-if (empty($till) || $amount < 1 || empty($phone)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'All fields required']);
+// ====================== BETTER ERROR HANDLING ======================
+function handlePhpError($errno, $errstr, $errfile, $errline) {
+    if (ob_get_length()) ob_clean();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => "PHP Error [$errno]: $errstr in $errfile on line $errline"
+    ]);
     exit;
 }
 
-// Phone number formatting
-if (preg_match('/^0[17]\d{8}$/', $phone)) {
-    $phone = '254' . substr($phone, 1);
-} elseif (!preg_match('/^254[17]\d{8}$/', $phone)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid phone number']);
+set_error_handler('handlePhpError');
+
+set_exception_handler(function($e) {
+    if (ob_get_length()) ob_clean();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Exception: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine()
+    ]);
     exit;
-}
+});
 
-$reference = 'TILL-' . strtoupper(substr(md5(uniqid()), 0, 12));
-
-function calculateFee($amount) {
-    if ($amount >= 1 && $amount <= 50.99) return ceil($amount * 0.002);
-    if ($amount >= 51 && $amount <= 80.99) return ceil($amount * 0.005);
-    if ($amount >= 81 && $amount <= 100.99) return ceil($amount * 0.009);
-    if ($amount >= 101 && $amount <= 150.99) return ceil($amount * 0.01);
-    if ($amount >= 151 && $amount <= 400.99) return ceil($amount * 0.018);
-    if ($amount >= 401 && $amount <= 800.99) return ceil($amount * 0.02);
-    if ($amount >= 801 && $amount <= 1200.99) return ceil($amount * 0.03);
-    if ($amount >= 1201 && $amount <= 3000.99) return ceil($amount * 0.05);
-    return 0;
-}
-
-$fee = calculateFee($amount);
-$total = $amount - $fee;
-
-$qr_text = "Till Number: $till\nAmount: KSh " . number_format($amount, 2) . "\nRef: $reference";
-
-// Create qr_images directory if it doesn't exist
-$qr_dir = __DIR__ . '/qr_images/';
-
-if (!is_dir($qr_dir)) {
-    mkdir($qr_dir, 0755, true);
-}
-
-$qr_filename = $reference . '.png';
-$qr_path = $qr_dir . $qr_filename;
-$qr_url_path = 'qr_images/' . $qr_filename;
-
-// ====================== GENERATE QR CODE USING ENDROID ======================
+// ====================== MAIN LOGIC ======================
 try {
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    $till = trim($input['till_number'] ?? '');
+    $amount = floatval($input['amount'] ?? 0);
+    $phone = trim($input['phone_number'] ?? '');
+
+    if (empty($till) || $amount < 1 || empty($phone)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'All fields are required']);
+        exit;
+    }
+
+    // Phone number formatting
+    if (preg_match('/^0[17]\d{8}$/', $phone)) {
+        $phone = '254' . substr($phone, 1);
+    } elseif (!preg_match('/^254[17]\d{8}$/', $phone)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid phone number format']);
+        exit;
+    }
+
+    $reference = 'TILL-' . strtoupper(substr(md5(uniqid()), 0, 12));
+
+    function calculateFee($amount) {
+        if ($amount >= 1 && $amount <= 50.99) return ceil($amount * 0.002);
+        if ($amount >= 51 && $amount <= 80.99) return ceil($amount * 0.005);
+        if ($amount >= 81 && $amount <= 100.99) return ceil($amount * 0.009);
+        if ($amount >= 101 && $amount <= 150.99) return ceil($amount * 0.01);
+        if ($amount >= 151 && $amount <= 400.99) return ceil($amount * 0.018);
+        if ($amount >= 401 && $amount <= 800.99) return ceil($amount * 0.02);
+        if ($amount >= 801 && $amount <= 1200.99) return ceil($amount * 0.03);
+        if ($amount >= 1201 && $amount <= 3000.99) return ceil($amount * 0.05);
+        return 0;
+    }
+
+    $fee = calculateFee($amount);
+    $total = $amount - $fee;
+
+    $qr_text = "Till Number: $till\nAmount: KSh " . number_format($amount, 2) . "\nRef: $reference";
+
+    // Create qr_images directory if it doesn't exist
+    $qr_dir = __DIR__ . '/qr_images/';
+    if (!is_dir($qr_dir)) {
+        mkdir($qr_dir, 0755, true);
+    }
+
+    $qr_filename = $reference . '.png';
+    $qr_path = $qr_dir . $qr_filename;
+    $qr_url_path = 'qr_images/' . $qr_filename;
+
+    // ====================== GENERATE QR CODE ======================
     $qrCode = QrCode::create($qr_text)
         ->setSize(300)
         ->setMargin(10);
 
     $writer = new PngWriter();
     $result = $writer->write($qrCode);
-
-    // Save QR code image
     $result->saveToFile($qr_path);
 
-    // Insert payment record into database
+    // Insert into database
     $stmt = $conn->prepare("INSERT INTO till_payments 
-        (till_number, amount, fee, total, payer_phone, reference, qr_text, qr_image_path, status)
+        (till_number, amount, fee, total, payer_phone, reference, qr_text, qr_image_path, status) 
         VALUES (?,?,?,?,?,?,?,?, 'pending')");
-    
+
     $stmt->execute([$till, $amount, $fee, $total, $phone, $reference, $qr_text, $qr_url_path]);
 
-    // Return success response
+    // Success response
     echo json_encode([
         'success' => true,
         'reference' => $reference,
@@ -92,14 +122,17 @@ try {
         'phone' => $phone,
         'qr_text' => $qr_text,
         'qr_image_path' => $qr_url_path,
-        'message' => 'Ready for payment'
+        'message' => 'QR Code generated successfully. Ready for payment.'
     ]);
 
 } catch (Exception $e) {
+    if (ob_get_length()) ob_clean();
     http_response_code(500);
     echo json_encode([
-        'success' => false, 
-        'message' => 'Error generating QR code or saving data: ' . $e->getMessage()
+        'success' => false,
+        'message' => 'Server Error: ' . $e->getMessage()
     ]);
+} finally {
+    restore_error_handler();
 }
 ?>
