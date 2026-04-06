@@ -110,7 +110,7 @@ try {
 
     $qrCode = QrCode::create($qr_text)->setSize(300);
     $writer = new PngWriter();
-    $writer->write($qrCode)->saveToFile($qr_path);
+    $writer->write($qrCode)->saveToFile($qr_url_path);
 
     // ================= DATABASE =================
     if (!isset($conn)) {
