@@ -28,9 +28,9 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 COPY . /var/www/html/
 
 # Create QR directories with correct permissions
-RUN mkdir -p qr_images paybill_qr_images \
+RUN mkdir -p /var/www/html/qr_images /var/www/html/paybill_qr_images \
     && chown -R www-data:www-data /var/www/html/qr_images /var/www/html/paybill_qr_images \
-    && chmod -R 755 /var/www/html/qr_images /var/www/html/paybill_qr_images
+    && chmod -R 775 /var/www/html/qr_images /var/www/html/paybill_qr_images
 
 # Enable Apache mod_rewrite (if you need clean URLs)
 RUN a2enmod rewrite
