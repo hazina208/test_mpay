@@ -98,13 +98,15 @@ try {
     // ================= QR GENERATION =================
     $qr_text = "Till: $till\nAmount: KES $amount\nRef: $reference";
 
-    $qr_dir = __DIR__ . '/qr_images/';
+    $qr_dir = __DIR__ . '/../../qr_images/';
     if (!is_dir($qr_dir)) {
         mkdir($qr_dir, 0755, true);
     }
 
     $qr_filename = $reference . '.png';
-    $qr_path = $qr_dir . $qr_filename;
+    //$qr_path = $qr_dir . $qr_filename;
+    $qr_url_path = 'qr_images/' . $qr_filename;
+    
 
     $qrCode = QrCode::create($qr_text)->setSize(300);
     $writer = new PngWriter();
