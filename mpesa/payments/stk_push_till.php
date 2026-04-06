@@ -35,11 +35,11 @@ set_exception_handler(function($e) {
 try {
 
     // ================= DEPENDENCIES =================
-    if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+    if (!file_exists(__DIR__ . '/../../vendor/autoload.php')) {
         throw new Exception('vendor/autoload.php not found. Run composer install.');
     }
 
-    require_once __DIR__ . '/vendor/autoload.php';
+    require_once __DIR__ . '/../../vendor/autoload.php';
     require_once 'config.php';
     require_once 'auth.php';
     require_once '../../DB_connection.php';
