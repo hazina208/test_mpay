@@ -1,5 +1,5 @@
 <?php
-// === MUST BE FIRST LINE (NO SPACES BEFORE THIS) ===
+// === MUST BE FIRST LINE ===
 ob_start();
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
@@ -7,7 +7,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 if (ob_get_length() > 0) ob_clean();
 
-// ✅ MUST BE AT TOP LEVEL (OUTSIDE try)
+// ================= USE STATEMENTS (TOP LEVEL ONLY) =================
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 
@@ -34,17 +34,17 @@ set_exception_handler(function($e) {
 
 try {
 
-    // ================= DEPENDENCIES =================
+    // ================= LOAD DEPENDENCIES =================
     if (!file_exists(__DIR__ . '/../../vendor/autoload.php')) {
         throw new Exception('vendor/autoload.php not found. Run composer install.');
     }
 
     require_once __DIR__ . '/../../vendor/autoload.php';
-    require_once 'config.php';
-    require_once 'auth.php';
-    require_once '../../DB_connection.php';
+    require_once __DIR__ . '/../../config.php';
+    require_once __DIR__ . '/../../auth.php';
+    require_once __DIR__ . '/../../DB_connection.php';
 
-    // ================= INPUT =================
+    // ================= READ INPUT =================
     $rawInput = file_get_contents('php://input');
     $input = json_decode($rawInput, true);
 
@@ -65,7 +65,7 @@ try {
         exit;
     }
 
-    // ================= PHONE FORMAT =================
+    // ================= PHONE NORMALIZATION =================
     if (preg_match('/^0[17]\d{8}$/', $phone)) {
         $phone = '254' . substr($phone, 1);
     } elseif (!preg_match('/^254[17]\d{8}$/', $phone)) {
@@ -95,22 +95,24 @@ try {
     $fee = calculateFee($amount);
     $total = $amount - $fee;
 
-    // ================= QR GENERATION =================
-    $qr_text = "Till: $till\nAmount: KES $amount\nRef: $reference";
+    // ================= QR DIRECTORY (ABSOLUTE PATH FIX) =================
+    $qr_dir = realpath(__DIR__ . '/../../qr_images/') . '/';
 
-    $qr_dir = __DIR__ . '/../../qr_images/';
     if (!is_dir($qr_dir)) {
         mkdir($qr_dir, 0755, true);
     }
 
+    // ================= QR GENERATION =================
+    $qr_text = "Till: $till\nAmount: KES $amount\nRef: $reference";
+
     $qr_filename = $reference . '.png';
-    //$qr_path = $qr_dir . $qr_filename;
-    $qr_url_path = 'qr_images/' . $qr_filename;
-    
+    $qr_path = $qr_dir . $qr_filename;
 
     $qrCode = QrCode::create($qr_text)->setSize(300);
     $writer = new PngWriter();
-    $writer->write($qrCode)->saveToFile($qr_url_path);
+    $writer->write($qrCode)->saveToFile($qr_path);
+
+    $qr_url_path = 'qr_images/' . $qr_filename;
 
     // ================= DATABASE =================
     if (!isset($conn)) {
@@ -129,10 +131,10 @@ try {
         $phone,
         $reference,
         $qr_text,
-        'qr_images/' . $qr_filename
+        $qr_url_path
     ]);
 
-    // ================= SUCCESS RESPONSE =================
+    // ================= RESPONSE =================
     echo json_encode([
         'success' => true,
         'reference' => $reference,
@@ -141,7 +143,7 @@ try {
         'fee' => $fee,
         'total' => $total,
         'phone' => $phone,
-        'qr_image' => 'qr_images/' . $qr_filename,
+        'qr_image' => $qr_url_path,
         'message' => 'QR Code generated successfully'
     ]);
 
