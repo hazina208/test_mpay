@@ -40,8 +40,10 @@ try {
     }
 
     require_once __DIR__ . '/../../vendor/autoload.php';
-    require_once __DIR__ . 'config.php';
-    require_once __DIR__ . 'auth.php';
+    //require_once __DIR__ . 'config.php';
+    //require_once __DIR__ . 'auth.php';
+    require_once 'config.php';
+    require_once 'auth.php';
     require_once __DIR__ . '/../../DB_connection.php';
 
     // ================= READ INPUT =================
